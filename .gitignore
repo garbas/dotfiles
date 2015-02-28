@@ -1,0 +1,4 @@
+weechat/logs/
+weechat/weechat.log
+weechat/slack.cache
+weechat/script/plugins.xml.gz
