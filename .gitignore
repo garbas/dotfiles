@@ -1,5 +1,5 @@
-weechat/logs/
-weechat/weechat.log
-weechat/slack.cache
-weechat/script/plugins.xml.gz
+/programs/weechat/logs/
+/programs/weechat/weechat.log
+/programs/weechat/slack.cache
+/programs/weechat/script/plugins.xml.gz
 result
