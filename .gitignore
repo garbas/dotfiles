@@ -1,6 +1,6 @@
 /nixos/*-secrets.nix
-/programs/weechat/logs/
-/programs/weechat/weechat.log
-/programs/weechat/slack.cache
-/programs/weechat/script/plugins.xml.gz
+/pkgs/weechat/logs/
+/pkgs/weechat/weechat.log
+/pkgs/weechat/slack.cache
+/pkgs/weechat/script/plugins.xml.gz
 /result
