@@ -275,7 +275,7 @@ in {
       perlBindings = true;
     };
 
-    packageOverrides = import ./../pkgs;
+    packageOverrides = pkgs: import ./../pkgs { inherit pkgs; };
 
   };
 
