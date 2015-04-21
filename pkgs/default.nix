@@ -1,8 +1,8 @@
 { pkgs ? import <nixpkgs> {}
 }:
 { 
-  weechat = weechat.override {
-    extraBuildInputs = [ pythonPackages.websocket_client ];
+  weechat = pkgs.weechat.override {
+    extraBuildInputs = [ pkgs.pythonPackages.websocket_client ];
   };
 
   ttf_bitstream_vera = pkgs.callPackage ./ttf_bitstream_vera {
