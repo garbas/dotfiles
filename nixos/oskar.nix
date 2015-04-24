@@ -332,10 +332,7 @@ in {
   };
 
   services = {
-    redis.enable = true;
     dbus.enable = true;
-    mysql.enable = true;
-    mysql.package = pkgs.mysql55;
     virtualboxHost.enable = true;
     locate.enable = true;
     nixosManual.showManual = true;
@@ -343,15 +340,6 @@ in {
     printing.enable = true;
     thinkfan.enable = true;
     thinkfan.sensor = "/sys/class/hwmon/hwmon0/temp1_input";
-    btsync = {
-      enable = true;
-      deviceName = "oskar";
-      enableWebUI = true;
-      httpListenAddr = "127.0.0.1";
-      httpListenPort = 1111;
-      httpLogin = secrets.btsync.httpLogin;
-      httpPass = secrets.btsync.httpPass;
-    };
     prey = {
       enable = true;
       apiKey = secrets.prey.apiKey;
