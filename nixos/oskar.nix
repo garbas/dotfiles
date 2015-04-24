@@ -247,10 +247,13 @@ in {
 
   nix = {
     package = pkgs.nixUnstable;
+    trustedBinaryCaches = [
+        "https://ci.rhodecode.com/cache"
+        "https://ci.rhodecode.com/rccache"
+    ];
     extraOptions = ''
         gc-keep-outputs = true
         gc-keep-derivations = true
-        trusted-binary-caches = https://ci.rhodecode.com/cache
         auto-optimise-store = true
     '';
     #useChroot = true;
