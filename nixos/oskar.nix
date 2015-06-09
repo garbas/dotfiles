@@ -34,7 +34,7 @@ in {
           } ];
       };
     };
-    #kernelPackages = pkgs.linuxPackages_3_14;
+    kernelPackages = pkgs.linuxPackages_latest;
     blacklistedKernelModules = [ "snd_pcsp" "pcspkr" ];
     extraModprobeConfig = ''
       options sdhci debug_quirks=0x4670
