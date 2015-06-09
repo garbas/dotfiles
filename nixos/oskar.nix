@@ -104,12 +104,11 @@ in {
       pa_applet
       networkmanagerapplet
       gnome3.dconf
-      gnome3.gnome_icon_theme
+      gnome3.defaultIconTheme
       gnome3.gnome_themes_standard 
       gnome.gnome_keyring
       pavucontrol
       stdenv
-      ngrok
       pypi2nix
       nodejs
       openvpn
@@ -134,7 +133,9 @@ in {
       pythonPackages.py3status
       mosh
       gnumake
-      goaccess
+
+      #goaccess
+      #ngrok
 
       # version control
       subversion
@@ -250,6 +251,8 @@ in {
     trustedBinaryCaches = [
         "https://ci.rhodecode.com/cache"
         "https://ci.rhodecode.com/rccache"
+        "https://hydra.nixos.org"
+        "https://hydra.cryp.to"
     ];
     extraOptions = ''
         gc-keep-outputs = true
@@ -295,6 +298,7 @@ in {
     extraHosts = ''
         89.212.67.227  home
         81.4.127.29    floki floki.garbas.si
+        10.30.10.83    ci.rhodecode.com bugs.rhodecode.com
     '';
     #connman.enable = true;
     networkmanager.enable = true;
