@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+
 from functools import wraps
 import time
 import json
@@ -9,6 +10,7 @@ import re
 import urllib
 import urlparse
 import HTMLParser
+import sys
 from websocket import create_connection
 
 # hack to make tests possible.. better way?
@@ -19,7 +21,7 @@ except:
 
 SCRIPT_NAME = "slack_extension"
 SCRIPT_AUTHOR = "Ryan Huber <rhuber@gmail.com>"
-SCRIPT_VERSION = "0.97.22"
+SCRIPT_VERSION = "0.97.25"
 SCRIPT_LICENSE = "MIT"
 SCRIPT_DESC = "Extends weechat for typing notification/search/etc on slack.com"
 
@@ -185,7 +187,6 @@ class SlackServer(object):
         self.communication_counter = 0
         self.message_buffer = {}
         self.ping_hook = None
-        self.failed_message = None
 
         self.identifier = None
         self.connect_to_slack()
@@ -212,15 +213,16 @@ class SlackServer(object):
         self.communication_counter += 1
         return self.communication_counter
 
-    def send_to_websocket(self, data):
+    def send_to_websocket(self, data, expect_reply=True):
         data["id"] = self.get_communication_id()
         message = json.dumps(data)
         try:
-            self.message_buffer[data["id"]] = data
+            if expect_reply:
+                self.message_buffer[data["id"]] = data
             self.ws.send(message)
             dbg("Sent {}...".format(message[:100]))
         except:
-            self.failed_message = data
+            dbg("Unexpected error: {}\nSent: {}".format(sys.exc_info()[0], data))
             self.connected = False
 
     def ping(self):
@@ -253,10 +255,16 @@ class SlackServer(object):
                 self.connecting = False
 
                 self.print_connection_info(login_data)
-                if self.failed_message:
-                    dbg("Resent failed message.")
-                    self.send_to_websocket(self.failed_message)
-                    self.failed_message = None
+                if len(self.message_buffer) > 0:
+                    for message_id in self.message_buffer.keys():
+                        if self.message_buffer[message_id]["type"] != 'ping':
+                            resend = self.message_buffer.pop(message_id)
+                            dbg("Resent failed message.")
+                            self.send_to_websocket(resend)
+                            #sleep to prevent being disconnected by websocket server
+                            time.sleep(1)
+                        else:
+                            self.message_buffer.pop(message_id)
             return True
         else:
             w.prnt("", "\n!! slack.com login error: " + login_data["error"] + "\n Please check your API token with\n \"/set plugins.var.python.slack_extension.slack_api_token (token)\"\n\n ")
@@ -462,7 +470,7 @@ class Channel(SlackThing):
     def linkify_text(self, message):
         message = message.split(' ')
         for item in enumerate(message):
-            if item[1].startswith('@'):
+            if item[1].startswith('@') and len(item[1]) > 1:
                 named = re.match('.*[@#](\w+)(\W*)', item[1]).groups()
                 if named[0] in ["group", "channel"]:
                     message[item[0]] = "<!{}>".format(named[0])
@@ -501,7 +509,10 @@ class Channel(SlackThing):
             async_slack_api_request(self.server.domain, self.server.token, SLACK_API_TRANSLATOR[self.type]["leave"], {"channel": self.identifier})
 
     def closed(self):
-        message_cache.pop(self.identifier)
+        try:
+            message_cache.pop(self.identifier)
+        except KeyError:
+            pass
         self.channel_buffer = None
         self.last_received = None
         self.close()
@@ -1068,7 +1079,7 @@ def process_channel_created(message_json):
         server.channels.find(message_json["channel"]["name"]).open(False)
     else:
         item = message_json["channel"]
-        server.channels.append(Channel(server, item["name"], item["id"], item["is_open"], item["last_read"], "#", item["members"], item["topic"]))
+        server.channels.append(Channel(server, item["name"], item["id"], item["is_open"], item["last_read"], "#", item["members"], item["topic"]["value"]))
     server.buffer_prnt("New channel created: {}".format(item["name"]))
 
 
@@ -1095,13 +1106,18 @@ def process_channel_joined(message_json):
         server.channels.find(message_json["channel"]["name"]).open(False)
     else:
         item = message_json["channel"]
-        server.channels.append(Channel(server, item["name"], item["id"], item["is_open"], item["last_read"], "#", item["members"], item["topic"]))
+        server.channels.append(Channel(server, item["name"], item["id"], item["is_open"], item["last_read"], "#", item["members"], item["topic"]["value"]))
 
 
 def process_channel_leave(message_json):
     server = servers.find(message_json["myserver"])
     channel = server.channels.find(message_json["channel"])
     channel.user_leave(message_json["user"])
+
+
+def  process_channel_archive(message_json):
+    channel = server.channels.find(message_json["channel"])
+    channel.detach_buffer()
 
 
 def process_group_left(message_json):
@@ -1115,7 +1131,12 @@ def process_group_joined(message_json):
         server.channels.find(message_json["channel"]["name"]).open(False)
     else:
         item = message_json["channel"]
-        server.channels.append(GroupChannel(server, item["name"], item["id"], item["is_open"], item["last_read"], "#", item["members"], item["topic"]))
+        server.channels.append(GroupChannel(server, item["name"], item["id"], item["is_open"], item["last_read"], "#", item["members"], item["topic"]["value"]))
+
+
+def  process_group_archive(message_json):
+    channel = server.channels.find(message_json["channel"])
+    channel.detach_buffer()
 
 
 def process_im_close(message_json):
@@ -1407,7 +1428,7 @@ def typing_notification_cb(signal, sig_type, data):
             if channel:
                 identifier = channel.identifier
                 request = {"type": "typing", "channel": identifier}
-                channel.server.send_to_websocket(request)
+                channel.server.send_to_websocket(request, expect_reply=False)
                 typing_timer = now
     return w.WEECHAT_RC_OK
 
@@ -1436,7 +1457,7 @@ def slack_never_away_cb(data, remaining):
             identifier = server.channels.find("slackbot").identifier
             request = {"type": "typing", "channel": identifier}
             #request = {"type":"typing","channel":"slackbot"}
-            server.send_to_websocket(request)
+            server.send_to_websocket(request, expect_reply=False)
     return w.WEECHAT_RC_OK
 
 # Slack specific requests
