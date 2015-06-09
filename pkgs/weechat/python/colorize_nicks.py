@@ -21,6 +21,14 @@
 #
 #
 # History:
+# 2015-04-19, xt
+#   version 20: fix ignore of nicks in URLs
+# 2015-04-18, xt
+#   version 19: new option ignore nicks in URLs
+# 2015-03-03, xt
+#   version 18: iterate buffers looking for nicklists instead of servers
+# 2015-02-23, holomorph
+#   version 17: fix coloring in non-channel buffers (#58)
 # 2014-09-17, holomorph
 #   version 16: use weechat config facilities
 #               clean unused, minor linting, some simplification
@@ -65,7 +73,7 @@ w = weechat
 
 SCRIPT_NAME    = "colorize_nicks"
 SCRIPT_AUTHOR  = "xt <xt@bash.no>"
-SCRIPT_VERSION = "16"
+SCRIPT_VERSION = "20"
 SCRIPT_LICENSE = "GPL"
 SCRIPT_DESC    = "Use the weechat nick colors in the chat area"
 
@@ -124,6 +132,10 @@ def colorize_config_init():
         colorize_config_file, section_look, "greedy_matching",
         "boolean", "If off, then use lazy matching instead", "", 0,
         0, "on", "on", 0, "", "", "", "", "", "")
+    colorize_config_option["ignore_nicks_in_urls"] = weechat.config_new_option(
+        colorize_config_file, section_look, "ignore_nicks_in_urls",
+        "boolean", "If on, don't colorize nicks inside URLs", "", 0,
+        0, "off", "off", 0, "", "", "", "", "", "")
 
 def colorize_config_read():
     ''' Read configuration file. '''
@@ -142,6 +154,7 @@ def colorize_cb(data, modifier, modifier_data, line):
 
     global ignore_nicks, ignore_channels, colored_nicks
 
+
     full_name = modifier_data.split(';')[1]
     channel = '.'.join(full_name.split('.')[1:])
 
@@ -150,7 +163,7 @@ def colorize_cb(data, modifier, modifier_data, line):
     if buffer not in colored_nicks:
         return line
 
-    if channel in ignore_channels:
+    if channel and channel in ignore_channels:
         return line
 
     min_length = w.config_integer(colorize_config_option['min_nick_length'])
@@ -169,6 +182,7 @@ def colorize_cb(data, modifier, modifier_data, line):
         # Check that nick is not ignored and longer than minimum length
         if len(nick) < min_length or nick in ignore_nicks:
             continue
+
         # Check that nick is in the dictionary colored_nicks
         if nick in colored_nicks[buffer]:
             nick_color = colored_nicks[buffer][nick]
@@ -176,6 +190,10 @@ def colorize_cb(data, modifier, modifier_data, line):
             # Let's use greedy matching. Will check against every word in a line.
             if w.config_boolean(colorize_config_option['greedy_matching']):
                 for word in line.split():
+                    if w.config_boolean(colorize_config_option['ignore_nicks_in_urls']) and \
+                          word.startswith(('http://', 'https://')):
+                        continue
+
                     if nick in word:
                         # Is there a nick that contains nick and has a greater lenght?
                         # If so let's save that nick into var biggest_nick
@@ -222,7 +240,7 @@ def colorize_input_cb(data, modifier, modifier_data, line):
         return line
 
     channel = w.buffer_get_string(buffer, 'name')
-    if channel in ignore_channels:
+    if channel and channel in ignore_channels:
         return line
 
     reset = w.color('reset')
@@ -245,30 +263,23 @@ def populate_nicks(*args):
 
     colored_nicks = {}
 
-    servers = w.infolist_get('irc_server', '', '')
-    while w.infolist_next(servers):
-        servername = w.infolist_string(servers, 'name')
-        colored_nicks[servername] = {}
-        my_nick = w.info_get('irc_nick', servername)
-        channels = w.infolist_get('irc_channel', '', servername)
-        while w.infolist_next(channels):
-            pointer = w.infolist_pointer(channels, 'buffer')
-            nicklist = w.infolist_get('nicklist', pointer, '')
+    buffers = w.infolist_get('buffer', '', '')
+    while w.infolist_next(buffers):
+        buffer_ptr = w.infolist_pointer(buffers, 'pointer')
+        my_nick = w.buffer_get_string(buffer_ptr, 'localvar_nick')
+        nicklist = w.infolist_get('nicklist', buffer_ptr, '')
+        while w.infolist_next(nicklist):
+            if buffer_ptr not in colored_nicks:
+                colored_nicks[buffer_ptr] = {}
 
-            if pointer not in colored_nicks:
-                colored_nicks[pointer] = {}
+            nick = w.infolist_string(nicklist, 'name')
+            nick_color = colorize_nick_color(nick, my_nick)
 
-            while w.infolist_next(nicklist):
-                nick = w.infolist_string(nicklist, 'name')
-                nick_color = colorize_nick_color(nick, my_nick)
+            colored_nicks[buffer_ptr][nick] = nick_color
 
-                colored_nicks[pointer][nick] = nick_color
+        w.infolist_free(nicklist)
 
-            w.infolist_free(nicklist)
-
-        w.infolist_free(channels)
-
-    w.infolist_free(servers)
+    w.infolist_free(buffers)
 
     return w.WEECHAT_RC_OK
 

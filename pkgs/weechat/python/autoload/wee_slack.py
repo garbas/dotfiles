@@ -19,7 +19,7 @@ except:
 
 SCRIPT_NAME = "slack_extension"
 SCRIPT_AUTHOR = "Ryan Huber <rhuber@gmail.com>"
-SCRIPT_VERSION = "0.97.20"
+SCRIPT_VERSION = "0.97.22"
 SCRIPT_LICENSE = "MIT"
 SCRIPT_DESC = "Extends weechat for typing notification/search/etc on slack.com"
 
@@ -31,18 +31,18 @@ SLACK_API_TRANSLATOR = {
         "join": "channels.join",
         "leave": "channels.leave",
         "mark": "channels.mark",
-        "info": "channels.info"
+        "info": "channels.info",
     },
     "im": {
         "history": "im.history",
         "leave": "im.close",
-        "mark": "im.mark"
+        "mark": "im.mark",
     },
     "group": {
         "history": "groups.history",
         "join": "channels.join",
         "leave": "groups.leave",
-        "mark": "groups.mark"
+        "mark": "groups.mark",
     }
 
 }
@@ -185,6 +185,7 @@ class SlackServer(object):
         self.communication_counter = 0
         self.message_buffer = {}
         self.ping_hook = None
+        self.failed_message = None
 
         self.identifier = None
         self.connect_to_slack()
@@ -212,13 +213,14 @@ class SlackServer(object):
         return self.communication_counter
 
     def send_to_websocket(self, data):
+        data["id"] = self.get_communication_id()
+        message = json.dumps(data)
         try:
-            data["id"] = self.get_communication_id()
-            message = json.dumps(data)
             self.message_buffer[data["id"]] = data
             self.ws.send(message)
             dbg("Sent {}...".format(message[:100]))
         except:
+            self.failed_message = data
             self.connected = False
 
     def ping(self):
@@ -251,6 +253,10 @@ class SlackServer(object):
                 self.connecting = False
 
                 self.print_connection_info(login_data)
+                if self.failed_message:
+                    dbg("Resent failed message.")
+                    self.send_to_websocket(self.failed_message)
+                    self.failed_message = None
             return True
         else:
             w.prnt("", "\n!! slack.com login error: " + login_data["error"] + "\n Please check your API token with\n \"/set plugins.var.python.slack_extension.slack_api_token (token)\"\n\n ")
@@ -293,11 +299,13 @@ class SlackServer(object):
             if "topic" not in item:
                 item["topic"] = {}
                 item["topic"]["value"] = ""
-            self.channels.append(Channel(self, item["name"], item["id"], item["is_member"], item["last_read"], "#", item["members"], item["topic"]["value"]))
+            if not item["is_archived"]:
+                self.channels.append(Channel(self, item["name"], item["id"], item["is_member"], item["last_read"], "#", item["members"], item["topic"]["value"]))
         for item in data["groups"]:
             if "last_read" not in item:
                 item["last_read"] = 0
-            self.channels.append(GroupChannel(self, item["name"], item["id"], item["is_open"], item["last_read"], "#", item["members"], item["topic"]["value"]))
+            if not item["is_archived"]:
+                self.channels.append(GroupChannel(self, item["name"], item["id"], item["is_open"], item["last_read"], "#", item["members"], item["topic"]["value"]))
         for item in data["ims"]:
             if "last_read" not in item:
                 item["last_read"] = 0
@@ -456,6 +464,8 @@ class Channel(SlackThing):
         for item in enumerate(message):
             if item[1].startswith('@'):
                 named = re.match('.*[@#](\w+)(\W*)', item[1]).groups()
+                if named[0] in ["group", "channel"]:
+                    message[item[0]] = "<!{}>".format(named[0])
                 if self.server.users.find(named[0]):
                     message[item[0]] = "<@{}>{}".format(self.server.users.find(named[0]).identifier, named[1])
             if item[1].startswith('#') and self.server.channels.find(item[1]):
@@ -474,9 +484,11 @@ class Channel(SlackThing):
         self.create_buffer()
         self.active = True
         self.get_history()
-        async_slack_api_request(self.server.domain, self.server.token, SLACK_API_TRANSLATOR[self.type]["info"], {"name": self.name.lstrip("#")})
+        if "info" in SLACK_API_TRANSLATOR[self.type]:
+            async_slack_api_request(self.server.domain, self.server.token, SLACK_API_TRANSLATOR[self.type]["info"], {"name": self.name.lstrip("#")})
         if update_remote:
-            async_slack_api_request(self.server.domain, self.server.token, SLACK_API_TRANSLATOR[self.type]["join"], {"name": self.name.lstrip("#")})
+            if "join" in SLACK_API_TRANSLATOR[self.type]:
+                async_slack_api_request(self.server.domain, self.server.token, SLACK_API_TRANSLATOR[self.type]["join"], {"name": self.name.lstrip("#")})
         self.opening = False
 
     def close(self, update_remote=True):
@@ -534,6 +546,18 @@ class Channel(SlackThing):
         if self.channel_buffer:
             if w.buffer_get_string(self.channel_buffer, "short_name") != (color + new_name):
                 w.buffer_set(self.channel_buffer, "short_name", color + new_name)
+
+    def buffer_prnt_changed(self, user, text, time, append=""):
+        if user:
+            if self.server.users.find(user):
+                name = self.server.users.find(user).formatted_name()
+            else:
+                name = user
+            name = name.decode('utf-8')
+            modify_buffer_line(self.channel_buffer, name, text, time, append)
+        else:
+            modify_buffer_line(self.channel_buffer, None, text, time, append)
+        return False
 
     def buffer_prnt(self, user='unknown user', message='no message', time=0):
         set_read_marker = False
@@ -1150,6 +1174,32 @@ def cache_message(message_json, from_me=False):
     if len(message_cache[channel]) > BACKLOG_SIZE:
         message_cache[channel] = message_cache[channel][-BACKLOG_SIZE:]
 
+
+def modify_buffer_line(buffer, user, new_message, time, append):
+    time = int(float(time))
+    own_lines = w.hdata_pointer(w.hdata_get('buffer'), buffer, 'own_lines')
+    if own_lines:
+        line = w.hdata_pointer(w.hdata_get('lines'), own_lines, 'last_line')
+        hdata_line = w.hdata_get('line')
+        hdata_line_data = w.hdata_get('line_data')
+
+        while line:
+            data = w.hdata_pointer(hdata_line, line, 'data')
+            if data:
+                date = w.hdata_time(hdata_line_data, data, 'date')
+                prefix = w.hdata_string(hdata_line_data, data, 'prefix')
+                if user and (int(date) == int(time) and user == prefix):
+#                    w.prnt("", "found matching time date is {}, time is {} ".format(date, time))
+                    w.hdata_update(hdata_line_data, data, {"message": "{}{}".format(new_message, append)})
+                    break
+                elif not user and (int(date) == int(time)):
+                    w.hdata_update(hdata_line_data, data, {"message": "{}{}".format(new_message, append)})
+                else:
+                    pass
+            line = w.hdata_move(hdata_line, line, -1)
+    return w.WEECHAT_RC_OK
+
+
 def process_message(message_json):
     try:
         # send these messages elsewhere
@@ -1181,7 +1231,7 @@ def process_message(message_json):
 
         text = unfurl_refs(text)
         if "attachments" in message_json:
-            text += u"--- {}".format(unwrap_attachments(message_json))
+            text += u" --- {}".format(unwrap_attachments(message_json))
         text = text.lstrip()
         text = text.replace("\t", "    ")
         name = get_user(message_json, server)
@@ -1189,7 +1239,18 @@ def process_message(message_json):
         text = text.encode('utf-8')
         name = name.encode('utf-8')
 
-        channel.buffer_prnt(name, text, time)
+        if "subtype" in message_json and message_json["subtype"] == "message_changed":
+                if "edited" in message_json["message"]:
+                    append = " (edited)"
+                else:
+                    append = ''
+                channel.buffer_prnt_changed(message_json["message"]["user"], text, message_json["message"]["ts"], append)
+        elif "subtype" in message_json and message_json["subtype"] == "message_deleted":
+            append = "(deleted)"
+            text = ""
+            channel.buffer_prnt_changed(None, text, message_json["deleted_ts"], append)
+        else:
+            channel.buffer_prnt(name, text, time)
     except:
         dbg("cannot process message {}".format(message_json))
 
@@ -1510,7 +1571,6 @@ def config_changed_cb(data, option, value):
     if channels_not_on_current_server_color == "0":
         channels_not_on_current_server_color = False
     colorize_nicks = w.config_get_plugin('colorize_nicks') == "1"
-    slack_debug = None
     debug_mode = w.config_get_plugin("debug_mode").lower()
     if debug_mode != '' and debug_mode != 'false':
         create_slack_debug_buffer()
@@ -1559,6 +1619,7 @@ if __name__ == "__main__":
             legacy_mode = True
 
         # Global var section
+        slack_debug = None
         config_changed_cb("", "", "")
 
         cmds = {k[8:]: v for k, v in globals().items() if k.startswith("command_")}
