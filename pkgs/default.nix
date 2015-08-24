@@ -9,7 +9,7 @@
     inherit (pkgs) stdenv fetchgit;
   };
 
-  neovim = neovim.override {
+  neovim = pkgs.neovim.override {
     vimAlias = true;
     configure = {
       customRC = ''
