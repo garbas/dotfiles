@@ -133,9 +133,9 @@ in {
       bazaarTools
       gitFull
       gitAndTools.tig
-      gitAndTools.git-remote-hg
+
       pythonFull
-      #keybase-node-client
+      keybase
 
       # editor and their tools
       neovim
