@@ -1,7 +1,8 @@
+/configuration.nix
+/nixops/certs/
 /nixos/*-secrets.nix
 /pkgs/weechat/logs/
-/pkgs/weechat/weechat.log
-/pkgs/weechat/slack.cache
 /pkgs/weechat/script/plugins.xml.gz
+/pkgs/weechat/slack.cache
+/pkgs/weechat/weechat.log
 /result
-/configuration.nix
