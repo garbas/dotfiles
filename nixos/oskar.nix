@@ -15,7 +15,6 @@ in {
         "aesni-intel"
 
         # proper console asap
-        "fbcon"
         "i915"
 
         "dm_mod"
@@ -67,16 +66,6 @@ in {
   ];
 
   environment = {
-    # to remove
-    #interactiveShellInit = ''
-    #    export PATH=$HOME/bin:$HOME/node_modules/bin:$PATH:$HOME/bin/launch
-    #  	export FPATH=${pkgs.zsh}/share/zsh/5.0.7/functions:$FPATH
-    #    export EDITOR="vim"
-    #    export EMAIL=rok@garbas.si
-    #    export FULLNAME="Rok Garbas"
-    #    export PIP_DOWNLOAD_CACHE=$HOME/.pip_download_cache
-    #    export NODE_PATH=$HOME/.node_modules
-    #'';
     systemPackages = with pkgs; [
 
       # TODO: create nixos configuration for
@@ -149,28 +138,21 @@ in {
       #keybase-node-client
 
       # editor and their tools
-      #emacs24
-      #emacs24Packages.org
-      #emacs24Packages.offlineimap
-      #emacs24Packages.notmuch
-      vimHugeX
       neovim
-      lighttable
-      atom
-      # needed for vim's syntastic
-      phantomjs
-      pythonPackages.flake8
-      pythonPackages.docutils
-      htmlTidy
-      csslint
-      #xmllint
-      #zptlint
-      ctags
+
+      ## needed for vim's syntastic
+      #phantomjs
+      #pythonPackages.flake8
+      #pythonPackages.docutils
+      #htmlTidy
+      #csslint
+      ##xmllint
+      ##zptlint
+      #ctags
 
       # browsers
       chromiumBeta
       firefoxWrapper
-      opera
 
       # programs
       #gitAndTools.gitAnnex
@@ -248,9 +230,8 @@ in {
 
   nix = {
     package = pkgs.nixUnstable;
+    binaryCachePublicKeys = [ "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs=" ];
     trustedBinaryCaches = [
-        "https://ci.rhodecode.com/cache"
-        "https://ci.rhodecode.com/rccache"
         "https://hydra.nixos.org"
         "https://hydra.cryp.to"
     ];
@@ -259,7 +240,7 @@ in {
         gc-keep-derivations = true
         auto-optimise-store = true
     '';
-    #useChroot = true;
+    useChroot = true;
   };
 
 
@@ -298,7 +279,6 @@ in {
     extraHosts = ''
         89.212.67.227  home
         81.4.127.29    floki floki.garbas.si
-        10.30.10.83    ci.rhodecode.com bugs.rhodecode.com
     '';
     #connman.enable = true;
     networkmanager.enable = true;
@@ -335,9 +315,10 @@ in {
     ];
   };
 
+  virtualisation.virtualbox.host.enable = true;
+
   services = {
     dbus.enable = true;
-    virtualboxHost.enable = true;
     locate.enable = true;
     nixosManual.showManual = true;
     openssh.enable = true;
@@ -348,28 +329,6 @@ in {
       enable = true;
       apiKey = secrets.prey.apiKey;
       deviceKey = secrets.prey.deviceKey;
-    };
-    synergy.server = {
-      enable = true;
-      # TODO: add password
-      configFile = pkgs.writeText "synergy-server.conf" ''
-      section: screens
-        oskar:
-        gollum:
-        missandei:
-      end
-      section: links
-        oskar:
-          right = gollum
-          left = missandei 
-        missandei:
-          right = oskar
-          left = gollum
-        gollum:
-          right = missandei 
-          left = oskar
-      end
-      '';
     };
     xserver = {
       vaapiDrivers = [ pkgs.vaapiIntel ]; 
