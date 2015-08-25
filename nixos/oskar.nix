@@ -3,6 +3,7 @@
 let
   secrets = import ./oskar-secrets.nix { };
 in {
+
   require = [
     ./hw/lenovo-x220.nix
   ];
@@ -66,6 +67,10 @@ in {
   ];
 
   environment = {
+    interactiveShellInit = ''
+      xrdb -merge ${pkgs.writeText "Xresources" (import ./../pkgs/urxvt_config.nix { inherit pkgs; })}
+      sh ${pkgs.base16}/shell/base16-default.dark.sh
+    '';
     systemPackages = with pkgs; [
 
       # TODO: create nixos configuration for
@@ -87,8 +92,11 @@ in {
       dmenu2
       scrot
       vifm
-      rxvt_unicode
+
+      rxvt_unicode-with-plugins
       fasd
+      st
+
       xsel
       pa_applet
       networkmanagerapplet
@@ -101,7 +109,6 @@ in {
       pypi2nix
       nodejs
       openvpn
-      vimPlugins.YouCompleteMe
       silver-searcher
 
 
@@ -133,6 +140,7 @@ in {
       bazaarTools
       gitFull
       gitAndTools.tig
+      gitAndTools.gitflow
 
       pythonFull
       keybase
@@ -155,22 +163,11 @@ in {
       firefoxWrapper
 
       # programs
-      #gitAndTools.gitAnnex
       zathura
       skype
       #mplayer2
       #vlc
-      gftp
       #calibre
-      gimp_2_8
-      inkscape
-      #libreoffice
-
-      # hacking tools
-      #wireshark
-      aircrackng
-
-
       # --------- 
       # old stuff
       # --------- 
@@ -210,8 +207,6 @@ in {
       xlibs.xev
       xlibs.xinput
       xlibs.xmessage
-      pythonPackages.turses
-      newsbeuter
       lcov
     ];
   };
@@ -243,8 +238,8 @@ in {
     useChroot = true;
   };
 
-
   nixpkgs.config = {
+
     allowUnfree = true;
 
     firefox = {
@@ -258,9 +253,6 @@ in {
      enableGoogleTalkPlugin = true;
      enableAdobeFlash = true;
     };
-    rxvt_unicode = {
-      perlBindings = true;
-    };
 
     packageOverrides = pkgs: import ./../pkgs { inherit pkgs; };
 
@@ -272,15 +264,13 @@ in {
     defaultLocale = "en_US.utf8";
   };
 
-  #virtualisation.libvirtd.enable = true;
-
   networking = {
     domain = "oskar.garbas.si";
     extraHosts = ''
         89.212.67.227  home
         81.4.127.29    floki floki.garbas.si
     '';
-    #connman.enable = true;
+    # TODO: connman.enable = true;
     networkmanager.enable = true;
     firewall = {
       allowedTCPPorts = [ 80 8080 8000 24800 ];
@@ -292,8 +282,12 @@ in {
   programs = {
     ssh.forwardX11 = false;
     ssh.startAgent = true;
-    bash.enableCompletion = true;
-    zsh.enable = true;
+    zsh = {
+      enable = true;
+      shellInit = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshenv";
+      loginShellInit = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zprofile";
+      interactiveShellInit = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshrc";
+    };
   };
 
   #users.mutableUsers = false;
@@ -315,7 +309,9 @@ in {
     ];
   };
 
-  virtualisation.virtualbox.host.enable = true;
+  virtualisation = {
+    virtualbox.host.enable = true;
+  };
 
   services = {
     dbus.enable = true;
@@ -338,6 +334,10 @@ in {
       layout = "us";
       windowManager.i3.enable = true;
       windowManager.default = "i3";
+      desktopManager = {
+        default = "none";
+        xterm.enable = false;
+      };
       displayManager.slim = {
         defaultUser = "rok";
         theme = pkgs.fetchurl {
@@ -349,4 +349,18 @@ in {
   };
 
   time.timeZone = "Europe/Berlin";
+
+  systemd.user.services.urxvtd = {
+    enable = true;
+    description = "RXVT-Unicode Daemon";
+    wantedBy = [ "default.target" ];
+    path = [ pkgs.rxvt_unicode-with-plugins ];
+    serviceConfig = {
+      ExecStart = ''
+        xrdb -merge ${pkgs.writeText "Xresources" (import ./../pkgs/urxvt_config.nix { inherit pkgs; })}
+        ${pkgs.rxvt_unicode-with-plugins}/bin/urxvtd -q -o
+      '';
+    };
+  };
+
 }
