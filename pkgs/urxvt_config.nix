@@ -23,14 +23,24 @@ Xft.rgba: rgb
 
 !! General
 URxvt*loginShell: false
-URxvt*internalBorder: 2
 URxvt*saveLines: 100000
 URxvt*shading: 15
 URxvt*transparent: false
 URxvt*geometry: 80x25
 URxvt*urgentOnBell: true
-URxvt.buffered: true
-URxvt.xftAntialias: true
+URxvt*buffered: true
+URxvt*kftAntialias: true
+!Disables the insanely annoying Ctrl+Shift shortcut that enters ISO14755 mode
+URxvt*iso14755:         False
+
+! Border {{{
+! pixels for external border
+URxvt*externalBorder: 0
+! pixels for internal border
+URxvt*internalBorder: 0
+! remove border
+URxvt*borderLess: false
+URxvt*borderColor: #000030
 
 !! Scrolling
 URxvt*scrollBar: false
@@ -39,10 +49,11 @@ URxvt*scrollTtyOutput: false
 URxvt*scrollTtyKeypress: true
 
 !! Fonts
-URxvt*font: xft:Bitstream Vera Sans Mono:autohint=true:pixelsize=12
-URxvt*boldFont: xft:Bitstream Vera Sans Mono:autohint=true:pixelsize=12
-URxvt*italicFont: xft:Bitstream Vera Sans Mono:italic:autohint=true:pixelsize=12
-URxvt*bolditalicFont: xft:Bitstream Vera Sans Mono:bold:italic:autohint=true:pixelsize=12
+URxvt*font:             xft:monospace:autohint=true:pixelsize=13
+!URxvt*font:             xft:Bitstream Vera Sans Mono:autohint=true:pixelsize=13
+!URxvt*boldFont:         xft:Bitstream Vera Sans Mono:bold:autohint=true:pixelsize=13
+!URxvt*italicFont:       xft:Bitstream Vera Sans Mono:italic:autohint=true:pixelsize=13
+!URxvt*bolditalicFont:   xft:Bitstream Vera Sans Mono:bold:italic:autohint=true:pixelsize=13
 !! Plugins
 URxvt.perl-ext-common: default,newterm,url-select,clipboard,font-size
 

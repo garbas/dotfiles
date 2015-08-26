@@ -155,10 +155,10 @@ zstyle ':prezto:module:tmux:auto-start' local 'yes'
 # Integrate with iTerm2.
 # zstyle ':prezto:module:tmux:iterm' integrate 'yes'
 
-
 # Custom Aliases
 alias j='${pkgs.fasd}/bin/fasd -d' 
 alias jj='${pkgs.fasd}/bin/fasd -si'
 alias o='${pkgs.fasd}/bin/fasd -a -e ${pkgs.xdg_utils}/bin/xdg-open'
 alias v='${pkgs.fasd}/bin/fasd -f -e ${pkgs.neovim}/bin/nvim'
 ''
+

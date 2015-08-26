@@ -68,7 +68,6 @@ in {
 
   environment = {
     interactiveShellInit = ''
-      xrdb -merge ${pkgs.writeText "Xresources" (import ./../pkgs/urxvt_config.nix { inherit pkgs; })}
       sh ${pkgs.base16}/shell/base16-default.dark.sh
     '';
     systemPackages = with pkgs; [
@@ -82,14 +81,10 @@ in {
       notmuch
       w3m
       offlineimap
-      pythonPackages.alot
-      pythonPackages.afew
-      dunst
-      libnotify
-      xss-lock
-      i3lock
+      
       i3status
       dmenu2
+      pythonPackages.afew
       scrot
       vifm
 
@@ -98,8 +93,6 @@ in {
       st
 
       xsel
-      pa_applet
-      networkmanagerapplet
       gnome3.dconf
       gnome3.defaultIconTheme
       gnome3.gnome_themes_standard 
@@ -109,8 +102,6 @@ in {
       pypi2nix
       nodejs
       openvpn
-      silver-searcher
-
 
       # nix tools
       nox
@@ -125,7 +116,6 @@ in {
       htop
       unrar
       unzip
-      pythonPackages.ipython
       pythonPackages.py3status
       mosh
       gnumake
@@ -214,12 +204,14 @@ in {
   fonts = {
     enableFontDir = true;
     enableGhostscriptFonts = true;
-    fonts = [
-       pkgs.anonymousPro
-       pkgs.corefonts
-       pkgs.freefont_ttf
-       pkgs.dejavu_fonts
-       pkgs.ttf_bitstream_vera
+    fonts = with pkgs; [
+       anonymousPro
+       corefonts
+       freefont_ttf
+       dejavu_fonts
+       ttf_bitstream_vera
+       source-code-pro
+       terminus_font
     ];
   };
 
@@ -332,12 +324,18 @@ in {
       enable = true;
       exportConfiguration = true;
       layout = "us";
-      windowManager.i3.enable = true;
       windowManager.default = "i3";
+      windowManager.i3 = {
+        enable = true;
+        configFile = pkgs.writeText "i3-config" (import ./../pkgs/i3_config.nix { inherit pkgs; });
+      };
       desktopManager = {
         default = "none";
         xterm.enable = false;
       };
+      displayManager.sessionCommands = ''
+        xrdb -merge ${pkgs.writeText "Xresources" (import ./../pkgs/urxvt_config.nix { inherit pkgs; })}
+      '';
       displayManager.slim = {
         defaultUser = "rok";
         theme = pkgs.fetchurl {
@@ -357,7 +355,6 @@ in {
     path = [ pkgs.rxvt_unicode-with-plugins ];
     serviceConfig = {
       ExecStart = ''
-        xrdb -merge ${pkgs.writeText "Xresources" (import ./../pkgs/urxvt_config.nix { inherit pkgs; })}
         ${pkgs.rxvt_unicode-with-plugins}/bin/urxvtd -q -o
       '';
     };
