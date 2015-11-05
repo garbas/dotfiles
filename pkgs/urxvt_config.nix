@@ -22,7 +22,7 @@ Xft.dpi: 96
 Xft.rgba: rgb
 
 !! General
-URxvt*loginShell: false
+URxvt*loginShell: true
 URxvt*saveLines: 100000
 URxvt*shading: 15
 URxvt*transparent: false
@@ -49,7 +49,7 @@ URxvt*scrollTtyOutput: false
 URxvt*scrollTtyKeypress: true
 
 !! Fonts
-URxvt*font:             xft:monospace:autohint=true:pixelsize=13
+URxvt*font:              xft:monospace:autohint=true:pixelsize=11
 !URxvt*font:             xft:Bitstream Vera Sans Mono:autohint=true:pixelsize=13
 !URxvt*boldFont:         xft:Bitstream Vera Sans Mono:bold:autohint=true:pixelsize=13
 !URxvt*italicFont:       xft:Bitstream Vera Sans Mono:italic:autohint=true:pixelsize=13
