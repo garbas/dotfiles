@@ -158,7 +158,7 @@ in {
       ## programs
       zathura
       skype
-      mplayer2
+      mplayer
       vlc
 
 
