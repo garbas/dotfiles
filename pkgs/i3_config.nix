@@ -9,9 +9,7 @@ set $mod Mod4
 
 # monitors
 set $mon_lap LVDS1
-#set $mon_ext VGA1
-set $mon_ext HDMI2
-#set $mon_ext LVDS1
+set $mon_ext VGA1
 
 # > horizontal | vertical | auto
 default_orientation horizontal
@@ -251,10 +249,8 @@ bindsym $mod+space exec --no-startup-id ${pkgs.i3}/bin/i3-dmenu-desktop
 
 # start a terminal
 bindsym $mod+Return exec urxvtc
+bindsym $mod+Shift+Return exec urxvtc -name LURxvt
 #bindsym $mod+Return exec st
-
-# start gvim
-bindsym $mod+Shift+Return exec gvim
 
 # ipython
 bindsym $mod+Shift+i [instance="ipython"] scratchpad show
