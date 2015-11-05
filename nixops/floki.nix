@@ -121,7 +121,7 @@ in {
         enable = true;
         description = "Weechat IRC Client (in tmux)";
         environment = { TERM = "${rxvt_unicode.terminfo}"; };
-        path = [ tmux weechat rxvt_unicode.terminfo ];
+        path = [ tmux weechat rxvt_unicode.terminfo which ];
         wantedBy = [ "multi-user.target" ];
         serviceConfig = {
           Type = "oneshot";
