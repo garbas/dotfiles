@@ -67,12 +67,18 @@ in {
   ];
 
   environment = {
+    shellInit = ''
+      source ${pkgs.base16}/shell/base16-default.dark.sh
+    '';
+    loginShellInit = ''
+      source ${pkgs.base16}/shell/base16-default.dark.sh
+    '';
     interactiveShellInit = ''
-      sh ${pkgs.base16}/shell/base16-default.dark.sh
+      source ${pkgs.base16}/shell/base16-default.dark.sh
     '';
     systemPackages = with pkgs; [
 
-      # TODO: create nixos configuration for
+      ## TODO: create nixos configuration for
       xlibs.xmodmap  # needed for bin/launch/keyboard
 
       # uncategorized
@@ -81,10 +87,11 @@ in {
       notmuch
       w3m
       offlineimap
-      
+
       i3status
       dmenu2
       pythonPackages.afew
+      pythonPackages.alot
       scrot
       vifm
 
@@ -99,7 +106,6 @@ in {
       gnome.gnome_keyring
       pavucontrol
       stdenv
-      pypi2nix
       nodejs
       openvpn
 
@@ -119,15 +125,14 @@ in {
       pythonPackages.py3status
       mosh
       gnumake
-
-      #goaccess
-      #ngrok
+      goaccess
+      ngrok
 
       # version control
-      subversion
-      mercurialFull
-      bazaar
-      bazaarTools
+      #subversion
+      #mercurialFull
+      #bazaar
+      #bazaarTools
       gitFull
       gitAndTools.tig
       gitAndTools.gitflow
@@ -138,66 +143,65 @@ in {
       # editor and their tools
       neovim
 
-      ## needed for vim's syntastic
-      #phantomjs
-      #pythonPackages.flake8
-      #pythonPackages.docutils
-      #htmlTidy
-      #csslint
-      ##xmllint
-      ##zptlint
-      #ctags
+      # needed for vim's syntastic
+      phantomjs
+      pythonPackages.flake8
+      pythonPackages.docutils
+      htmlTidy
+      csslint
+      ctags
 
       # browsers
-      chromiumBeta
-      firefoxWrapper
+      chromium
+      firefox
 
-      # programs
+      ## programs
       zathura
       skype
-      #mplayer2
-      #vlc
-      #calibre
+      mplayer2
+      vlc
+
+
+
       # --------- 
       # old stuff
       # --------- 
-
-      zlib
-      acpitool
-      alsaLib
-      alsaPlugins
-      alsaUtils
-      bc
-      colordiff
-      cpufrequtils
-      cryptsetup
-      ddrescue
-      file
-      gnupg
-      gnupg1
-      keychain
-      links2
-      #mailutils
-      ncftp
-      netcat
-      nmap
-      p7zip
-      parted
-      pinentry
-      powertop
-      pwgen
-      stdmanpages
-      tcpdump
-      telnet
-      units
-      bash
-      #kde410.calligra
-      #blueman
-      xfontsel
-      xlibs.xev
-      xlibs.xinput
-      xlibs.xmessage
-      lcov
+      #zlib
+      #acpitool
+      #alsaLib
+      #alsaPlugins
+      #alsaUtils
+      #bc
+      #colordiff
+      #cpufrequtils
+      #cryptsetup
+      #ddrescue
+      #file
+      #gnupg
+      #gnupg1
+      #keychain
+      #links2
+      ##mailutils
+      #ncftp
+      #netcat
+      #nmap
+      #p7zip
+      #parted
+      #pinentry
+      #powertop
+      #pwgen
+      #stdmanpages
+      #tcpdump
+      #telnet
+      #units
+      #bash
+      ##kde410.calligra
+      ##blueman
+      #xfontsel
+      #xlibs.xev
+      #xlibs.xinput
+      #xlibs.xmessage
+      #lcov
     ];
   };
 
@@ -227,7 +231,7 @@ in {
         gc-keep-derivations = true
         auto-optimise-store = true
     '';
-    useChroot = true;
+    useChroot = false;
   };
 
   nixpkgs.config = {
@@ -235,12 +239,6 @@ in {
     allowUnfree = true;
 
     firefox = {
-     jre = false;
-     enableGoogleTalkPlugin = true;
-     enableAdobeFlash = true;
-    };
-
-    chromium = {
      jre = false;
      enableGoogleTalkPlugin = true;
      enableAdobeFlash = true;
@@ -269,6 +267,9 @@ in {
       enable = true;
     };
     hostName = "oskar";
+    nat.enable = true;
+    nat.internalInterfaces = ["ve-+"];
+    nat.externalInterface = "wlp3s0";
   };
 
   programs = {
