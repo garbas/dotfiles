@@ -8,6 +8,21 @@ rec {
   #  - add afew to systemd
   #  - create alot theme
 
+  chromium = pkgs.chromium.override {
+    channel = "beta";
+    enableHotwording = false;
+    #gnomeSupport = true; 
+    #gnomeKeyringSupport = true;
+    proprietaryCodecs = true;
+    enablePepperFlash = true;
+    enableWideVine = true;
+    cupsSupport = true;
+    pulseSupport = true;
+    #hiDPISupport = true;
+  };
+
+  firefox = pkgs.wrapFirefox { browser = pkgs.firefox; };
+
   nerdfonts = pkgs.stdenv.mkDerivation rec {
     rev = "6158e08ce0367090e9383a2e795aa03d3550f2b4";
     name = "nerdfonts-2015-${rev}";
