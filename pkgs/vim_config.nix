@@ -2,7 +2,7 @@
 {
   customRC = ''
 
-if has('nvim')
+if has("nvim")
   tnoremap <Esc> <C-\><C-n>
   tnoremap <C-h> <C-\><C-n><C-w>h
   tnoremap <C-j> <C-\><C-n><C-w>j
@@ -12,18 +12,22 @@ if has('nvim')
   autocmd BufLeave term://* stopinsert
 endif
 
-let mapleader = "\<Space>"
-let maplocalleader = ","
+let mapleader = ","
+let maplocalleader = "\\"
 
 " Addons ------------------------------------------------------------------ {{{
 
-let g:ctrlp_dont_split = 'NERD_tree_2'
-let g:ctrlp_extensions = ['undo', 'bookmarkdir', 'funky']
+let g:gist_detect_filetype = 1
+let g:gist_open_browser_after_post = 1
+let g:gist_browser_command = "${pkgs.firefox} %URL%"
+
+let g:ctrlp_dont_split = "NERD_tree_2"
+let g:ctrlp_extensions = ["undo", "bookmarkdir", "funky"]
 let g:ctrlp_jump_to_buffer = 0
-let g:ctrlp_map = '<leader>o'
+let g:ctrlp_map = "<leader><leader>"
 let g:ctrlp_match_window_reversed = 1
 let g:ctrlp_max_height = 20
-let g:ctrlp_open_new_file = 'v'
+let g:ctrlp_open_new_file = "v"
 let g:ctrlp_open_multiple_files = '2vjr'
 let g:ctrlp_split_window = 0
 let g:ctrlp_working_path_mode = 'ra'
@@ -36,7 +40,7 @@ let g:ctrlp_user_command = {
   \ 'fallback': 'find %s -type f'
   \ }
 
-nnoremap <LEADER><LEADER> :CtrlPBuffer<cr>
+   nnoremap <LEADER>. :CtrlPBuffer<cr>
 nnoremap <LEADER>b :CtrlPBookmarkDir<cr>
 
 let g:airline_theme = "base16"
@@ -177,11 +181,8 @@ filetype plugin indent on
 
 set background=dark
 
-${builtins.readFile "${base16}/vim/base16-default.vim"}
-${builtins.readFile "${base16}/vim-airline/base16-default.vim"}
-
 " Highlight VCS conflict markers
-match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?''$'
+match ErrorMsg "^\(<\|=\|>\)\{7\}\([^=].\+\)\?$"
 
 " Highlight lines that are longer then 80
 match ErrorMsg '\%>80v.+'
@@ -241,7 +242,7 @@ inoremap <c-a> <esc>I
 inoremap <c-e> <esc>A
 
 " Open a Quickfix window for the last search.
-nnoremap <silent> <LEADER>/ :execute 'vimgrep /'.@/.'/g %'<CR>:copen<CR>
+nnoremap <silent> <LEADER>/ :execute "vimgrep /".@/."/g %"<CR>:copen<CR>
 
 " Ack for the last search.
 nnoremap <silent> <LEADER>? :execute "Ack! '" . substitute(substitute(substitute(@/, "\\\\<", "\\\\b", ""), "\\\\>", "\\\\b", ""), "\\\\v", "", "") . "'"<CR>
@@ -487,28 +488,13 @@ augroup ft_nginx
 augroup END
 
 " }}}
-" OrgMode {{{
-
-augroup ft_org
-    au!
-
-    au Filetype org nmap <buffer> Q vahjgq
-augroup END
-
-" }}}
 " Python {{{
 
 augroup ft_python
     au!
 
-    "au FileType python noremap <buffer> <localleader>rr :RopeRename<CR>
-    "au FileType python vnoremap <buffer> <localleader>rm :RopeExtractMethod<CR>
-    "au FileType python noremap <buffer> <localleader>ri :RopeOrganizeImports<CR>
-
     au FileType python setlocal omnifunc=pythoncomplete#Complete
     au FileType python setlocal define=^\s*\\(def\\\\|class\\)
-    "au FileType python compiler unit2
-    "au FileType man nnoremap <buffer> <cr> :q<cr>
 augroup END
 
 " }}}
@@ -544,7 +530,7 @@ map <SILENT> <LEADER>H :set hlsearch!<CR>¬
 map <SILENT> <LEADER>N :set number!<CR>
 
 " Clean whitespace
-map <leader>W :%s/\s\+$//<cr>:let @/='''<CR>
+map <leader>W :%s/\s\+$//<cr>:let @/=""<CR>
 
 " Change case
 nnoremap <C-u> gUiw
@@ -587,8 +573,8 @@ endfunc
 
 " }}}
 
-endfun
-
+${builtins.readFile "${base16}/vim/base16-default.vim"}
+${builtins.readFile "${base16}/vim-airline/base16-default.vim"}
 
   '';
   vam.pluginDictionaries = [
