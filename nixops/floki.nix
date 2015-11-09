@@ -1,6 +1,7 @@
 { nginx_garbas_ssl_certificate ? null       # certs/garbas.si-bundle.crt
 , nginx_garbas_ssl_certificate_key ? null   # certs/garbas.si.key
 , nginx_garbas_ssl_dhparam ? null           # certs/garbas.si-dhparam.pem
+, datadog_api_key ? null                    # datadog api_key
 }:
 
 # - openssl req -new -newkey rsa:2048 -nodes -keyout garbas.si.key -out garbas.si.csr
@@ -8,8 +9,9 @@
 # - cat certs/garbas_si.crt certs/COMODORSADomainValidationSecureServerCA.crt certs/AddTrustExternalCARoot.crt > certs/garbas.si-bundle.crt
 # - openssl dhparam -out certs/garbas.si-dhparam.pem 4096 
 
-let
+assert datadog_api_key != null;
 
+let
 
   createNginxStaticSite = domain:
     if nginx_garbas_ssl_certificate == null ||
@@ -23,6 +25,7 @@ let
           listen                  80;
           server_name             ${domain};
           #return                  301 https://${domain}$request_uri;
+
           location / {
             alias                     /var/www/static/${domain}/;
             autoindex                 off;
@@ -66,6 +69,10 @@ let
           location / {
             alias                     /var/www/static/${domain}/;
             autoindex                 off;
+          }
+
+          location /_nginx_status {
+              stub_status;
           }
         }
       '';
@@ -166,6 +173,22 @@ in {
 
         ${createNginxStaticSite "garbas.si"}
         ${createNginxStaticSite "next.garbas.si"}
+      '';
+
+      services.dd-agent.enable = true;
+      services.dd-agent.api_key = datadog_api_key;
+      services.dd-agent.hostname = "floki.garbas.si";
+      services.dd-agent.nginxConfig = ''
+        init_config:
+
+        instances:
+          - nginx_status_url: https://garbas.si/_nginx_status/
+            tags:
+              - instance:www
+
+          - nginx_status_url: https://next.garbas.si/_nginx_status/
+            tags:
+              - instance:next
       '';
 
     };
