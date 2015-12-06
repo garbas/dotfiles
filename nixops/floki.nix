@@ -2,87 +2,123 @@
 , nginx_garbas_ssl_certificate_key ? null   # certs/garbas.si.key
 , nginx_garbas_ssl_dhparam ? null           # certs/garbas.si-dhparam.pem
 , datadog_api_key ? null                    # datadog api_key
+, datadog_postgresql_password ? null        # datadog agent connection string
 }:
 
 # - openssl req -new -newkey rsa:2048 -nodes -keyout garbas.si.key -out garbas.si.csr
 # - submit www.garbas.si.csr to http://cheapsslsecurity.com/ and receive back garbas.crt
 # - cat certs/garbas_si.crt certs/COMODORSADomainValidationSecureServerCA.crt certs/AddTrustExternalCARoot.crt > certs/garbas.si-bundle.crt
-# - openssl dhparam -out certs/garbas.si-dhparam.pem 4096 
+# - openssl dhparam -out certs/garbas.si-dhparam.pem 4096
 
-assert datadog_api_key != null;
 
 let
 
-  createNginxStaticSite = domain:
-    if nginx_garbas_ssl_certificate == null ||
-       nginx_garbas_ssl_certificate_key == null ||
-       nginx_garbas_ssl_dhparam == null
-    then
-      abort "ERROR: 'ssl_certificate', 'ssl_certificate_key' or 'ssl_dhparam' arguments need to be provided."
-    else
-      ''
-        server {
-          listen                  80;
-          server_name             ${domain};
-          #return                  301 https://${domain}$request_uri;
+  isSSL = nginx_garbas_ssl_certificate != null ||
+          nginx_garbas_ssl_certificate_key != null ||
+          nginx_garbas_ssl_dhparam != null;
 
-          location / {
-            alias                     /var/www/static/${domain}/;
-            autoindex                 off;
-          }
-        }
-
-        server {
-          listen                  443 ssl;
-          server_name             ${domain};
-
-          access_log              /var/log/nginx_${domain}_access.log;
-          error_log               /var/log/nginx_${domain}_error.log;
-
-          # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
-          ssl                         on;
-          ssl_certificate             ${nginx_garbas_ssl_certificate};
-          ssl_certificate_key         ${nginx_garbas_ssl_certificate_key};
-          ssl_session_timeout         1d;
-          ssl_session_cache           shared:SSL:50m;
-
-          # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
-          ssl_dhparam                 ${nginx_garbas_ssl_dhparam};
-
-          # modern configuration.
-          ssl_protocols               TLSv1.1 TLSv1.2;
-          ssl_ciphers                 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK';
-          ssl_prefer_server_ciphers   on;
-
-          # HSTS (ngx_http_headers_module is required) (15768000 seconds = 6 months)
-          add_header                  Strict-Transport-Security max-age=15768000;
-
-          # OCSP Stapling ---
-          # fetch OCSP records from URL in ssl_certificate and cache them
-          ssl_stapling                on;
-          ssl_stapling_verify         on;
-
-          ## verify chain of trust of OCSP response using Root CA and Intermediate certs
-
-          resolver                    127.0.0.1 [::1];
-
-          location / {
-            alias                     /var/www/static/${domain}/;
-            autoindex                 off;
-          }
-
-          location /_nginx_status {
-              stub_status;
-          }
-        }
-      '';
+  isDD = datadog_api_key != null ||
+         datadog_postgresql_password != null;
 
 in {
 
   network.description = "Floki";
   floki =
     { config, pkgs, lib, ... }:
-    {
+    let
+
+      createSite = domain: config:
+        ''
+          server {
+            listen                  80;
+            server_name             ${domain};
+        '' + (lib.optionalString isSSL ''
+            return                  301 https://${domain}$request_uri;
+          }
+
+          server {
+            listen                  443 ssl;
+            server_name             ${domain};
+
+            access_log              /var/log/nginx_${domain}_access.log;
+            error_log               /var/log/nginx_${domain}_error.log;
+
+            # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
+            ssl                         on;
+            ssl_certificate             ${nginx_garbas_ssl_certificate};
+            ssl_certificate_key         ${nginx_garbas_ssl_certificate_key};
+            ssl_session_timeout         1d;
+            ssl_session_cache           shared:SSL:50m;
+
+            # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+            ssl_dhparam                 ${nginx_garbas_ssl_dhparam};
+
+            # modern configuration.
+            ssl_protocols               TLSv1.1 TLSv1.2;
+            ssl_ciphers                 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK';
+            ssl_prefer_server_ciphers   on;
+
+            # HSTS (ngx_http_headers_module is required) (15768000 seconds = 6 months)
+            add_header                  Strict-Transport-Security max-age=15768000;
+
+            # OCSP Stapling ---
+            # fetch OCSP records from URL in ssl_certificate and cache them
+            ssl_stapling                on;
+            ssl_stapling_verify         on;
+
+            ## verify chain of trust of OCSP response using Root CA and Intermediate certs
+
+            resolver                    127.0.0.1 [::1];
+
+        '') + config + ''
+
+          }
+        '';
+
+      createStaticSite = domain: createSite domain ''
+        location / {
+          alias                     /var/www/static/${domain}/;
+          autoindex                 off;
+        }
+
+        location /__status__ {
+            stub_status;
+        }
+      '';
+
+      hydraSrc = (import <nixpkgs> {}).fetchFromGitHub {
+        owner = "NixOS";
+        repo = "hydra";
+        rev = "53c80d9526fb029b7adde47d0cfaa39a80926c48";
+        sha256 = "095zvi1pbcxr395ss44c399vmpp5z422lvm0iwjpkia19nr96zd5";
+      };
+
+      hydraRelease = import "${hydraSrc}/release.nix" {
+        inherit hydraSrc;
+        officialRelease = true;
+      };
+
+      hydraModule = import "${hydraSrc}/hydra-module.nix";
+
+      hydra = builtins.getAttr config.nixpkgs.system hydraRelease.build;
+
+    in {
+
+      imports = [ hydraModule ];
+
+      services.hydra = {
+        enable = true;
+        dbi = "dbi:Pg:dbname=hydra;user=hydra;";
+        package = hydra;
+        hydraURL = "http://hydra.garbas.si/";
+        listenHost = "0.0.0.0";
+        port = 3000;
+        minimumDiskFree = 5;  # in GB
+        minimumDiskFreeEvaluator = 2;
+        notificationSender = "hydra@garbas.si";
+        logo = null;
+        debugServer = false;
+      };
 
       nixpkgs.config = {
         allowUnfree = true;
@@ -165,28 +201,50 @@ in {
         gzip_types        text/plain application/x-javascript text/xml text/css application/xml;
         gzip_disable      "msie6";
 
-        include       ${pkgs.nginx}/conf/mime.types;
-        default_type  application/octet-stream;
-
         access_log  /var/log/nginx_access.log;
         error_log   /var/log/nginx_error.log;
 
-        ${createNginxStaticSite "garbas.si"}
-        ${createNginxStaticSite "next.garbas.si"}
+        ${createStaticSite "garbas.si"}
+
+        server {
+          listen                  80;
+          server_name             hydra.garbas.si;
+          access_log              /var/log/nginx_hydra.garbas.si_access.log;
+          error_log               /var/log/nginx_hydra.garbas.si_error.log;
+          location / {
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Forwarded-Host $http_host;
+            proxy_set_header X-Forwarded-Proto https;
+            proxy_set_header X-Forwarded-Port 443;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Request-Base "http://hydra.garbas.si";
+            proxy_pass http://${config.services.hydra.listenHost}:${builtins.toString config.services.hydra.port}/;
+          }
+        }
       '';
 
-      services.dd-agent.enable = true;
-      services.dd-agent.api_key = datadog_api_key;
+      services.dd-agent.enable = isDD;
+      services.dd-agent.api_key = lib.optionalString isDD datadog_api_key;
       services.dd-agent.hostname = "floki.garbas.si";
+      services.dd-agent.postgresqlConfig = lib.optionalString isDD ''
+        init_config:
+
+        instances:
+          - host: localhost
+            port: 5432
+            username: datadog
+            password: ${datadog_postgresql_password}
+      '';
       services.dd-agent.nginxConfig = ''
         init_config:
 
         instances:
-          - nginx_status_url: https://garbas.si/_nginx_status/
+          - nginx_status_url: https://garbas.si/__status__/
             tags:
               - instance:www
 
-          - nginx_status_url: https://next.garbas.si/_nginx_status/
+          - nginx_status_url: https://next.garbas.si/__status__/
             tags:
               - instance:next
       '';
