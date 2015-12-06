@@ -74,9 +74,9 @@ rec {
          sha256 = "92eabf5247a878c57e045988a2475021f9a345de8c9a3bcc05f2b42dc4711c6d";
          })
       (pkgs.fetchgit {
-         rev = "d05089b7fd211d201b9519ca5321b60544082c19";
+         rev = "9b7d216ec095ccee541ebfa5f04249aa2964d054";
          url = "https://github.com/garbas/nix-zsh-completions";
-         sha256 = "0cb26f211f56bc27ac81f31b8f05616c21095238034b36db35dbc1cff986255a";
+         sha256 = "00r3mapc6hyj34pglwvf84iz5k7nlv84vl3in8grdp11vrwgs3ga";
          })
     ];
     sourceRoot = "prezto-f2a826e";
@@ -90,7 +90,7 @@ rec {
       done
       sed -i -e "s|\''${0:h}/cache.zsh|\''${ZDOTDIR:\-\$HOME}/.zfasd_cache|g" modules/fasd/init.zsh
 
-      cp ../nix-zsh-completions-d05089b/* $out/modules/nix -R
+      cp ../nix-zsh-completions-9b7d216/* $out/modules/nix -R
       cp ./* $out/ -R
     '';
   };
