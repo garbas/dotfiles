@@ -126,7 +126,7 @@ in {
       mosh
       gnumake
       goaccess
-      ngrok
+      #ngrok
 
       # version control
       #subversion
@@ -160,6 +160,7 @@ in {
       skype
       mplayer
       vlc
+      gnupg
 
 
 
@@ -220,18 +221,19 @@ in {
   };
 
   nix = {
-    package = pkgs.nixUnstable;
-    binaryCachePublicKeys = [ "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs=" ];
+    #package = pkgs.nixUnstable;
+    binaryCachePublicKeys = [
+      "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
+    ];
     trustedBinaryCaches = [
-        "https://hydra.nixos.org"
-        "https://hydra.cryp.to"
+      "https://hydra.nixos.org"
     ];
     extraOptions = ''
         gc-keep-outputs = true
         gc-keep-derivations = true
         auto-optimise-store = true
     '';
-    useChroot = false;
+    useChroot = true;
   };
 
   nixpkgs.config = {
@@ -313,7 +315,7 @@ in {
     openssh.enable = true;
     printing.enable = true;
     thinkfan.enable = true;
-    thinkfan.sensor = "/sys/class/hwmon/hwmon0/temp1_input";
+    thinkfan.sensor = "/sys/class/hwmon/hwmon1/temp1_input";
     prey = {
       enable = true;
       apiKey = secrets.prey.apiKey;
