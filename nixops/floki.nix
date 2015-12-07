@@ -3,6 +3,7 @@
 , nginx_garbas_ssl_dhparam ? null           # certs/garbas.si-dhparam.pem
 , datadog_api_key ? null                    # datadog api_key
 , datadog_postgresql_password ? null        # datadog agent connection string
+, logentries_token ? null                   # logentries service
 }:
 
 # - openssl req -new -newkey rsa:2048 -nodes -keyout garbas.si.key -out garbas.si.csr
@@ -19,6 +20,32 @@ let
 
   isDD = datadog_api_key != null ||
          datadog_postgresql_password != null;
+
+  isLogentries = logentries_token != null;
+
+  _pkgs = import <nixpkgs> {};
+
+  hydraSrc = _pkgs.fetchFromGitHub {
+    owner = "NixOS";
+    repo = "hydra";
+    rev = "53c80d9526fb029b7adde47d0cfaa39a80926c48";
+    sha256 = "095zvi1pbcxr395ss44c399vmpp5z422lvm0iwjpkia19nr96zd5";
+    #rev = "8f7614030e6950f389e04d8077e7793cde1e6305";
+    #sha256 = "1xz5diybk1yr5q6xvxa7m0jbr8y6h7xwcqkgvblp4jpwa8sq0ygn";
+  };
+
+  hydraRelease = import "${hydraSrc}/release.nix" {
+    inherit hydraSrc;
+    officialRelease = true;
+  };
+
+  hydraModule = import "${hydraSrc}/hydra-module.nix";
+
+  # https://logentries.com/doc/nixos/
+  logentries-crt = _pkgs.fetchurl {
+    url = https://bits.lecdn.net/certs/1/logentries.all.crt;
+    sha256 = "1ppsr783pd05ymcrwdqyxaw977hahzzzdy5na0ma9fslz5h9sxmj";
+  };
 
 in {
 
@@ -86,20 +113,6 @@ in {
         }
       '';
 
-      hydraSrc = (import <nixpkgs> {}).fetchFromGitHub {
-        owner = "NixOS";
-        repo = "hydra";
-        rev = "53c80d9526fb029b7adde47d0cfaa39a80926c48";
-        sha256 = "095zvi1pbcxr395ss44c399vmpp5z422lvm0iwjpkia19nr96zd5";
-      };
-
-      hydraRelease = import "${hydraSrc}/release.nix" {
-        inherit hydraSrc;
-        officialRelease = true;
-      };
-
-      hydraModule = import "${hydraSrc}/hydra-module.nix";
-
       hydra = builtins.getAttr config.nixpkgs.system hydraRelease.build;
 
     in {
@@ -113,8 +126,8 @@ in {
         hydraURL = "http://hydra.garbas.si/";
         listenHost = "0.0.0.0";
         port = 3000;
-        minimumDiskFree = 5;  # in GB
-        minimumDiskFreeEvaluator = 2;
+        minimumDiskFree = 2;  # in GB
+        minimumDiskFreeEvaluator = 1;
         notificationSender = "hydra@garbas.si";
         logo = null;
         debugServer = false;
@@ -125,6 +138,9 @@ in {
         packageOverrides = pkgs: import ./../pkgs { inherit pkgs; };
       };
 
+      nix.binaryCaches = [ "https://cache.nixos.org/" "https://hydra.nixos.org" ];
+      nix.binaryCachePublicKeys = [ "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs=" ];
+
       i18n.consoleFont = "lat9w-16";
       i18n.consoleKeyMap = "us";
       i18n.defaultLocale = "en_US.UTF-8";
@@ -133,6 +149,8 @@ in {
 
       services.openssh.enable = true;
       services.openssh.permitRootLogin = "yes";
+
+      services.fail2ban.enable = true;
 
       services.dnsmasq.enable = true;
       services.dnsmasq.servers = [ "8.8.8.8" "8.8.4.4" ];
@@ -243,10 +261,21 @@ in {
           - nginx_status_url: https://garbas.si/__status__/
             tags:
               - instance:www
+      '';
 
-          - nginx_status_url: https://next.garbas.si/__status__/
-            tags:
-              - instance:next
+      services.rsyslogd.enable = isLogentries;
+      services.rsyslogd.extraConfig = lib.optionalString isLogentries ''
+        $ModLoad imjournal
+
+        $DefaultNetstreamDriverCAFile ${logentries-crt}
+
+        $ActionSendStreamDriver gtls
+        $ActionSendStreamDriverMode 1
+        $ActionSendStreamDriverAuthMode x509/name
+        $ActionSendStreamDriverPermittedPeer *.logentries.com
+
+        $template LogentriesFormat,"${logentries_token} %HOSTNAME% %syslogtag%%msg%\n"
+        *.* @@data.logentries.com:443;LogentriesFormat
       '';
 
     };
