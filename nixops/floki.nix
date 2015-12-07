@@ -67,9 +67,6 @@ in {
             listen                  443 ssl;
             server_name             ${domain};
 
-            access_log              /var/log/nginx_${domain}_access.log;
-            error_log               /var/log/nginx_${domain}_error.log;
-
             # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
             ssl                         on;
             ssl_certificate             ${nginx_garbas_ssl_certificate};
@@ -212,23 +209,21 @@ in {
         keepalive_timeout       15;
         send_timeout            10;
 
-        gzip              on;
-        gzip_comp_level   2;
-        gzip_min_length   1000;
-        gzip_proxied      expired no-cache no-store private auth;
-        gzip_types        text/plain application/x-javascript text/xml text/css application/xml;
-        gzip_disable      "msie6";
+        gzip                    on;
+        gzip_comp_level         2;
+        gzip_min_length         1000;
+        gzip_proxied            expired no-cache no-store private auth;
+        gzip_types              text/plain application/x-javascript text/xml text/css application/xml;
+        gzip_disable            "msie6";
 
-        access_log  /var/log/nginx_access.log;
-        error_log   /var/log/nginx_error.log;
+        access_log              syslog:server=unix:/dev/log;
+        error_log               syslog:server=unix:/dev/log;
 
         ${createStaticSite "garbas.si"}
 
         server {
           listen                  80;
           server_name             hydra.garbas.si;
-          access_log              /var/log/nginx_hydra.garbas.si_access.log;
-          error_log               /var/log/nginx_hydra.garbas.si_error.log;
           location / {
             proxy_set_header Host $http_host;
             proxy_set_header X-Forwarded-Host $http_host;
