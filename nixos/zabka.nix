@@ -30,9 +30,17 @@
   nix.maxJobs = 2;
 
   nixpkgs.config.allowUnfree = true;
-  #nixpkgs.config.firefox.jre = false;
-  #nixpkgs.config.firefox.enableGoogleTalkPlugin = true;
-  #nixpkgs.config.firefox.enableAdobeFlash = true;
+  nixpkgs.config.firefox.jre = false;
+  nixpkgs.config.firefox.enableGoogleTalkPlugin = true;
+  nixpkgs.config.firefox.enableAdobeFlash = true;
+  nixpkgs.config.packageOverrides = pkgs: {
+    flashplayer = pkgs.lib.overrideDerivation pkgs.flashplayer (old: {
+      src = pkgs.fetchurl {
+        url = "https://fpdownload.adobe.com/get/flashplayer/pdc/11.2.202.554/install_flash_player_11_linux.i386.tar.gz";
+        sha256 = "1a26l6lz5l6qbx4lm7266pzk0zr77h6issbnayr6df9qj99bppyz";
+      };
+    });
+  };
 
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
