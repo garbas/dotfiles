@@ -53,7 +53,7 @@
   i18n = {
     consoleFont = "Lat2-Terminus16";
     consoleKeyMap = "us";
-    defaultLocale = "en_US.UTF-8";
+    defaultLocale = "pl_PL.UTF-8";
   };
 
   time.timeZone = "Europe/Warsaw";
@@ -75,7 +75,7 @@
   #services.printing.drivers = [ pkgs.mfcj470dw ];
 
   services.xserver.enable = true;
-  services.xserver.layout = "us";
+  services.xserver.layout = "pl";
   services.xserver.xkbOptions = "eurosign:e";
   services.xserver.displayManager.slim.enable = true;
   services.xserver.desktopManager.gnome3.enable = true;
