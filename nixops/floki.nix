@@ -4,6 +4,8 @@
 , datadog_api_key ? null                    # datadog api_key
 , datadog_postgresql_password ? null        # datadog agent connection string
 , logentries_token ? null                   # logentries service
+, gmail_user ? null                         #
+, gmail_pass ? null                         #
 }:
 
 # - openssl req -new -newkey rsa:2048 -nodes -keyout garbas.si.key -out garbas.si.csr
@@ -13,6 +15,9 @@
 
 
 let
+
+  isGmail = gmail_user != null ||
+            gmail_pass != null;
 
   isSSL = nginx_garbas_ssl_certificate != null ||
           nginx_garbas_ssl_certificate_key != null ||
@@ -157,6 +162,16 @@ in {
 
       networking.firewall.allowedTCPPorts = [ 22 80 443 ];
       networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
+
+      networking.defaultMailServer.directDelivery = isGmail;
+      networking.defaultMailServer.hostName = "smtp.gmail.com:587";
+      networking.defaultMailServer.root = "floki@garbas.si";
+      networking.defaultMailServer.domain = "garbas.si";
+      networking.defaultMailServer.useTLS = true;
+      networking.defaultMailServer.useSTARTTLS = true;
+      networking.defaultMailServer.authUser = gmail_user;
+      networking.defaultMailServer.authPass = gmail_pass;
+      #networking.defaultMailServer.fromLineOverride = true;
 
       environment.systemPackages = with pkgs; [
         tmux
