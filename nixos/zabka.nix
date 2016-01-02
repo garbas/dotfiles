@@ -4,7 +4,9 @@
 
 { config, pkgs, ... }:
 
-{
+let
+  gpkgs = import ./../pkgs/default.nix { inherit pkgs; };
+in {
   imports =
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
     ];
@@ -72,7 +74,7 @@
   services.nixosManual.showManual = true;
   services.openssh.enable = true;
   services.printing.enable = true;
-  services.printing.drivers = [ pkgs.mfcj470dw ];
+  services.printing.drivers = [ gpkgs.brother-hl2030 pkgs.cups_filters ];
 
   services.xserver.enable = true;
   services.xserver.layout = "us";
@@ -89,6 +91,6 @@
   };
 
   system.autoUpgrade.enable = true;
-  system.autoUpgrade.channel = "https://nixos.org/channels/nixos-unstable";
+  system.autoUpgrade.channel = "https://nixos.org/channels/nixos-15.09";
 
 }

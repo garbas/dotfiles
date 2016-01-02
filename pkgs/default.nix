@@ -8,6 +8,10 @@ rec {
   #  - add afew to systemd
   #  - create alot theme
 
+  brother-hl2030 = import ./brother-hl2030.nix {
+    inherit (pkgs) stdenv fetchurl cups dpkg ghostscript patchelf bash file coreutils;
+  };
+
   chromium = pkgs.chromium.override {
     channel = "beta";
     enableHotwording = false;
