@@ -232,8 +232,8 @@ in {
         gc-keep-outputs = true
         gc-keep-derivations = true
         auto-optimise-store = true
+        build-use-chroot = relaxed
     '';
-    useChroot = true;
   };
 
   nixpkgs.config = {
@@ -315,7 +315,7 @@ in {
     openssh.enable = true;
     printing.enable = true;
     thinkfan.enable = true;
-    thinkfan.sensor = "/sys/class/hwmon/hwmon1/temp1_input";
+    thinkfan.sensor = "/sys/class/hwmon/hwmon0/temp1_input";
     prey = {
       enable = true;
       apiKey = secrets.prey.apiKey;
@@ -350,6 +350,13 @@ in {
   };
 
   time.timeZone = "Europe/Berlin";
+
+  systemd.extraConfig = ''
+    DefaultCPUAccounting=true
+    DefaultBlockIOAccounting=true
+    DefaultMemoryAccounting=true
+    DefaultTasksAccounting=true
+  '';
 
   systemd.user.services.urxvtd = {
     enable = true;
