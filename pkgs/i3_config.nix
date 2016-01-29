@@ -1,4 +1,7 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ i3, xrandr, feh, xss-lock, i3lock, dunst, pa_applet
+, rxvt_unicode-with-plugins, ipython, networkmanagerapplet, gnome_keyring
+, redshift, alot
+}:
 
 ''
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
@@ -29,25 +32,25 @@ floating_modifier $mod
 mode "monitor_select" {
 
   # only one
-  bindsym 1 exec --no-startup-id ${pkgs.xorg.xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --off --output $mon_ext1 --off --output $mon_ext2 --off ; mode "default"
+  bindsym 1 exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --off --output $mon_ext1 --off --output $mon_ext2 --off ; mode "default"
 
   # office
-  bindsym o exec --no-startup-id ${pkgs.xorg.xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext2 --auto --left-of $mon_lap ; mode "default"
-  #bindsym o exec --no-startup-id ${pkgs.xorg.xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext2 --rotate left --auto --left-of $mon_lap ; mode "default"
+  bindsym o exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext2 --auto --left-of $mon_lap ; mode "default"
+  #bindsym o exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext2 --rotate left --auto --left-of $mon_lap ; mode "default"
 
   # left and right
-  bindsym l exec --no-startup-id ${pkgs.xorg.xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --left-of $mon_lap ; mode "default"
-  bindsym r exec --no-startup-id ${pkgs.xorg.xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --right-of $mon_lap ; mode "default"
+  bindsym l exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --left-of $mon_lap ; mode "default"
+  bindsym r exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --right-of $mon_lap ; mode "default"
 
   # up and down
-  bindsym u exec --no-startup-id ${pkgs.xorg.xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --above $mon_lap ; mode "default"
-  bindsym d exec --no-startup-id ${pkgs.xorg.xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --below $mon_lap ; mode "default"
+  bindsym u exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --above $mon_lap ; mode "default"
+  bindsym d exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --below $mon_lap ; mode "default"
 
   # clone
-  bindsym c exec --no-startup-id ${pkgs.xorg.xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --same-as $mon_lap ; mode "default"
+  bindsym c exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --same-as $mon_lap ; mode "default"
 
   # presentation
-  bindsym p exec --no-startup-id ${pkgs.xorg.xrandr}/bin/xrandr --output $mon_lap --off --output $mon_ext1 --auto ; mode "default"
+  bindsym p exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --off --output $mon_ext1 --auto ; mode "default"
 
   # back to normal: Enter or Escape
   bindsym Return mode "default"
@@ -243,7 +246,7 @@ bindsym $mod+u border none
 # start dmenu (a program launcher)
 #bindsym $mod+d exec dmenu_run
 #bindsym $mod+space exec --no-startup-id /run/current-system/sw/bin/dmenu
-bindsym $mod+space exec --no-startup-id ${pkgs.i3}/bin/i3-dmenu-desktop
+bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop
 #~/bin/dmenu
 #dmenu_run -l 7 -p ">>>" -fn "7x14"
 
@@ -339,18 +342,18 @@ bar {
 #}}}
 #{{{ Autostart
 
-exec --no-startup-id ${pkgs.feh}/bin/feh  --bg-scale $HOME/wallpaper_latest.png
+exec --no-startup-id ${feh}/bin/feh  --bg-scale $HOME/wallpaper_latest.png
 exec_always xset s 900
-exec_always --no-startup-id ${pkgs.xss-lock}/bin/xss-lock -- ${pkgs.i3lock}/bin/i3lock -n -i $HOME/wallpaper_latest.png
+exec_always --no-startup-id ${xss-lock}/bin/xss-lock -- ${i3lock}/bin/i3lock -n -i $HOME/wallpaper_latest.png
 # TODO:
 exec --no-startup-id /home/rok/bin/launch/keyboard
-exec --no-startup-id ${pkgs.dunst}/bin/dunst
-exec --no-startup-id ${pkgs.pa_applet}/bin/pa-applet
-exec --no-startup-id ${pkgs.rxvt_unicode-with-plugins}/bin/urxvtc -name ipython -e ${pkgs.pythonPackages.ipython}/bin/ipython
-exec --no-startup-id ${pkgs.networkmanagerapplet}/bin/nm-applet
-exec --no-startup-id ${pkgs.rxvt_unicode-with-plugins}/bin/urxvtc -name alot -e ${pkgs.pythonPackages.alot}/bin/alot
-exec --no-startup-id ${pkgs.gnome3.gnome_keyring}/bin/gnome-keyring
-exec --no-startup-id ${pkgs.redshift}/bin/redshift -l 46.055556:14.508333 -t 5700:3600
+exec --no-startup-id ${dunst}/bin/dunst
+exec --no-startup-id ${pa_applet}/bin/pa-applet
+exec --no-startup-id ${rxvt_unicode-with-plugins}/bin/urxvtc -name ipython -e ${ipython}/bin/ipython
+exec --no-startup-id ${networkmanagerapplet}/bin/nm-applet
+exec --no-startup-id ${rxvt_unicode-with-plugins}/bin/urxvtc -name alot -e ${alot}/bin/alot
+exec --no-startup-id ${gnome_keyring}/bin/gnome-keyring
+exec --no-startup-id ${redshift}/bin/redshift -l 46.055556:14.508333 -t 5700:3600
 
 # }}}
 ''

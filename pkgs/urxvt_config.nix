@@ -1,4 +1,4 @@
-{ pkgs }:
+{ xsel }:
 ''
 
 ! XDVI
@@ -72,8 +72,8 @@ URxvt.url-select.launcher: firefox
 URxvt.keysym.M-c: perl:clipboard:copy
 URxvt.keysym.M-v: perl:clipboard:paste
 URxvt.keysym.M-C-v: perl:clipboard:paste_escaped
-URxvt.copyCommand: ${pkgs.xsel}/bin/xsel -ib
-URxvt.pasteCommand: ${pkgs.xsel}/bin/xsel -ob
+URxvt.copyCommand: ${xsel}/bin/xsel -ib
+URxvt.pasteCommand: ${xsel}/bin/xsel -ob
 
 !!!! font-size
 !!!! Allows changing the font size on the fly with keyboard shortcuts

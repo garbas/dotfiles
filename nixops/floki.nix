@@ -33,10 +33,8 @@ let
   hydraSrc = _pkgs.fetchFromGitHub {
     owner = "NixOS";
     repo = "hydra";
-    rev = "53c80d9526fb029b7adde47d0cfaa39a80926c48";
-    sha256 = "095zvi1pbcxr395ss44c399vmpp5z422lvm0iwjpkia19nr96zd5";
-    #rev = "8f7614030e6950f389e04d8077e7793cde1e6305";
-    #sha256 = "1xz5diybk1yr5q6xvxa7m0jbr8y6h7xwcqkgvblp4jpwa8sq0ygn";
+    rev = "993647d1e3b43f1f9b7dc2ebce889b475d156bb9";
+    sha256 = "115z4prns7mxf8yxygvficq6c00gzi1qizj121qqpl1af521f8r9";
   };
 
   hydraRelease = import "${hydraSrc}/release.nix" {

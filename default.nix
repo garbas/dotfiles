@@ -1,1 +1,1 @@
-import ./pkgs {}
+import ./pkgs { pkgs = import <nixpkgs> {}; }

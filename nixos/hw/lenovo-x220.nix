@@ -39,4 +39,16 @@
   nix.maxJobs = 4;
 
   services.xserver.xkbModel = "thinkpad60";
+
+  services.thinkfan.enable = true;
+  services.thinkfan.sensor = "/sys/class/hwmon/hwmon0/temp1_input";
+  services.thinkfan.levels = ''
+    (0, 0, 45)
+    (1, 40, 60)
+    (2, 45, 65)
+    (3, 50, 75)
+    (4, 55, 80)
+    (5, 60, 85)
+    (7, 65, 32767)
+  '';
 }
