@@ -1,9 +1,24 @@
-{ i3, xrandr, feh, xss-lock, i3lock, dunst, pa_applet
-, rxvt_unicode-with-plugins, ipython, networkmanagerapplet, gnome_keyring
-, redshift, alot
+{ i3, xrandr, feh, xss-lock, i3lock, dunst, pa_applet, py3status, lib, dmenu
+, rxvt_unicode-with-plugins, ipython, gnome_keyring, redshift, alot
+, connmanui, base16, base16Theme
+, dark ? true
 }:
 
-''
+let
+
+  i3Theme = builtins.readFile "${base16}/i3/base16-${base16Theme}.i3";
+  dmenuTheme = builtins.readFile "${base16}/dmenu/base16-${base16Theme}.${if dark then "dark" else "light"}";
+
+  dmenuCmd = builtins.replaceStrings ["\n"] [""] (lib.last (lib.splitString "\n" dmenuTheme));
+  getColors = theme: builtins.head (
+    lib.splitString "\n\n## remember to add the rest of your configuration" theme);
+  getBarColors = theme: builtins.head (
+    lib.splitString "\n    }" (
+      builtins.head (builtins.tail (
+        lib.splitString "\n        colors {" theme))
+    ));
+    
+in ''
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
 #{{{ Main
@@ -244,11 +259,7 @@ bindsym $mod+u border none
 #bindsym Mod4+l exec xset s activate
 
 # start dmenu (a program launcher)
-#bindsym $mod+d exec dmenu_run
-#bindsym $mod+space exec --no-startup-id /run/current-system/sw/bin/dmenu
-bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop
-#~/bin/dmenu
-#dmenu_run -l 7 -p ">>>" -fn "7x14"
+bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop --dmenu="${dmenu}/bin/dmenu -i ${builtins.substring 5 (builtins.stringLength dmenuCmd) dmenuCmd}"
 
 # start a terminal
 bindsym $mod+Return exec urxvtc
@@ -298,10 +309,12 @@ bindsym $mod+a focus parent
 #bindcode $mod+d focus child
 
 # reload the configuration file
-bindsym $mod+Shift+C reload
+bindsym $mod+Shift+C exec "rm -f /tmp/i3-config && cp /etc/i3-config-${if dark then "dark" else "light"} /tmp/i3-config && i3-msg reload"
 
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+R restart
+
+bindsym $mod+Shift+D exec "rm -f /tmp/i3-config && cp /etc/i3-config-${if dark then "light" else "dark"} /tmp/i3-config && i3-msg reload"
 
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+E exit
@@ -310,32 +323,19 @@ bindsym $mod+Shift+E exit
 #}}}
 #{{{ Colors
 
-# class border backgr. text
-#client.focused #c0c0c0 #c0c0c0 #595959
-#client.focused_inactive #292929 #292929 #c0c0c0
-#client.unfocused #292929 #292929 #595959
-#client.urgent #ff4500 #ff4500 #c0c0c0
-#client.background #000000
+${getColors i3Theme}
 
 #}}}
 #{{{ i3bar
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-    #status_command /run/current-system/sw/bin/py3status -c ~/.config/i3status/config
-    status_command i3status -c ~/.config/i3status/config2
+    status_command ${py3status}/bin/py3status -c /etc/i3status-config
     position bottom
-    #tray_output $mon_ext2
     tray_output $mon_lap
 #{{{ i3bar colors
     colors {
-        background #0e0e0e
-        statusline #c0c0c0
-
-        focused_workspace #c0c0c0 #0e0e0e
-        inactive_workspace #595959 #0e0e0e
-        urgent_workspace #c0c0c0 #ff4500
-        #active_workspace #696969 #0e0e0e
+${getBarColors i3Theme}
     }
 #}}}
 }
@@ -350,7 +350,7 @@ exec --no-startup-id /home/rok/bin/launch/keyboard
 exec --no-startup-id ${dunst}/bin/dunst
 exec --no-startup-id ${pa_applet}/bin/pa-applet
 exec --no-startup-id ${rxvt_unicode-with-plugins}/bin/urxvtc -name ipython -e ${ipython}/bin/ipython
-exec --no-startup-id ${networkmanagerapplet}/bin/nm-applet
+exec --no-startup-id ${connmanui}/bin/connman-ui-gtk
 exec --no-startup-id ${rxvt_unicode-with-plugins}/bin/urxvtc -name alot -e ${alot}/bin/alot
 exec --no-startup-id ${gnome_keyring}/bin/gnome-keyring
 exec --no-startup-id ${redshift}/bin/redshift -l 46.055556:14.508333 -t 5700:3600

@@ -3,13 +3,15 @@
 let
 
   secrets = import ./oskar-secrets.nix { };
+  base16Theme = "default";
 
   i3Packages = with pkgs; {
     inherit i3 i3lock feh xss-lock dunst pa_applet rxvt_unicode-with-plugins
-      networkmanagerapplet redshift;
+      connmanui redshift base16;
     inherit (xorg) xrandr;
-    inherit (pythonPackages) ipython alot;
+    inherit (pythonPackages) ipython alot py3status;
     inherit (gnome3) gnome_keyring;
+    dmenu = dmenu2;
   };
   urxvtPackages = with pkgs; { inherit xsel; };
   setxkbmapPackages = with pkgs.xorg; { inherit xinput xset setxkbmap xmodmap; };
@@ -67,9 +69,9 @@ in {
     }
   ];
 
-  environment.shellInit = "source ${pkgs.base16}/shell/base16-default.dark.sh";
-  environment.loginShellInit = "source ${pkgs.base16}/shell/base16-default.dark.sh";
-  environment.interactiveShellInit = "source ${pkgs.base16}/shell/base16-default.dark.sh";
+  environment.shellInit = "source ${pkgs.base16}/shell/base16-${base16Theme}.dark.sh";
+  environment.loginShellInit = "source ${pkgs.base16}/shell/base16-${base16Theme}.dark.sh";
+  environment.interactiveShellInit = "source ${pkgs.base16}/shell/base16-${base16Theme}.dark.sh";
 
   environment.systemPackages = with pkgs; (builtins.attrValues (i3Packages // urxvtPackages // setxkbmapPackages )) ++ [
 
@@ -91,11 +93,6 @@ in {
     notmuch
     offlineimap
     w3m
-
-    # window manager
-    dmenu2
-    i3status
-    pythonPackages.py3status
 
     # console applications
     gitAndTools.gitflow
@@ -179,8 +176,8 @@ in {
     81.4.127.29    floki floki.garbas.si
   '';
 
-  # TODO: connman.enable = true;
-  networking.networkmanager.enable = true;
+  networking.connman.enable = true;
+  # networking.networkmanager.enable = true;
 
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 80 8080 8000 24800 ];
@@ -243,17 +240,25 @@ in {
 
   services.xserver.windowManager.default = "i3";
   services.xserver.windowManager.i3.enable = true;
-  services.xserver.windowManager.i3.configFile =
-    pkgs.writeText "i3-config" ( import ./../pkgs/i3_config.nix i3Packages );
+  services.xserver.windowManager.i3.configFile = "/tmp/i3-config";
 
   services.xserver.displayManager.sessionCommands = ''
-      xrdb -merge ${
-        pkgs.writeText "Xresources"
-          ( import ./../pkgs/urxvt_config.nix urxvtPackages )}
-    '';
+    cp -f /etc/i3-config-dark /tmp/i3-config
+    source /etc/setxkbmap
+  '';
 
   services.xserver.displayManager.slim.defaultUser = "rok";
   services.xserver.displayManager.slim.theme = pkgs.nixos_slim_theme;
+
+  environment.etc."Xmodmap".text = import ./../pkgs/xmodmap_config.nix {};
+  environment.etc."i3-config-dark".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme; inherit (pkgs) lib; dark = true; });
+  environment.etc."i3-config-light".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme; inherit (pkgs) lib; dark = false; });
+  environment.etc."i3status-config".text = import ./../pkgs/i3status_config.nix { inherit base16Theme; inherit (pkgs) lib base16; };
+
+  environment.etc."setxkbmap".text = ''
+    ${(import ./../pkgs/setxkbmap_config.nix setxkbmapPackages)}
+    xrdb -merge ${pkgs.writeText "Xresources" ( import ./../pkgs/urxvt_config.nix urxvtPackages )}
+  '';
 
   time.timeZone = "Europe/Berlin";
 
@@ -276,8 +281,5 @@ in {
     };
   };
 
-  environment.etc."Xmodmap".text = import ./../pkgs/xmodmap_config.nix {};
-  systemd.services.display-manager.postStart =
-    (import ./../pkgs/setxkbmap_config.nix setxkbmapPackages);
 
 }

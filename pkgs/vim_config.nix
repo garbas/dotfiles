@@ -1,4 +1,4 @@
-{ pkgs, base16 }:
+{ pkgs, base16, base16Theme }:
 {
   customRC = ''
 
@@ -573,8 +573,8 @@ endfunc
 
 " }}}
 
-${builtins.readFile "${base16}/vim/base16-default.vim"}
-${builtins.readFile "${base16}/vim-airline/base16-default.vim"}
+${builtins.readFile "${base16}/vim/base16-${base16Theme}.vim"}
+${builtins.readFile "${base16}/vim-airline/base16-${base16Theme}.vim"}
 
   '';
   vam.pluginDictionaries = [

@@ -1,8 +1,7 @@
-{ pkgs }: #? import <nixpkgs> {} }:
+{ pkgs, base16Theme ? "default" }:
 
 rec { 
   # TODO:
-  #  - i3 themed
   #  - py3status configured
   #  - replace offlineimap with isync and add to systemd
   #  - add afew to systemd
@@ -29,6 +28,15 @@ rec {
     cupsSupport = true;
     pulseSupport = true;
     #hiDPISupport = true;
+  };
+
+  rxvt_unicode-with-plugins = pkgs.rxvt_unicode-with-plugins.override {
+    plugins = with pkgs; [
+      urxvt_perl
+      urxvt_perls
+      urxvt_tabbedex
+      urxvt_font_size
+    ];
   };
 
   inherit (pkgs.callPackages <nixpkgs/pkgs/applications/networking/browsers/firefox> {
@@ -79,7 +87,7 @@ rec {
 
   st = pkgs.st.override {
     conf = import ./st_config.nix {
-      theme = builtins.readFile "${base16}/st/base16-default.light.c";
+      theme = builtins.readFile "${base16}/st/base16-${base16Theme}.light.c";
     };
   };
 
@@ -120,6 +128,6 @@ rec {
 
   neovim = pkgs.neovim.override {
     vimAlias = true;
-    configure = import ./vim_config.nix { inherit pkgs base16; };
+    configure = import ./vim_config.nix { inherit pkgs base16 base16Theme; };
   };
 }
