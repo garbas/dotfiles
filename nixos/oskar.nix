@@ -7,11 +7,10 @@ let
 
   i3Packages = with pkgs; {
     inherit i3 i3lock feh xss-lock dunst pa_applet rxvt_unicode-with-plugins
-      connmanui redshift base16;
+      connmanui redshift base16 dmenu;
     inherit (xorg) xrandr;
     inherit (pythonPackages) ipython alot py3status;
     inherit (gnome3) gnome_keyring;
-    dmenu = dmenu2;
   };
   urxvtPackages = with pkgs; { inherit xsel stdenv; };
   setxkbmapPackages = with pkgs.xorg; { inherit xinput xset setxkbmap xmodmap; };

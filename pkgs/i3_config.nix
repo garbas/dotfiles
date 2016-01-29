@@ -259,7 +259,7 @@ bindsym $mod+u border none
 #bindsym Mod4+l exec xset s activate
 
 # start dmenu (a program launcher)
-bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop --dmenu="${dmenu}/bin/dmenu -i ${builtins.substring 5 (builtins.stringLength dmenuCmd) dmenuCmd}"
+bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop --dmenu="${dmenu}/bin/dmenu -i -lh 20 -l 10 ${builtins.substring 5 (builtins.stringLength dmenuCmd) dmenuCmd}"
 
 # start a terminal
 bindsym $mod+Return exec urxvtc
