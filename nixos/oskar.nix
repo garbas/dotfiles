@@ -13,7 +13,7 @@ let
     inherit (gnome3) gnome_keyring;
     dmenu = dmenu2;
   };
-  urxvtPackages = with pkgs; { inherit xsel; };
+  urxvtPackages = with pkgs; { inherit xsel stdenv; };
   setxkbmapPackages = with pkgs.xorg; { inherit xinput xset setxkbmap xmodmap; };
 
 in {
@@ -68,10 +68,6 @@ in {
       options = "nosuid,nodev,relatime";
     }
   ];
-
-  environment.shellInit = "source ${pkgs.base16}/shell/base16-${base16Theme}.dark.sh";
-  environment.loginShellInit = "source ${pkgs.base16}/shell/base16-${base16Theme}.dark.sh";
-  environment.interactiveShellInit = "source ${pkgs.base16}/shell/base16-${base16Theme}.dark.sh";
 
   environment.systemPackages = with pkgs; (builtins.attrValues (i3Packages // urxvtPackages // setxkbmapPackages )) ++ [
 
@@ -244,7 +240,10 @@ in {
 
   services.xserver.displayManager.sessionCommands = ''
     cp -f /etc/i3-config-dark /tmp/i3-config
-    source /etc/setxkbmap
+    cp -f /etc/urxvt-themes/${base16Theme}-dark /tmp/urxvt-theme
+    xrdb -merge /etc/urxvt-config
+    xrdb -merge /tmp/urxvt-theme
+    source /etc/setxkbmap-config
   '';
 
   services.xserver.displayManager.slim.defaultUser = "rok";
@@ -254,11 +253,10 @@ in {
   environment.etc."i3-config-dark".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme; inherit (pkgs) lib; dark = true; });
   environment.etc."i3-config-light".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme; inherit (pkgs) lib; dark = false; });
   environment.etc."i3status-config".text = import ./../pkgs/i3status_config.nix { inherit base16Theme; inherit (pkgs) lib base16; };
-
-  environment.etc."setxkbmap".text = ''
-    ${(import ./../pkgs/setxkbmap_config.nix setxkbmapPackages)}
-    xrdb -merge ${pkgs.writeText "Xresources" ( import ./../pkgs/urxvt_config.nix urxvtPackages )}
-  '';
+  environment.etc."urxvt-themes/${base16Theme}-dark".text = builtins.readFile "${pkgs.base16}/xresources/base16-${base16Theme}.dark.256.xresources";
+  environment.etc."urxvt-themes/${base16Theme}-light".text = builtins.readFile "${pkgs.base16}/xresources/base16-${base16Theme}.light.256.xresources";
+  environment.etc."urxvt-config".text = import ./../pkgs/urxvt_config.nix urxvtPackages;
+  environment.etc."setxkbmap-config".text = import ./../pkgs/setxkbmap_config.nix setxkbmapPackages;
 
   time.timeZone = "Europe/Berlin";
 

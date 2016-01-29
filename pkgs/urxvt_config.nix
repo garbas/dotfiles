@@ -1,4 +1,4 @@
-{ xsel }:
+{ stdenv, xsel }:
 ''
 
 ! XDVI
@@ -49,13 +49,14 @@ URxvt*scrollTtyOutput: false
 URxvt*scrollTtyKeypress: true
 
 !! Fonts
-URxvt*font:              xft:monospace:autohint=true:pixelsize=11
-!URxvt*font:             xft:Bitstream Vera Sans Mono:autohint=true:pixelsize=13
-!URxvt*boldFont:         xft:Bitstream Vera Sans Mono:bold:autohint=true:pixelsize=13
-!URxvt*italicFont:       xft:Bitstream Vera Sans Mono:italic:autohint=true:pixelsize=13
-!URxvt*bolditalicFont:   xft:Bitstream Vera Sans Mono:bold:italic:autohint=true:pixelsize=13
+URxvt*font:              xft:monospace:autohint=false:antialias=false:pixelsize=12
+!URxvt*font:             xft:Liberation Mono:autohint=true:pixelsize=13
+!URxvt*boldFont:         xft:Liberation Mono:bold:autohint=true:pixelsize=13
+!URxvt*italicFont:       xft:Liberation Mono:italic:autohint=true:pixelsize=13
+!URxvt*bolditalicFont:   xft:Liberation Mono:bold:italic:autohint=true:pixelsize=13
+
 !! Plugins
-URxvt.perl-ext-common: default,newterm,url-select,clipboard,font-size
+URxvt.perl-ext-common: default,newterm,url-select,clipboard,font-size,color-themes
 
 !!!! newterm
 !!!! Open a new terminal in your current working directory, a la 
@@ -82,6 +83,17 @@ URxvt.keysym.M-Page_Down: perl:font-size:decrease
 URxvt.keysym.M-S-Page_Up: perl:font-size:incglobal
 URxvt.keysym.M-S-Page_Down: perl:font-size:decglobal
 URxvt.keysym.M-0: perl:font-size:reset
-URxvt.font-size.step: 2
+URxvt.font-size.step: 1
+
+!!!! color-themes
+URxvt.color-themes.themedir: /etc/urxvt-themes
+URxvt.color-themes.preprocessor: ${stdenv}/bin/cpp
+URxvt.keysym.M-[:  perl:color-themes:next
+URxvt.keysym.M-]:  perl:color-themes:prev
+
+URxvt.color-themes.state-file: /tmp/urxvt-theme
+URxvt.color-themes.autosave: 1
+URxvt.keysym.M-C-l:  perl:color-themes:load-state
+URxvt.keysym.M-C-s:  perl:color-themes:save-state
 
 ''

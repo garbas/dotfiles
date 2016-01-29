@@ -30,15 +30,6 @@ rec {
     #hiDPISupport = true;
   };
 
-  rxvt_unicode-with-plugins = pkgs.rxvt_unicode-with-plugins.override {
-    plugins = with pkgs; [
-      urxvt_perl
-      urxvt_perls
-      urxvt_tabbedex
-      urxvt_font_size
-    ];
-  };
-
   inherit (pkgs.callPackages <nixpkgs/pkgs/applications/networking/browsers/firefox> {
     inherit (pkgs.gnome) libIDL;
     inherit (pkgs.pythonPackages) pysqlite;
@@ -130,4 +121,17 @@ rec {
     vimAlias = true;
     configure = import ./vim_config.nix { inherit pkgs base16 base16Theme; };
   };
+
+  urxvt-theme-switch = import ./urxvt_theme_switch.nix { inherit (pkgs) stdenv fetchFromGitHub; };
+
+  rxvt_unicode-with-plugins = pkgs.rxvt_unicode-with-plugins.override {
+    plugins = with pkgs; [
+      urxvt_perl
+      urxvt_perls
+      urxvt_tabbedex
+      urxvt_font_size
+      urxvt-theme-switch
+    ];
+  };
+
 }
