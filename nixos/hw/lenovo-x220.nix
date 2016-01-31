@@ -25,6 +25,11 @@
     "msr"
   ];
 
+  boot.extraModprobeConfig = ''
+      options sdhci debug_quirks=0x4670
+      options thinkpad_acpi fan_control=1
+    '';
+
   boot.extraModulePackages = [
       config.boot.kernelPackages.tp_smapi
   ];

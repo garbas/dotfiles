@@ -23,10 +23,6 @@ in {
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.blacklistedKernelModules = [ "snd_pcsp" "pcspkr" ];
-  boot.extraModprobeConfig = ''
-      options sdhci debug_quirks=0x4670
-      options thinkpad_acpi fan_control=1
-    '';
 
   boot.initrd.kernelModules = [
     # rootfs, hardware specific
