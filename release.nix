@@ -18,6 +18,23 @@ let
 
   pkgs_x86_64_linux = allPackages { system = "x86_64-linux"; };
 
-in {
-  weechat = pkgs.lib.genAttrs supportedSystems (system: (pkgsFor system).weechat);
-}
+  getPackage = package: pkgs.lib.genAttrs supportedSystems (
+    system: builtins.getAttr package (pkgsFor system));
+
+  getPackages = packages: builtins.listToAttrs (
+    map (x: { name = x; value = getPackage x; }) packages);
+
+in getPackages [
+  "weechat"
+  "chromium"
+  "firefox"
+  "nerdfonts"
+  "base16"
+  "ttf_bitstream_vera"
+  "st"
+  "zsh_prezto"
+  "neovim"
+  "urxvt-theme-switch"
+  "rxvt_unicode-with-plugins"
+  "dmenu"
+]
