@@ -1,5 +1,5 @@
 /configuration.nix
-/nixops/certs/
+/nixops/secrets/
 /nixos/*-secrets.nix
 /pkgs/weechat/logs/
 /pkgs/weechat/script/plugins.xml.gz

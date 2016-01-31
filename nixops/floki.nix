@@ -6,6 +6,9 @@
 , logentries_token ? null                   # logentries service
 , gmail_user ? null                         #
 , gmail_pass ? null                         #
+, hydra_id_buildfarm ? null                 # SSH key used by the Hydra master
+                                            # server to authenticate itself to
+                                            # the build slaves
 }:
 
 # - openssl req -new -newkey rsa:2048 -nodes -keyout garbas.si.key -out garbas.si.csr
@@ -117,33 +120,55 @@ in {
 
     in {
 
+      assertions = pkgs.lib.singleton {
+        assertion = pkgs.system == "x86_64-linux";
+        message = "unsupported system ${pkgs.system}";
+      };
+
       imports = [ hydraModule ];
 
-      services.hydra = {
-        enable = true;
-        dbi = "dbi:Pg:dbname=hydra;user=hydra;";
-        package = hydra;
-        hydraURL = "http://hydra.garbas.si/";
-        listenHost = "0.0.0.0";
-        port = 3000;
-        minimumDiskFree = 2;  # in GB
-        minimumDiskFreeEvaluator = 1;
-        notificationSender = "hydra@garbas.si";
-        logo = null;
-        debugServer = false;
-      };
-
-      nixpkgs.config = {
-        allowUnfree = true;
-        packageOverrides = pkgs: import ./../pkgs { inherit pkgs; };
-      };
-
+      nix.distributedBuilds = true;
+      nix.nrBuildUsers = 30;
+      nix.extraOptions = ''
+        build-use-chroot = relaxed
+        auto-optimise-store = true
+      '';
       nix.binaryCaches = [ "https://cache.nixos.org/" "https://hydra.nixos.org" ];
-      nix.binaryCachePublicKeys = [ "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs=" ];
+      nix.binaryCachePublicKeys = [
+        "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
+      ];
+      nix.gc.automatic = true;
+      nix.gc.dates = "05:15";
+      nix.gc.options = ''--max-freed "$((12 * 1024**3 - 1024 * $(df -P -k /nix/store | tail -n 1 | ${pkgs.gawk}/bin/awk '{ print $4 }')))"'';
 
-      i18n.consoleFont = "lat9w-16";
-      i18n.consoleKeyMap = "us";
-      i18n.defaultLocale = "en_US.UTF-8";
+      nixpkgs.config.allowUnfree = true;
+      nixpkgs.config.packageOverrides = pkgs: import ./../pkgs { inherit pkgs; };
+
+      #
+      # Initialization commands
+      #
+      # on nixops server:
+      # - ssh-keygen -C "hydra@hydra.example.org" -N "" -f id_buildfarm
+      #
+      # on master server:
+      #   - hydra-create-user garbas --full-name 'Rok Garbas' --email-address 'rok@garbas.si' --password 'XXX' --role admin
+      #   - install -d -m 551 /etc/nix/hydra.garbas.si-1
+      #   - nix-store --generate-binary-cache-key hydra.garbas.si-1 /etc/nix/hydra.garbas.si-1/secret /etc/nix/hydra.garbas.si-1/public
+      #   - chown -R hydra:hydra /etc/nix/hydra.garbas.si-1
+      #   - chmod 440 /etc/nix/hydra.garbas.si-1/secret
+      #   - chmod 444 /etc/nix/hydra.garbas.si-1/public
+      services.hydra.enable = true;
+      services.hydra.dbi = "dbi:Pg:dbname=hydra;user=hydra;";
+      services.hydra.package = hydra;
+      services.hydra.hydraURL = "http://hydra.garbas.si/";
+      services.hydra.listenHost = "0.0.0.0";
+      services.hydra.port = 3000;
+      services.hydra.extraConfig = "binary_cache_secret_key_file = /etc/nix/hydra.garbas.si-1/secret";
+      services.hydra.minimumDiskFree = 2;  # in GB
+      services.hydra.minimumDiskFreeEvaluator = 1;
+      services.hydra.notificationSender = "hydra@garbas.si";
+      services.hydra.logo = null;
+      services.hydra.debugServer = false;
 
       services.xserver.enable = false;
 
@@ -171,6 +196,21 @@ in {
       networking.defaultMailServer.authPass = gmail_pass;
       #networking.defaultMailServer.fromLineOverride = true;
 
+      i18n.consoleFont = "lat9w-16";
+      i18n.consoleKeyMap = "us";
+      i18n.defaultLocale = "en_US.UTF-8";
+
+      time.timeZone = "Europe/Berlin";
+
+      environment.etc = if hydra_id_buildfarm == null then [] else (
+        pkgs.lib.singleton {
+          target = "nix/id_buildfarm";
+          text = builtins.readFile hydra_id_buildfarm;
+          uid = config.ids.uids.hydra;
+          gid = config.ids.gids.hydra;
+          mode = "0440";
+        });
+
       environment.systemPackages = with pkgs; [
         tmux
         htop
@@ -181,11 +221,10 @@ in {
         rxvt_unicode.terminfo
       ];
 
-      users.extraUsers.root = {
-       openssh.authorizedKeys.keys = [
-        "ssh-dss AAAAB3NzaC1kc3MAAACBAMSjkowfIlAJn80+5ccsUpG0Dsunbg9nVzGJF4ZU2QlcqC8Hbw7WzhvUgqE5HY4eFxdrbX5nISZTokOT2lyoRH2bIbcCILFwFOoUvdCbbG/M/X+9lOm1cRe9DG20HbhxxquAC9PAKGvUBWRmRhRUv/jyEHITX/0Sq6IyK/VaP/xjAAAAFQD1osCdij1P/Hw8nBBaUYGPDJOeJwAAAIBdKBHJUWBwJyDr1Q/lrRrVjddNP2m9gMt3cJr+7KfpENcjODBsHIpFJNkwIhYfxZSJntij7NxYL2QlI6I9j1dLG4yXH/2kgK+1R4htUTAWDspDGNj7+SruNtVmCvtIDQH3Az+95qCOxYZyOocuWE/6MoqhzRgQQUer44M+KFX6xwAAAIAVwMXUyT0s5tp5wyR+87L6lp9kDR8Fey++K9H91k4p2i/EMI4k4zyvIWHKUqKpDmjvcxQmizpfKeceZv6lPYcXo7CO4dDFoR6U1gIcGYCM1Rgfxacsp10NbwA2DBO1VplNB7ffGx0nGRKRtUP4ZFkbzJiORYxr3RY4Q42HVAV9Eg== rok@oskar"
-        ];
-      };
+      users.mutableUsers = false;
+      users.users.root.openssh.authorizedKeys.keyFiles = [ ~/.ssh/id_dsa.pub ];
+      users.users.hydra.uid = config.ids.uids.hydra;
+      users.groups.hydra.gid = config.ids.gids.hydra;
 
       # From: http://www.mythmon.com/posts/2015-02-15-systemd-weechat.html
       systemd.services."weechat" = with pkgs; {
