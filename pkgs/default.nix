@@ -20,22 +20,22 @@ rec {
   chromium = pkgs.chromium.override {
     channel = "beta";
     enableHotwording = false;
-    gnomeSupport = true; 
-    gnomeKeyringSupport = true;
+    #gnomeSupport = true; 
+    #gnomeKeyringSupport = true;
     proprietaryCodecs = true;
     enablePepperFlash = true;
     enableWideVine = true;
     cupsSupport = true;
     pulseSupport = true;
-    hiDPISupport = true;
+    #hiDPISupport = true;
   };
 
   inherit (pkgs.callPackages <nixpkgs/pkgs/applications/networking/browsers/firefox> {
     inherit (pkgs.gnome) libIDL;
     inherit (pkgs.pythonPackages) pysqlite;
     libpng = pkgs.libpng_apng;
-    enableGTK3 = true;
-    enableOfficialBranding = true;
+    #enableGTK3 = true;
+    #enableOfficialBranding = true;
   }) firefox-unwrapped firefox-esr-unwrapped;
 
   firefox = pkgs.wrapFirefox firefox-unwrapped { };
