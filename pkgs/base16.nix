@@ -6,7 +6,7 @@ stdenv.mkDerivation rec {
 
   src = fetchgit {
     inherit rev;
-    url = "https://github.com/xHN35RQ/base16-builder";
+    url = "git://github.com/xHN35RQ/base16-builder.git";
     sha256 = "8036e5c472550deb2c0d247f8af67186c9b35018245cd2267c44e90d438efd58";
   };
 
