@@ -1,14 +1,21 @@
-{ stdenv, fetchgit, ruby, which }:
+{ stdenv, fetchgit, fetchurl, ruby, which }:
 
 stdenv.mkDerivation rec {
-  rev = "a73bb13d5a3480c13fa92dab6b3f4065ae694a3f";
-  name = "base16-2015-08-20_${rev}";
+  rev = "9b24598c08a27780f87c318e6145c1468b9880ba";
+  name = "base16-2015-09-29_${rev}";
 
   src = fetchgit {
     inherit rev;
-    url = "git://github.com/xHN35RQ/base16-builder.git";
-    sha256 = "8036e5c472550deb2c0d247f8af67186c9b35018245cd2267c44e90d438efd58";
+    url = "https://github.com/chriskempson/base16-builder";
+    sha256 = "05wyf0qz5z3n3g8lz2rd1b6gv6v7qjaazwjm0w4ib4anj4v026sd";
   };
+
+  patches = [
+    (fetchurl {
+        url = "https://patch-diff.githubusercontent.com/raw/chriskempson/base16-builder/pull/336.patch";
+        sha256 = "1gbz5nw6m7dgwx5jdq1mydg5afsgdq9q96284q4zpkna5rm491yj";
+      })
+  ];
 
   buildInputs = [ ruby which ];
 
