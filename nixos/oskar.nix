@@ -113,6 +113,7 @@ in {
     skype
     vlc
     zathura
+    VidyoDesktop
 
     # gnome3 theme
     gnome3.dconf
