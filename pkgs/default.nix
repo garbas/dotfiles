@@ -20,14 +20,14 @@ rec {
   chromium = pkgs.chromium.override {
     channel = "beta";
     enableHotwording = false;
-    #gnomeSupport = true; 
-    #gnomeKeyringSupport = true;
+    gnomeSupport = true; 
+    gnomeKeyringSupport = true;
     proprietaryCodecs = true;
     enablePepperFlash = true;
     enableWideVine = true;
     cupsSupport = true;
     pulseSupport = true;
-    #hiDPISupport = true;
+    hiDPISupport = true;
   };
 
   inherit (pkgs.callPackages <nixpkgs/pkgs/applications/networking/browsers/firefox> {
