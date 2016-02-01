@@ -7,7 +7,7 @@ let
 
   i3Packages = with pkgs; {
     inherit i3 i3lock feh xss-lock dunst pa_applet rxvt_unicode-with-plugins
-      connmanui redshift base16 dmenu;
+      networkmanagerapplet redshift base16 dmenu;
     inherit (xorg) xrandr;
     inherit (pythonPackages) ipython alot py3status;
     inherit (gnome3) gnome_keyring;
@@ -167,8 +167,8 @@ in {
     81.4.127.29    floki floki.garbas.si
   '';
 
-  networking.connman.enable = true;
-  # networking.networkmanager.enable = true;
+  #networking.connman.enable = true;
+  networking.networkmanager.enable = true;
 
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 80 8080 8000 24800 ];

@@ -1,6 +1,6 @@
 { i3, xrandr, feh, xss-lock, i3lock, dunst, pa_applet, py3status, lib, dmenu
 , rxvt_unicode-with-plugins, ipython, gnome_keyring, redshift, alot
-, connmanui, base16, base16Theme
+, networkmanagerapplet, base16, base16Theme
 , dark ? true
 }:
 
@@ -259,7 +259,7 @@ bindsym $mod+u border none
 #bindsym Mod4+l exec xset s activate
 
 # start dmenu (a program launcher)
-bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop --dmenu="${dmenu}/bin/dmenu -i -lh 20 -l 10 ${builtins.substring 5 (builtins.stringLength dmenuCmd) dmenuCmd}"
+bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop --dmenu="${dmenu}/bin/dmenu -i -lh 20 -l 10"
 
 # start a terminal
 bindsym $mod+Return exec urxvtc
@@ -350,7 +350,7 @@ exec --no-startup-id /home/rok/bin/launch/keyboard
 exec --no-startup-id ${dunst}/bin/dunst
 exec --no-startup-id ${pa_applet}/bin/pa-applet
 exec --no-startup-id ${rxvt_unicode-with-plugins}/bin/urxvtc -name ipython -e ${ipython}/bin/ipython
-exec --no-startup-id ${connmanui}/bin/connman-ui-gtk
+exec --no-startup-id ${networkmanagerapplet}/bin/nm-applet
 exec --no-startup-id ${rxvt_unicode-with-plugins}/bin/urxvtc -name alot -e ${alot}/bin/alot
 exec --no-startup-id ${gnome_keyring}/bin/gnome-keyring
 exec --no-startup-id ${redshift}/bin/redshift -l 46.055556:14.508333 -t 5700:3600

@@ -46,7 +46,7 @@
   services.xserver.xkbModel = "thinkpad60";
 
   services.thinkfan.enable = true;
-  services.thinkfan.sensor = "/sys/class/hwmon/hwmon0/temp1_input";
+  services.thinkfan.sensor = "/sys/class/hwmon/hwmon1/temp1_input";
   services.thinkfan.levels = ''
     (0, 0, 45)
     (1, 40, 60)
