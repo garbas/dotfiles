@@ -37,4 +37,5 @@ in getPackages [
   "urxvt-theme-switch"
   "rxvt_unicode-with-plugins"
   "dmenu"
+  "VidyoDesktop"
 ]

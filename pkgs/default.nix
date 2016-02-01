@@ -20,14 +20,14 @@ rec {
   chromium = pkgs.chromium.override {
     channel = "beta";
     enableHotwording = false;
-    gnomeSupport = true; 
-    gnomeKeyringSupport = true;
+    #gnomeSupport = true; 
+    #gnomeKeyringSupport = true;
     proprietaryCodecs = true;
     enablePepperFlash = true;
     enableWideVine = true;
     cupsSupport = true;
     pulseSupport = true;
-    hiDPISupport = true;
+    #hiDPISupport = true;
   };
 
   inherit (pkgs.callPackages <nixpkgs/pkgs/applications/networking/browsers/firefox> {
@@ -176,5 +176,12 @@ rec {
         })
     ];
   });
+
+  VidyoDesktop = import ./VidyoDesktop {
+    inherit (pkgs) stdenv fetchurl buildFHSUserEnv makeWrapper dpkg  alsaLib
+      alsaUtils alsaOss alsaTools alsaPlugins libidn utillinux mesa_glu qt4
+      zlib patchelf;
+    inherit (pkgs.xorg) libXext libXv libX11 libXfixes libXrandr libXScrnSaver;
+  };
 
 }
