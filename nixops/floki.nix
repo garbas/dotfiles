@@ -133,7 +133,10 @@ in {
         build-use-chroot = relaxed
         auto-optimise-store = true
       '';
-      nix.binaryCaches = [ "https://cache.nixos.org/" "https://hydra.nixos.org" ];
+      nix.binaryCaches = [
+        #"https://cache.nixos.org/"
+        "https://hydra.nixos.org"
+      ];
       nix.binaryCachePublicKeys = [
         "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
       ];
