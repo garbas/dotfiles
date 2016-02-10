@@ -310,11 +310,12 @@ bindsym $mod+a focus parent
 
 # reload the configuration file
 bindsym $mod+Shift+C exec "rm -f /tmp/i3-config && cp /etc/i3-config-${if dark then "dark" else "light"} /tmp/i3-config && i3-msg reload"
+bindsym $mod+Shift+D exec "rm -f /tmp/i3-config && cp /etc/i3-config-${if dark then "light" else "dark"} /tmp/i3-config && i3-msg reload"
 
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
-bindsym $mod+Shift+R restart
+bindsym $mod+Shift+R exec "rm -f /tmp/i3-config && cp /etc/i3-config-${if dark then "dark" else "light"} /tmp/i3-config && i3-msg restart"
+#bindsym $mod+Shift+R restart
 
-bindsym $mod+Shift+D exec "rm -f /tmp/i3-config && cp /etc/i3-config-${if dark then "light" else "dark"} /tmp/i3-config && i3-msg reload"
 
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+E exit
