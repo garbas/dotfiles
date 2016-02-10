@@ -186,14 +186,16 @@ in {
   programs.zsh.loginShellInit = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zprofile";
   programs.zsh.interactiveShellInit = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshrc";
 
-  # TODO: users.mutableUsers = false;
-  users.extraUsers."rok" = {
-    extraGroups = [ "wheel" "vboxusers" "networkmanager" ] ;
+  # users.mutableUsers = false;
+  users.users."rok" = {
+    hashedPassword = "11HncXhIWAVWo";
+    isNormalUser = true;
+    uid = 1000;
+    description = "Rok Garbas";
+    extraGroups = [ "wheel" "vboxusers" "networkmanager" "docker" ] ;
     group = "users";
     home = "/home/rok";
-    description = "Rok Garbas";
     shell = "/run/current-system/sw/bin/zsh";
-    uid = 1000;
   };
 
   security.setuidPrograms = [ "dumpcap" ];
@@ -206,10 +208,15 @@ in {
       }
   ];
 
+  virtualisation.docker.enable = true;
+  virtualisation.docker.socketActivation = true;
+
   virtualisation.virtualbox.host.enable = true;
 
   services.dbus.enable = true;
+
   services.locate.enable = true;
+
   services.nixosManual.showManual = true;
 
   services.openssh.enable = true;
