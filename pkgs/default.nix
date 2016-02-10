@@ -8,7 +8,7 @@ rec {
   #  - create alot theme
 
   nixos_slim_theme = pkgs.fetchurl {
-    url = "https://github.com/jagajaga/nixos-slim-theme/raw/master/nixos-slim-theme.tar.gz";
+    url = "https://github.com/jagajaga/nixos-slim-theme/archive/master.tar.gz";
     sha256 = "0bn7m3msmwnhlmfz3x3zh29bgb8vs0l4d53m3z5jkgk9ryf03nk2";
   };
 
