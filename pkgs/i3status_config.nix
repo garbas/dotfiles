@@ -3,10 +3,7 @@
 let
 in ''
 
-${builtins.replaceStrings
-  ["color_bad = \""     "# interval"]
-  ["color_bad = \"#"    "interval"]
-  (builtins.readFile "${base16}/i3status/base16-${base16Theme}.i3status")}
+${builtins.readFile "${base16}/i3status/base16-${base16Theme}.i3status"}
 
   
 order += "disk /"
