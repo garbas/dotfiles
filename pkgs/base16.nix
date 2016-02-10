@@ -12,8 +12,24 @@ stdenv.mkDerivation rec {
 
   patches = [
     (fetchurl {
-        url = "https://patch-diff.githubusercontent.com/raw/chriskempson/base16-builder/pull/336.patch";
-        sha256 = "1gbz5nw6m7dgwx5jdq1mydg5afsgdq9q96284q4zpkna5rm491yj";
+        url = "https://github.com/chriskempson/base16-builder/pull/341.patch";
+        sha256 = "1r7i22qr5maxnp8a84mwin0a48klb8fym2hkw15ichkqfn3cdqdn";
+      })
+    (fetchurl {
+        url = "https://github.com/chriskempson/base16-builder/pull/331.patch";
+        sha256 = "0hbyc9i62ihms00rk1ap0apjw8zf5axrvsk63vdy1hfyd9n5y2yf";
+      })
+    (fetchurl {
+        url = "https://github.com/chriskempson/base16-builder/pull/330.patch";
+        sha256 = "1gfsbrxzdk3pz9dmyxismc3mzgm0cz8pkmf52iz4s9gq7vkv1d14";
+      })
+    (fetchurl {
+        url = "https://github.com/chriskempson/base16-builder/pull/325.patch";
+        sha256 = "0n10yzm0n4g77z29s5f69261qy6x6kkjc6nj6ccdjlncz0bk6d8k";
+      })
+    (fetchurl {
+        url = "https://github.com/chriskempson/base16-builder/pull/318.patch";
+        sha256 = "0c044bimdbiw2n2nzzivzrvxhwk6i93lc4ydah56xhs6pp1x0i60";
       })
   ];
 
