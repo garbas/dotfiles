@@ -84,13 +84,13 @@ rec {
 
   zsh_prezto =
     let
-      rev = "f2a826e963f06a204dc0e09c05fc3e5419799f52";
+      rev = "7227c4f0bef5f8ae787c65150d7a7403394fff48";
     in pkgs.stdenv.mkDerivation rec {
       name = "zsh-prezto-2015";
       srcs = [
         (pkgs.fetchgit {
           url = "https://github.com/sorin-ionescu/prezto";
-          sha256 = "0v8wf722vd7j0p63p6lcvr2s7y91a13s522r0izcay588x9bzslj";
+          sha256 = "16hzcmbfqyksckx7ljv62abwmwny7jqrkll9lrhm3z4d5k6dd80d";
           inherit rev;
           })
         (pkgs.fetchFromGitHub {
@@ -99,6 +99,12 @@ rec {
           rev = "9b7d216ec095ccee541ebfa5f04249aa2964d054";
           sha256 = "1pvmfcqdvdi3nc1jm72f54mwf06yrmlq31pqw6b5fczawcz02jrz";
           })
+      ];
+      patches = [
+        (pkgs.fetchurl {
+          url = "https://github.com/sorin-ionescu/prezto/pull/1028.patch";
+          sha256 = "0n2s7kfp9ljrq8lw5iibv0vyv66awrkzkqbyvy7hlcl06d8aykjv";
+        })
       ];
       sourceRoot = "prezto-${builtins.substring 0 7 rev}";
       buildPhase = ''

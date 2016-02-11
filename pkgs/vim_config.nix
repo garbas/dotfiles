@@ -161,7 +161,7 @@ set colorcolumn=+1
 " }}}
 " Backups {{{
 
-set backupdir=~/.vim-backup//     " backups
+set backupdir=~/.vim/backup//     " backups
 set backupskip=/tmp/*,/private/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*¬
 set undodir=~/.vim/tmp/undo//     " undo files
 set directory=~/.vim/tmp/swap//    " swap files

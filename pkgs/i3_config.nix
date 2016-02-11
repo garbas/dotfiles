@@ -26,7 +26,7 @@ in ''
 set $mod Mod4
 
 # monitors
-set $mon_lap LVDS1
+set $mon_lap eDP1
 set $mon_ext VGA1
 
 # > horizontal | vertical | auto
