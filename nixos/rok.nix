@@ -13,8 +13,9 @@ let
     inherit (pythonPackages) ipython alot py3status;
     inherit (gnome3) gnome_keyring;
   };
-  urxvtPackages = with pkgs; { inherit xsel stdenv; };
   setxkbmapPackages = with pkgs.xorg; { inherit xinput xset setxkbmap xmodmap; };
+  urxvtPackages = with pkgs; { inherit xsel stdenv; };
+  zshPackages = with pkgs; { inherit fasd xdg_utils neovim less; };
 
 in {
 
@@ -23,17 +24,27 @@ in {
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   environment.etc."Xmodmap".text = import ./../pkgs/xmodmap_config.nix {};
+  environment.etc."gitconfig".text = import ./../pkgs/git_config.nix { inherit (pkgs) neovim; };
   environment.etc."i3-config-dark".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme i3_tray_output; inherit (pkgs) lib; dark = true; });
   environment.etc."i3-config-light".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme i3_tray_output; inherit (pkgs) lib; dark = false; });
   environment.etc."i3status-config".text = import ./../pkgs/i3status_config.nix { inherit base16Theme; inherit (pkgs) lib base16; };
+  environment.etc."setxkbmap-config".text = import ./../pkgs/setxkbmap_config.nix setxkbmapPackages;
+  environment.etc."urxvt-config".text = import ./../pkgs/urxvt_config.nix urxvtPackages;
   environment.etc."urxvt-themes/${base16Theme}-dark".text = builtins.readFile "${pkgs.base16}/xresources/base16-${base16Theme}.dark.256.xresources";
   environment.etc."urxvt-themes/${base16Theme}-light".text = builtins.readFile "${pkgs.base16}/xresources/base16-${base16Theme}.light.256.xresources";
-  environment.etc."urxvt-config".text = import ./../pkgs/urxvt_config.nix urxvtPackages;
-  environment.etc."setxkbmap-config".text = import ./../pkgs/setxkbmap_config.nix setxkbmapPackages;
-  environment.etc."gitconfig".text = import ./../pkgs/git_config.nix { inherit (pkgs) neovim; };
-
+  environment.etc."zlogin".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zlogin";
+  environment.etc."zlogout".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zlogout";
+  environment.etc."zpreztorc".text = import ./../pkgs/zsh_config.nix (zshPackages);
+  environment.etc."zprofile.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zprofile";
+  environment.etc."zshenv.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshenv";
+  environment.etc."zshrc.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshrc";
   environment.systemPackages = with pkgs;
-    (builtins.attrValues (i3Packages // urxvtPackages // setxkbmapPackages )) ++
+    (builtins.attrValues (
+      i3Packages //
+      setxkbmapPackages //
+      urxvtPackages //
+      zshPackages //
+      {})) ++
     [
 
       # TODO:
@@ -151,13 +162,7 @@ in {
 
   programs.ssh.forwardX11 = false;
   programs.ssh.startAgent = true;
-
   programs.zsh.enable = true;
-  environment.etc."zlogin".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zlogin";
-  environment.etc."zlogout".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zlogout";
-  environment.etc."zprofile.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zprofile";
-  environment.etc."zshenv.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshenv";
-  environment.etc."zshrc.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshrc";
 
   security.sudo.enable = true;
 

@@ -108,8 +108,7 @@ rec {
       ];
       sourceRoot = "prezto-${builtins.substring 0 7 rev}";
       buildPhase = ''
-        echo "${import ./zsh_config.nix { inherit pkgs; }}" > zpreztorc
-        sed -i -e "s|\''${ZDOTDIR:\-\$HOME}/.zpreztorc|$out/zpreztorc|g" init.zsh
+        sed -i -e "s|\''${ZDOTDIR:\-\$HOME}/.zpreztorc|/etc/zpreztorc|g" init.zsh
         sed -i -e "s|\''${ZDOTDIR:\-\$HOME}/.zprezto/|$out/|g" init.zsh
         for i in runcoms/*; do
           sed -i -e "s|\''${ZDOTDIR:\-\$HOME}/.zprezto/|$out/|g" $i

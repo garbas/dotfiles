@@ -1,4 +1,4 @@
-{ pkgs }:
+{ fasd, xdg_utils, neovim, less }:
 ''
 #
 # Sets Prezto options.
@@ -156,9 +156,14 @@ zstyle ':prezto:module:tmux:auto-start' local 'yes'
 # zstyle ':prezto:module:tmux:iterm' integrate 'yes'
 
 # Custom Aliases
-alias j='${pkgs.fasd}/bin/fasd -d' 
-alias jj='${pkgs.fasd}/bin/fasd -si'
-alias o='${pkgs.fasd}/bin/fasd -a -e ${pkgs.xdg_utils}/bin/xdg-open'
-alias v='${pkgs.fasd}/bin/fasd -f -e ${pkgs.neovim}/bin/nvim'
+alias j='${fasd}/bin/fasd -d'
+alias jj='${fasd}/bin/fasd -si'
+alias o='${fasd}/bin/fasd -a -e ${xdg_utils}/bin/xdg-open'
+alias v='${fasd}/bin/fasd -f -e ${neovim}/bin/nvim'
+
+
+export EDITOR='${neovim}/bin/nvim'
+export VISUAL='${neovim}/bin/nvim'
+export PAGER='${less}/bin/less'
 ''
 
