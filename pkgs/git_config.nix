@@ -35,4 +35,7 @@
 
 [status]
   submodulesummary = true
+
+[push]
+  default = simple
 ''
