@@ -225,7 +225,10 @@ in {
       ];
 
       users.mutableUsers = false;
-      users.users.root.openssh.authorizedKeys.keyFiles = [ ~/.ssh/id_dsa.pub ];
+      users.users.root.openssh.authorizedKeys.keys = [
+        "ssh-dss AAAAB3NzaC1kc3MAAACBAMSjkowfIlAJn80+5ccsUpG0Dsunbg9nVzGJF4ZU2QlcqC8Hbw7WzhvUgqE5HY4eFxdrbX5nISZTokOT2lyoRH2bIbcCILFwFOoUvdCbbG/M/X+9lOm1cRe9DG20HbhxxquAC9PAKGvUBWRmRhRUv/jyEHITX/0Sq6IyK/VaP/xjAAAAFQD1osCdij1P/Hw8nBBaUYGPDJOeJwAAAIBdKBHJUWBwJyDr1Q/lrRrVjddNP2m9gMt3cJr+7KfpENcjODBsHIpFJNkwIhYfxZSJntij7NxYL2QlI6I9j1dLG4yXH/2kgK+1R4htUTAWDspDGNj7+SruNtVmCvtIDQH3Az+95qCOxYZyOocuWE/6MoqhzRgQQUer44M+KFX6xwAAAIAVwMXUyT0s5tp5wyR+87L6lp9kDR8Fey++K9H91k4p2i/EMI4k4zyvIWHKUqKpDmjvcxQmizpfKeceZv6lPYcXo7CO4dDFoR6U1gIcGYCM1Rgfxacsp10NbwA2DBO1VplNB7ffGx0nGRKRtUP4ZFkbzJiORYxr3RY4Q42HVAV9Eg== rok@oskar"
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDVxOBeJUJmWYrniuFyDaJIxjxwwV1ikQUbp7cvOO4F63RQt0AH2Yu9/dxIefuH4yXJb8dh1rqM7MtI5U0s5atfZymqqZJIcTdDs9rc2nOqW+uqsE3ROA9y5moVEdc+jJCjQRr4/wFCQd9xlzH2vwushYnI1w9cn9kWXelI/B8hbRZ22mNiXRIOoG9W+4iX7IFLqmyukxetL/cXV5FPxvfxXxDvGfj7mQ8y3bteotOObNZo5RBSd2EE0BIceC2bMruxZX1oOBdIgiixHfjzgaeEEzlbqnjpAIG2BgCad9WVJaBnGIYJnHtYavIZvHMKTsgExwgjwHbh79YAz735qDbn5CGYj1XZQB5OerRgNsokojan2XQYbo7YP88F4MGrDJEVZrBqHRFMwee0nfIXM9tml28DDAPnntkntNdMUrIiyhkGWOzn4PUCuvLPmWLq7Dba/bpXKcLKy9bXA8QPw6OYeIpOT6a6Ax6eP2aULOYN1Wti1Xa6MX5Eml4Te32UUBviGSf/ugVumcogZulURaxsMUeK7LzXcX1GVFs+1MoOvGAgUbu45qLRJGv7qHU3LbNBDP2eqCfaBLwKiqExwMhSzAuEEH+IzSUgOk88N2RTV/0BXGBqCUc/D2iF24btEL43PqBCoCkiCrIxJg9G/CHFdRau+RUMzvWCk2X9pG9IWQ== rok@nemo"
+      ];
       users.users.hydra.uid = config.ids.uids.hydra;
       users.groups.hydra.gid = config.ids.gids.hydra;
 

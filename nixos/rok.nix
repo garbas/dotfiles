@@ -1,4 +1,6 @@
-{ pkgs, ... }:
+{ i3_tray_output }:
+
+{ pkgs, config, ... }:
 
 let
 
@@ -16,9 +18,13 @@ let
 
 in {
 
+  boot.blacklistedKernelModules = [ "snd_pcsp" "pcspkr" ];
+  boot.kernelModules = [ "fbcon" "intel_agp" "i915" ];
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   environment.etc."Xmodmap".text = import ./../pkgs/xmodmap_config.nix {};
-  environment.etc."i3-config-dark".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme; inherit (pkgs) lib; dark = true; });
-  environment.etc."i3-config-light".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme; inherit (pkgs) lib; dark = false; });
+  environment.etc."i3-config-dark".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme i3_tray_output; inherit (pkgs) lib; dark = true; });
+  environment.etc."i3-config-light".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme i3_tray_output; inherit (pkgs) lib; dark = false; });
   environment.etc."i3status-config".text = import ./../pkgs/i3status_config.nix { inherit base16Theme; inherit (pkgs) lib base16; };
   environment.etc."urxvt-themes/${base16Theme}-dark".text = builtins.readFile "${pkgs.base16}/xresources/base16-${base16Theme}.dark.256.xresources";
   environment.etc."urxvt-themes/${base16Theme}-light".text = builtins.readFile "${pkgs.base16}/xresources/base16-${base16Theme}.light.256.xresources";
@@ -61,8 +67,10 @@ in {
       mosh
       neovim
       ngrok
+      pass
       scrot
       st  # backup terminal
+      taskwarrior
       unrar
       unzip
       vifm
@@ -95,8 +103,14 @@ in {
   fonts.enableFontDir = true;
   fonts.enableGhostscriptFonts = true;
   fonts.fonts = with pkgs; [
+    anonymousPro
+    corefonts
+    dejavu_fonts
+    freefont_ttf
     liberation_ttf
+    source-code-pro
     terminus_font
+    ttf_bitstream_vera
   ];
 
   i18n.consoleFont = "Lat2-Terminus16";
@@ -104,7 +118,9 @@ in {
   i18n.defaultLocale = "en_US.UTF-8";
 
   networking.extraHosts = ''
-    81.4.127.29    floki floki.garbas.si
+    81.4.127.29 floki floki.garbas.si
+    127.0.0.1 ${config.networking.hostName}
+    ::1 ${config.networking.hostName}
   '';
   networking.networkmanager.enable = true;
   networking.firewall.enable = true;
@@ -123,19 +139,25 @@ in {
     build-use-chroot = relaxed
   '';
 
+  nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfreeRedistributable = true;
   nixpkgs.config.packageOverrides = pkgs: import ./../pkgs { inherit pkgs; };
-  nixpkgs.config.firefox.jre = false;
-  nixpkgs.config.firefox.enableGoogleTalkPlugin = true;
+
   nixpkgs.config.firefox.enableAdobeFlash = true;
+  nixpkgs.config.firefox.enableGoogleTalkPlugin = true;
+  nixpkgs.config.firefox.jre = false;
+  nixpkgs.config.zathura.useMupdf = true;
 
   programs.ssh.forwardX11 = false;
   programs.ssh.startAgent = true;
 
   programs.zsh.enable = true;
-  programs.zsh.shellInit = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshenv";
-  programs.zsh.loginShellInit = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zprofile";
-  programs.zsh.interactiveShellInit = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshrc";
+  environment.etc."zlogin".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zlogin";
+  environment.etc."zlogout".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zlogout";
+  environment.etc."zprofile.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zprofile";
+  environment.etc."zshenv.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshenv";
+  environment.etc."zshrc.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshrc";
 
   security.sudo.enable = true;
 
@@ -192,6 +214,7 @@ in {
   };
 
   users.mutableUsers = false;
+  users.users."root".shell = "/run/current-system/sw/bin/zsh";
   users.users."rok" = {
     hashedPassword = "11HncXhIWAVWo";
     isNormalUser = true;
@@ -210,4 +233,3 @@ in {
   virtualisation.virtualbox.host.enable = true;
 
 }
-

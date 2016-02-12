@@ -1,6 +1,6 @@
 { i3, xrandr, feh, xss-lock, i3lock, dunst, pa_applet, py3status, lib, dmenu
 , rxvt_unicode-with-plugins, ipython, gnome_keyring, redshift, alot
-, networkmanagerapplet, base16, base16Theme
+, networkmanagerapplet, base16, base16Theme, i3_tray_output
 , dark ? true
 }:
 
@@ -26,7 +26,7 @@ in ''
 set $mod Mod4
 
 # monitors
-set $mon_lap eDP1
+set $mon_lap ${i3_tray_output}
 set $mon_ext VGA1
 
 # > horizontal | vertical | auto

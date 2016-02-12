@@ -3,12 +3,9 @@
 {
   imports =
     [ ./hw/lenovo-x250.nix 
-      ./rok.nix
+      (./rok.nix { i3_tray_output = "eDP1"; })
     ];
 
-  boot.blacklistedKernelModules = [ "snd_pcsp" "pcspkr" ];
-  boot.kernelModules = [ "fbcon" "intek_agp" "i915" ];
-  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.device = "nodev";
   boot.loader.grub.efiSupport = true;
@@ -36,18 +33,15 @@
   fileSystems."/var".fsType = "zfs";
   fileSystems."/var".options = "defaults,noatime,acl";
 
-  hardware.bluetooth.enable = true;
-  hardware.pulseaudio.enable = true;
-
+  # hostId needed for zsh
   # cksum /etc/machine-id | while read c rest; do printf "%x" $c; done
   networking.hostId = "5eb7479f";
 
+  nix.extraOptions = ''
+    build-cores = 4
+  '';
   nix.maxJobs = 4;
 
   networking.hostName = "nemo";
-  networking.extraHosts = ''
-    127.0.0.1 nemo
-    ::1 nemo
-  '';
 
 }
