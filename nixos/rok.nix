@@ -88,6 +88,7 @@ in {
       vifm
       wget
       which
+      asciinema
 
       # gui applications
       chromium
