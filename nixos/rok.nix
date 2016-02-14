@@ -32,12 +32,12 @@ in {
   environment.etc."urxvt-config".text = import ./../pkgs/urxvt_config.nix urxvtPackages;
   environment.etc."urxvt-themes/${base16Theme}-dark".text = builtins.readFile "${pkgs.base16}/xresources/base16-${base16Theme}.dark.256.xresources";
   environment.etc."urxvt-themes/${base16Theme}-light".text = builtins.readFile "${pkgs.base16}/xresources/base16-${base16Theme}.light.256.xresources";
-  environment.etc."zlogin".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zlogin";
-  environment.etc."zlogout".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zlogout";
+  environment.etc."zlogin".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zlogin";
+  environment.etc."zlogout".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zlogout";
   environment.etc."zpreztorc".text = import ./../pkgs/zsh_config.nix (zshPackages);
-  environment.etc."zprofile.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zprofile";
-  environment.etc."zshenv.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshenv";
-  environment.etc."zshrc.local".text = builtins.readFile "${pkgs.zsh_prezto}/runcoms/zshrc";
+  environment.etc."zprofile.local".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zprofile";
+  environment.etc."zshenv.local".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zshenv";
+  environment.etc."zshrc.local".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zshrc";
   environment.systemPackages = with pkgs;
     (builtins.attrValues (
       i3Packages //
@@ -49,7 +49,7 @@ in {
 
 
       # TODO:
-      base16 zsh_prezto # should be included automatically
+      base16 zsh-prezto # should be included automatically
       fasd  # should be part of vim and zsh config
       pythonPackages.afew  # set with timer
 

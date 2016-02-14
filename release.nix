@@ -32,7 +32,7 @@ in getPackages [
   "base16"
   "ttf_bitstream_vera"
   #"st"
-  "zsh_prezto"
+  "zsh-prezto"
   #"neovim"
   "urxvt-theme-switch"
   "rxvt_unicode-with-plugins"

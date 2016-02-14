@@ -82,7 +82,7 @@ rec {
     };
   };
 
-  zsh_prezto =
+  zsh-prezto =
     let
       rev = "7227c4f0bef5f8ae787c65150d7a7403394fff48";
     in pkgs.stdenv.mkDerivation rec {
