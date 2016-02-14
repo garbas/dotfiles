@@ -12,12 +12,19 @@ order += "ethernet eth0"
 order += "cpu_temperature 0"
 order += "sysdata"
 order += "time"
-order += "battery_level"
-order += "xrandr"
+order += "battery_level 0"
+order += "battery_level 1"
 
-battery_level {
+battery_level 0 {
+  battery_id = 0
   notify_low_level = true
-  format = "{percent}% {icon}"
+  format = "B0: {percent}% {icon}"
+}
+
+battery_level 1 {
+  battery_id = 1
+  notify_low_level = true
+  format = "B1: {percent}% {icon}"
 }
 
 wireless wlp3s0 {
