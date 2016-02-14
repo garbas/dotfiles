@@ -1,15 +1,12 @@
-{ i3, xrandr, feh, xss-lock, i3lock, dunst, pa_applet, py3status, lib, dmenu
+{ i3, xrandr, feh, xss-lock, i3lock, dunst, pa_applet, py3status, lib
 , rxvt_unicode-with-plugins, ipython, gnome_keyring, redshift, alot
-, networkmanagerapplet, base16, base16Theme, i3_tray_output
+, networkmanagerapplet, base16, base16Theme, i3_tray_output, rofi, rofi-pass
 , dark ? true
 }:
 
 let
 
   i3Theme = builtins.readFile "${base16}/i3/base16-${base16Theme}.i3";
-  dmenuTheme = builtins.readFile "${base16}/dmenu/base16-${base16Theme}.${if dark then "dark" else "light"}";
-
-  dmenuCmd = builtins.replaceStrings ["\n"] [""] (lib.last (lib.splitString "\n" dmenuTheme));
   getColors = theme: builtins.head (
     lib.splitString "\n\n## remember to add the rest of your configuration" theme);
   getBarColors = theme: builtins.head (
@@ -228,10 +225,10 @@ bindsym $mod+r mode "resize"
 #{{{   Tiling / Floating / Fullscreen
 
 # toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+g floating toggle
 
 # change focus between tiling / floating windows
-#bindsym $mod+space focus mode_toggle
+bindsym $mod+g focus mode_toggle
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen
@@ -258,8 +255,10 @@ bindsym $mod+u border none
 
 #bindsym Mod4+l exec xset s activate
 
-# start dmenu (a program launcher)
-bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop --dmenu="${dmenu}/bin/dmenu -i -lh 20 -l 10"
+# rofi program launcher
+bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop --dmenu='${rofi}/bin/rofi -dmenu -p "run:"'
+bindsym $mod+Shift+space exec --no-startup-id ${rofi}/bin/rofi -show window
+bindsym $mod+Shift+p exec --no-startup-id ${rofi-pass}/bin/rofi-pass
 
 # start a terminal
 bindsym $mod+Return exec urxvtc

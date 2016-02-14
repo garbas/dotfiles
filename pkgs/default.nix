@@ -139,6 +139,8 @@ rec {
     ];
   };
 
+  rofi = pkgs.rofi.override { i3Support = true; };
+
   dmenu = pkgs.dmenu.overrideDerivation (old: {
     patches = [
 

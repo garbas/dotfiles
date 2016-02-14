@@ -8,7 +8,7 @@ let
 
   i3Packages = with pkgs; {
     inherit i3 i3lock feh xss-lock dunst pa_applet rxvt_unicode-with-plugins
-      networkmanagerapplet redshift base16 dmenu;
+      networkmanagerapplet redshift base16 rofi rofi-pass;
     inherit (xorg) xrandr;
     inherit (pythonPackages) ipython alot py3status;
     inherit (gnome3) gnome_keyring;
@@ -46,6 +46,7 @@ in {
       zshPackages //
       {})) ++
     [
+
 
       # TODO:
       base16 zsh_prezto # should be included automatically
@@ -97,12 +98,12 @@ in {
       vlc
       zathura
       #VidyoDesktop
-  
+
       # gnome3 theme
       gnome3.dconf
       gnome3.defaultIconTheme
-      gnome3.gnome_themes_standard 
-  
+      gnome3.gnome_themes_standard
+
       # nix tools
       nix-prefetch-scripts
       nix-repl
@@ -174,7 +175,7 @@ in {
   services.printing.enable = true;
   services.printing.drivers = [ pkgs.brother-hl2030 ];
 
-  services.xserver.vaapiDrivers = [ pkgs.vaapiIntel ]; 
+  services.xserver.vaapiDrivers = [ pkgs.vaapiIntel ];
   services.xserver.autorun = true;
   services.xserver.enable = true;
   services.xserver.exportConfiguration = true;
@@ -234,7 +235,7 @@ in {
   time.timeZone = "Europe/Berlin";
 
   virtualisation.docker.enable = true;
-  virtualisation.docker.socketActivation = true; 
+  virtualisation.docker.socketActivation = true;
   virtualisation.virtualbox.host.enable = true;
 
 }
