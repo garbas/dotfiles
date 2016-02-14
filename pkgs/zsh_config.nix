@@ -164,6 +164,6 @@ alias v='${fasd}/bin/fasd -f -e ${neovim}/bin/nvim'
 
 export EDITOR='${neovim}/bin/nvim'
 export VISUAL='${neovim}/bin/nvim'
-export PAGER='${less}/bin/less'
+export PAGER='${less}/bin/less -R'
 ''
 
