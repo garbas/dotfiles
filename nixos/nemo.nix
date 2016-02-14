@@ -3,7 +3,7 @@
 {
   imports =
     [ ./hw/lenovo-x250.nix 
-      (./rok.nix { i3_tray_output = "eDP1"; })
+      (import ./rok.nix { i3_tray_output = "eDP1"; })
     ];
 
   boot.loader.efi.canTouchEfiVariables = true;
