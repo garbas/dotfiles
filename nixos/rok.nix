@@ -223,6 +223,7 @@ in {
     xrdb -merge /tmp/urxvt-theme
     source /etc/setxkbmap-config
     mkdir -p ~/.vim/backup
+    systemctl --user start udiskie
   '';
 
   services.xserver.displayManager.slim.defaultUser = "rok";
@@ -247,10 +248,15 @@ in {
   };
 
   systemd.user.services.udiskie = {
-    enable = true;
+    enable = false;
     description = "Removable disk automounter";
     wantedBy = [ "default.target" ];
-    path = [ pkgs.pythonPackages.udiskie ];
+    path = with pkgs; [
+      gnome3.defaultIconTheme
+      gnome3.gnome_themes_standard
+      pythonPackages.udiskie
+    ];
+    environment.XDG_DATA_DIRS="${pkgs.gnome3.defaultIconTheme}/share:${pkgs.gnome3.gnome_themes_standard}/share";
     serviceConfig = {
       Restart = "always";
       ExecStart = "${pkgs.pythonPackages.udiskie}/bin/udiskie --automount --notify --tray --use-udisks2";
