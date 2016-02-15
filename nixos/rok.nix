@@ -214,9 +214,8 @@ in {
     wantedBy = [ "default.target" ];
     path = [ pkgs.rxvt_unicode-with-plugins ];
     serviceConfig = {
-      ExecStart = ''
-        ${pkgs.rxvt_unicode-with-plugins}/bin/urxvtd -q -o
-      '';
+      Restart = "always";
+      ExecStart = "${pkgs.rxvt_unicode-with-plugins}/bin/urxvtd -q -o";
     };
   };
 
