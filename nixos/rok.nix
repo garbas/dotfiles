@@ -219,6 +219,27 @@ in {
     };
   };
 
+  systemd.user.services.i3lock-auto = {
+    enable = true;
+    description = "Automatically lock screen after 15 minutes";
+    wantedBy = [ "default.target" ];
+    path = with pkgs; [ xautolock i3lock-fancy ];
+    serviceConfig = {
+      Restart = "always";
+      ExecStart = "${pkgs.xautolock}/bin/xautolock -time 15 -locker ${pkgs.i3lock-fancy}/bin/i3lock-fancy -detectsleep";
+    };
+  };
+
+  systemd.user.services.i3lock-sleep = {
+    enable = true;
+    description = "Automatically lock screen before going to sleep";
+    wantedBy = [ "default.target" ];
+    serviceConfig = {
+      Restart = "always";
+      ExecStart = "${pkgs.xss-lock}/bin/xss-lock ${pkgs.i3lock-fancy}/bin/i3lock-fancy";
+    };
+  };
+
   users.mutableUsers = false;
   users.users."root".shell = "/run/current-system/sw/bin/zsh";
   users.users."rok" = {
