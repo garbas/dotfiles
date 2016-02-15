@@ -7,8 +7,8 @@ let
   base16Theme = "default";
 
   i3Packages = with pkgs; {
-    inherit i3 i3lock feh xss-lock dunst pa_applet rxvt_unicode-with-plugins
-      networkmanagerapplet redshift base16 rofi rofi-pass;
+    inherit i3 feh pa_applet rxvt_unicode-with-plugins rofi-menugen
+      networkmanagerapplet redshift base16 rofi rofi-pass i3lock-fancy;
     inherit (xorg) xrandr;
     inherit (pythonPackages) ipython alot py3status;
     inherit (gnome3) gnome_keyring;
@@ -25,8 +25,8 @@ in {
 
   environment.etc."Xmodmap".text = import ./../pkgs/xmodmap_config.nix {};
   environment.etc."gitconfig".text = import ./../pkgs/git_config.nix { inherit (pkgs) neovim; };
-  environment.etc."i3-config-dark".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme i3_tray_output; inherit (pkgs) lib; dark = true; });
-  environment.etc."i3-config-light".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme i3_tray_output; inherit (pkgs) lib; dark = false; });
+  environment.etc."i3-config-dark".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme i3_tray_output; inherit (pkgs) lib writeScript; dark = true; });
+  environment.etc."i3-config-light".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme i3_tray_output; inherit (pkgs) lib writeScript; dark = false; });
   environment.etc."i3status-config".text = import ./../pkgs/i3status_config.nix { inherit base16Theme; inherit (pkgs) lib base16; };
   environment.etc."setxkbmap-config".text = import ./../pkgs/setxkbmap_config.nix setxkbmapPackages;
   environment.etc."urxvt-config".text = import ./../pkgs/urxvt_config.nix urxvtPackages;
