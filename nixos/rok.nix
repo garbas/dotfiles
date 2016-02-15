@@ -208,6 +208,17 @@ in {
     DefaultTasksAccounting=true
   '';
 
+  systemd.user.services.dunst = {
+    enable = true;
+    description = "Lightweight and customizable notification daemon";
+    wantedBy = [ "default.target" ];
+    path = [ pkgs.dunst ];
+    serviceConfig = {
+      Restart = "always";
+      ExecStart = "${pkgs.dunst}/bin/dunst";
+    };
+  };
+
   systemd.user.services.urxvtd = {
     enable = true;
     description = "RXVT-Unicode Daemon";
