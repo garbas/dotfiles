@@ -268,8 +268,8 @@ bindsym $mod+u border none
 #bindsym Mod4+l exec xset s activate
 
 # rofi program launcher
-bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop --dmenu='${rofi}/bin/rofi -dmenu -p "run:"'
-bindsym $mod+Shift+space exec --no-startup-id ${rofi}/bin/rofi -show window
+bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop --dmenu='${rofi}/bin/rofi -fuzzy -dmenu -p "run:"'
+bindsym $mod+Shift+space exec --no-startup-id ${rofi}/bin/rofi -fuzzy -show window
 bindsym $mod+Shift+p exec --no-startup-id ${rofi-pass}/bin/rofi-pass
 bindsym $mod+Shift+o exec --no-startup-id ${powerManagement}
 
