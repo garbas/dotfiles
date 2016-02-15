@@ -180,49 +180,6 @@ rec {
 
   rofi = pkgs.rofi.override { i3Support = true; };
 
-  dmenu = pkgs.dmenu.overrideDerivation (old: {
-    patches = [
-
-      # follow input focus
-      #
-      # With this patch dmenu will show up on the monitor which has input
-      # focus.
-      #
-      # http://tools.suckless.org/dmenu/patches/follow-focus
-      #
-      # TODO: patch doesn't apply
-      #(pkgs.fetchurl {
-      #    url = "http://tools.suckless.org/dmenu/patches/dmenu-4.4-follow-focus.diff";
-      #    sha256 = "0ha7d9z9dgsdnzc59977nnry0a4j247bv7ivz8fiks12wqdqlc46";
-      #  })
-
-      # fuzzymatch
-      #
-      # This patch adds support for fuzzy matching to dmenu, allowing users to
-      # type non-consecutive portions of the string to be matched.
-      #
-      # http://tools.suckless.org/dmenu/patches/fuzzymatch
-      #
-      # TODO: patch doesn't apply
-      #(pkgs.fetchurl {
-      #    url = "http://tools.suckless.org/dmenu/patches/dmenu-git-20151020-fuzzymatch.diff";
-      #    sha256 = "0swk4ggw6si9mhvpmaryxzm53cqd2wi4ijjccj4kgy9dk1q7r44h";
-      #  })
-
-      # Line height
-      #
-      # The patch adds a ‘-lh’ option, which sets the minimum height of a dmenu
-      # line. This helps integrate dmenu with other UI elements that require
-      # a particular vertical size.
-      #
-      # http://tools.suckless.org/dmenu/patches/line-height
-      (pkgs.fetchurl {
-          url = "http://tools.suckless.org/dmenu/patches/dmenu-4.6-line-height.diff";
-          sha256 = "0zdf0clnpqqsa8nwsdldhnm8jj7cc3z83yc66pxzi5lvihk7m9c1";
-        })
-    ];
-  });
-
   VidyoDesktop = import ./VidyoDesktop {
     inherit (pkgs) stdenv fetchurl buildFHSUserEnv makeWrapper dpkg  alsaLib
       alsaUtils alsaOss alsaTools alsaPlugins libidn utillinux mesa_glu qt4
