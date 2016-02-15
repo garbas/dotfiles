@@ -358,8 +358,6 @@ ${getBarColors i3Theme}
 # TODO: move this section to systemd
 exec --no-startup-id ${feh}/bin/feh  --bg-scale $HOME/wallpaper_latest.png
 exec_always xset s 900
-exec_always --no-startup-id ${xss-lock}/bin/xss-lock -- ${i3lock}/bin/i3lock -n -i $HOME/wallpaper_latest.png
-exec --no-startup-id /home/rok/bin/launch/keyboard
 exec --no-startup-id ${pa_applet}/bin/pa-applet
 exec --no-startup-id ${rxvt_unicode-with-plugins}/bin/urxvtc -name ipython -e ${ipython}/bin/ipython
 exec --no-startup-id ${networkmanagerapplet}/bin/nm-applet
