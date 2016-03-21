@@ -1,7 +1,7 @@
-{ i3, xrandr, feh, pa_applet, py3status, lib, rofi-menugen, writeScript
-, rxvt_unicode-with-plugins, ipython, gnome_keyring, redshift, alot
-, networkmanagerapplet, base16, base16Theme, i3_tray_output, rofi, rofi-pass
-, i3lock-fancy
+{ i3, i3status, xrandr, feh, pa_applet, py3status, lib, rofi-menugen
+, writeScript, rxvt_unicode-with-plugins, ipython, gnome_keyring, redshift
+, alot, networkmanagerapplet, base16, base16Theme, i3_tray_output, rofi
+, rofi-pass, i3lock-fancy, xbacklight
 , dark ? true
 }:
 
@@ -19,11 +19,27 @@ let
     #!${rofi-menugen}/bin/rofi-menugen
     #begin main
     prompt="Select:"
-    add_exec 'Sleep'        '${i3lock-fancy}/bin/i3lock-fancy'
-    add_exec 'Suspend'      'systemctl suspend'
-    add_exec 'Hibernate'    'systemctl hibernate'
+    add_exec 'Lock'         '${i3lock-fancy}/bin/i3lock-fancy'
+    add_exec 'Sleep'        'systemctl suspend'
     add_exec 'Reboot'       'systemctl reboot'
     add_exec 'PowerOff'     'systemctl poweroff'
+    #end main
+  '';
+  brigtnessManagement = writeScript "rofi-brigtness-management" ''
+    #!${rofi-menugen}/bin/rofi-menugen
+    #begin main
+    prompt="Brigtness:"
+    add_exec   "0" "${xbacklight}/bin/xbacklight -time 500 -steps 30 -set 0"
+    add_exec  "10" "${xbacklight}/bin/xbacklight -time 500 -steps 30 -set 10"
+    add_exec  "20" "${xbacklight}/bin/xbacklight -time 500 -steps 30 -set 20"
+    add_exec  "30" "${xbacklight}/bin/xbacklight -time 500 -steps 30 -set 30"
+    add_exec  "40" "${xbacklight}/bin/xbacklight -time 500 -steps 30 -set 40"
+    add_exec  "50" "${xbacklight}/bin/xbacklight -time 500 -steps 30 -set 50"
+    add_exec  "60" "${xbacklight}/bin/xbacklight -time 500 -steps 30 -set 60"
+    add_exec  "70" "${xbacklight}/bin/xbacklight -time 500 -steps 30 -set 70"
+    add_exec  "80" "${xbacklight}/bin/xbacklight -time 500 -steps 30 -set 80"
+    add_exec  "90" "${xbacklight}/bin/xbacklight -time 500 -steps 30 -set 90"
+    add_exec "100" "${xbacklight}/bin/xbacklight -time 500 -steps 30 -set 100"
     #end main
   '';
     
@@ -272,6 +288,7 @@ bindsym $mod+space exec --no-startup-id ${i3}/bin/i3-dmenu-desktop --dmenu='${ro
 bindsym $mod+Shift+space exec --no-startup-id ${rofi}/bin/rofi -fuzzy -show window
 bindsym $mod+Shift+p exec --no-startup-id ${rofi-pass}/bin/rofi-pass
 bindsym $mod+Shift+o exec --no-startup-id ${powerManagement}
+bindsym $mod+Shift+b exec --no-startup-id ${brigtnessManagement}
 
 # start a terminal
 bindsym $mod+Return exec urxvtc
