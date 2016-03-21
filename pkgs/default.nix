@@ -7,6 +7,8 @@ rec {
   #  - add afew to systemd
   #  - create alot theme
 
+  ffkiosk = import ./ffkiosk.nix { inherit pkgs; };
+
   nixos_slim_theme = pkgs.fetchurl {
     url = "https://github.com/jagajaga/nixos-slim-theme/archive/master.tar.gz";
     sha256 = "0nflmgwdwc7qy0qb3kwg96w0hw7mvxwfx77yrahv8cqbq78k0gl9";

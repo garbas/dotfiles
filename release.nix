@@ -38,4 +38,5 @@ in getPackages [
   "rxvt_unicode-with-plugins"
   "dmenu"
   "VidyoDesktop"
+  "ffkiosk"
 ]
