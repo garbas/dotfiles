@@ -7,9 +7,9 @@ let
   base16Theme = "default";
 
   i3Packages = with pkgs; {
-    inherit i3 feh pa_applet rxvt_unicode-with-plugins rofi-menugen
+    inherit i3 i3status feh pa_applet rxvt_unicode-with-plugins rofi-menugen
       networkmanagerapplet redshift base16 rofi rofi-pass i3lock-fancy;
-    inherit (xorg) xrandr;
+    inherit (xorg) xrandr xbacklight;
     inherit (pythonPackages) ipython alot py3status;
     inherit (gnome3) gnome_keyring;
   };
@@ -98,7 +98,7 @@ in {
       skype
       vlc
       zathura
-      #VidyoDesktop
+      VidyoDesktop
 
       # gnome3 theme
       gnome3.dconf
@@ -203,11 +203,15 @@ in {
   services.printing.enable = true;
   services.printing.drivers = [ pkgs.brother-hl2030 ];
 
-  services.xserver.vaapiDrivers = [ pkgs.vaapiIntel ];
   services.xserver.autorun = true;
   services.xserver.enable = true;
   services.xserver.exportConfiguration = true;
   services.xserver.layout = "us";
+  services.xserver.videoDrivers = [ "intel" ];
+  services.xserver.deviceSection = ''
+    Option "Backlight" "intel_backlight"
+    BusID "PCI:0:2:0"
+  '';
 
   services.xserver.desktopManager.default = "none";
   services.xserver.desktopManager.xterm.enable = false;

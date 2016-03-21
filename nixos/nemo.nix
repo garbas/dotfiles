@@ -28,10 +28,10 @@
   fileSystems."/home".fsType = "zfs";
   fileSystems."/tmp".device = "tmpfs";
   fileSystems."/tmp".fsType = "tmpfs";
-  fileSystems."/tmp".options = "nosuid,nodev,relatime";
+  fileSystems."/tmp".options = [ "nosuid" "nodev" "relatime" ];
   fileSystems."/var".device = "rpool/VAR";
   fileSystems."/var".fsType = "zfs";
-  fileSystems."/var".options = "defaults,noatime,acl";
+  fileSystems."/var".options = [ "defaults" "noatime" "acl" ];
 
   # hostId needed for zsh
   # cksum /etc/machine-id | while read c rest; do printf "%x" $c; done

@@ -11,7 +11,7 @@
         ];
 
       boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" ];
-      boot.kernelModules = [ ];
+      boot.kernelModules = [ "kvm-intel" ];
       boot.extraModulePackages = [ ];
 
       boot.loader.grub.enable = true;

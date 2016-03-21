@@ -8,12 +8,13 @@
   ];
   boot.extraModprobeConfig = ''
     options snd_hda_intel index=1,0
-    options thinkpad_acpi fan_control=1
+    options thinkpad_acpi fan_control=1 force-load=1
   '';
   boot.kernelModules = [ "kvm-intel" ];
 
   hardware.bluetooth.enable = true;
   hardware.pulseaudio.enable = true;
+  hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
 
   services.acpid.enable = true;
   services.thinkfan.enable = true;
@@ -26,5 +27,4 @@
     (5, 60, 85)
     (7, 65, 32767)
   '';
-  services.xserver.vaapiDrivers = [ pkgs.vaapiIntel ]; 
 }
