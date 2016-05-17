@@ -6,16 +6,26 @@ let
 
   base16Theme = "default";
 
+  themeUpdateScript = theme: ''
+    rm -f /tmp/theme-config
+    echo -n "${theme}" > /tmp/theme-config
+    cp -f /etc/termite-config-${theme} /tmp/termite-config
+    source /etc/setxkbmap-config
+    mkdir -p ~/.vim/backup
+  '';
+
+  themeDark = pkgs.writeScript "theme-dark" (themeUpdateScript "dark");
+  themeLigth = pkgs.writeScript "theme-light" (themeUpdateScript "light");
+
   i3Packages = with pkgs; {
-    inherit i3 i3status feh pa_applet rxvt_unicode-with-plugins rofi-menugen
-      networkmanagerapplet redshift base16 rofi rofi-pass i3lock-fancy;
+    inherit i3 i3status feh termite rofi-menugen networkmanagerapplet
+      redshift base16 rofi rofi-pass i3lock-fancy;
     inherit (xorg) xrandr xbacklight;
     inherit (pythonPackages) ipython alot py3status;
     inherit (gnome3) gnome_keyring;
   };
   setxkbmapPackages = with pkgs.xorg; { inherit xinput xset setxkbmap xmodmap; };
-  urxvtPackages = with pkgs; { inherit xsel stdenv; };
-  zshPackages = with pkgs; { inherit fasd xdg_utils neovim less; };
+  zshPackages = with pkgs; { inherit fasd xdg_utils neovim less zsh-prezto; };
 
 in {
 
@@ -23,35 +33,51 @@ in {
   boot.kernelModules = [ "fbcon" "intel_agp" "i915" ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  environment.etc."Xmodmap".text = import ./../pkgs/xmodmap_config.nix {};
-  environment.etc."gitconfig".text = import ./../pkgs/git_config.nix { inherit (pkgs) neovim; };
-  environment.etc."i3-config-dark".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme i3_tray_output; inherit (pkgs) lib writeScript; dark = true; });
-  environment.etc."i3-config-light".text = import ./../pkgs/i3_config.nix (i3Packages // { inherit base16Theme i3_tray_output; inherit (pkgs) lib writeScript; dark = false; });
-  environment.etc."i3status-config".text = import ./../pkgs/i3status_config.nix { inherit base16Theme; inherit (pkgs) lib base16; };
+  environment.etc."Xmodmap".text = import ./../pkgs/xmodmap_config.nix { };
+
+  environment.etc."gitconfig".text = import ./../pkgs/git_config.nix {
+    inherit (pkgs) neovim;
+  };
+
+  environment.etc."i3-config".text = import ./../pkgs/i3_config.nix (i3Packages // {
+    inherit base16Theme i3_tray_output themeDark themeLigth;
+    inherit (pkgs) lib writeScript;
+  });
+
+  environment.etc."i3status-config".text = import ./../pkgs/i3status_config.nix {
+    inherit base16Theme;
+    inherit (pkgs) lib base16;
+  };
+
   environment.etc."setxkbmap-config".text = import ./../pkgs/setxkbmap_config.nix setxkbmapPackages;
-  environment.etc."urxvt-config".text = import ./../pkgs/urxvt_config.nix urxvtPackages;
-  environment.etc."urxvt-themes/${base16Theme}-dark".text = builtins.readFile "${pkgs.base16}/xresources/base16-${base16Theme}.dark.256.xresources";
-  environment.etc."urxvt-themes/${base16Theme}-light".text = builtins.readFile "${pkgs.base16}/xresources/base16-${base16Theme}.light.256.xresources";
+
   environment.etc."zlogin".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zlogin";
   environment.etc."zlogout".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zlogout";
   environment.etc."zpreztorc".text = import ./../pkgs/zsh_config.nix (zshPackages);
   environment.etc."zprofile.local".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zprofile";
   environment.etc."zshenv.local".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zshenv";
   environment.etc."zshrc.local".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zshrc";
+
+  environment.etc."termite-config-dark".text = import ./../pkgs/termite_config.nix { inherit pkgs base16Theme; dark = true; };
+  environment.etc."termite-config-light".text = import ./../pkgs/termite_config.nix { inherit pkgs base16Theme; dark = false; };
+
   environment.systemPackages = with pkgs;
     (builtins.attrValues (
       i3Packages //
       setxkbmapPackages //
-      urxvtPackages //
       zshPackages //
       {})) ++
     [
 
+      termite.terminfo
 
-      # TODO:
-      base16 zsh-prezto # should be included automatically
-      fasd  # should be part of vim and zsh config
+      # email (TODO: we need to reconfigure mail system)
+      pythonPackages.alot
       pythonPackages.afew  # set with timer
+      msmtp
+      notmuch
+      isync
+      w3m
 
       # TODO: needed for vim's syntastic
       csslint
@@ -61,11 +87,6 @@ in {
       pythonPackages.docutils
       pythonPackages.flake8
 
-      # email (TODO: we need to reconfigure mail system)
-      msmtp
-      notmuch
-      offlineimap
-      w3m
 
       # console applications
       gitAndTools.gitflow
@@ -89,16 +110,18 @@ in {
       wget
       which
       asciinema
+      pavucontrol
 
       # gui applications
-      chromium
-      firefox
-      mplayer
+      #chromium
+      firefox-beta-bin
       pavucontrol
-      skype
+      skype  # doesnt work for some time
       vlc
+      mplayer
       zathura
       VidyoDesktop
+      #tdesktop
 
       # gnome3 theme
       gnome3.dconf
@@ -124,6 +147,7 @@ in {
     source-code-pro
     terminus_font
     ttf_bitstream_vera
+    nerdfonts
   ];
 
   i18n.consoleFont = "Lat2-Terminus16";
@@ -143,8 +167,11 @@ in {
   networking.nat.externalInterface = "wlp3s0";
 
   nix.package = pkgs.nixUnstable;
-  nix.binaryCachePublicKeys = [ "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs=" ];
-  nix.trustedBinaryCaches = [ "https://hydra.nixos.org" ];
+  nix.binaryCachePublicKeys = [
+    "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
+    "hydra.garbas.si-1:haasp6o2+/uevXZ5i9q4BrgyIu2xL2zAf6hk90EsoRk="
+  ];
+  nix.trustedBinaryCaches = [ "https://hydra.nixos.org" "http://hydra.garbas.si" ];
   nix.extraOptions = ''
     gc-keep-outputs = true
     gc-keep-derivations = true
@@ -155,7 +182,10 @@ in {
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
-  nixpkgs.config.packageOverrides = pkgs: import ./../pkgs { inherit pkgs; };
+  nixpkgs.config.packageOverrides = pkgs: (import ./../pkgs { inherit pkgs; }) // {
+    termite = pkgs.termite.override { configFile="/tmp/termite-config"; };
+  };
+
 
   nixpkgs.config.firefox.enableAdobeFlash = true;
   nixpkgs.config.firefox.enableGoogleTalkPlugin = true;
@@ -218,16 +248,10 @@ in {
 
   services.xserver.windowManager.default = "i3";
   services.xserver.windowManager.i3.enable = true;
-  services.xserver.windowManager.i3.configFile = "/tmp/i3-config";
+  services.xserver.windowManager.i3.configFile = "/etc/i3-config";
 
   services.xserver.displayManager.sessionCommands = ''
-    cp -f /etc/i3-config-dark /tmp/i3-config
-    cp -f /etc/urxvt-themes/${base16Theme}-dark /tmp/urxvt-theme
-    xrdb -merge /etc/urxvt-config
-    xrdb -merge /tmp/urxvt-theme
-    source /etc/setxkbmap-config
-    mkdir -p ~/.vim/backup
-    systemctl --user start udiskie
+    ${themeDark}
   '';
 
   services.xserver.displayManager.slim.defaultUser = "rok";
@@ -252,7 +276,7 @@ in {
   };
 
   systemd.user.services.udiskie = {
-    enable = false;
+    enable = true;
     description = "Removable disk automounter";
     wantedBy = [ "default.target" ];
     path = with pkgs; [
@@ -267,17 +291,6 @@ in {
     };
   };
 
-  systemd.user.services.urxvtd = {
-    enable = true;
-    description = "RXVT-Unicode Daemon";
-    wantedBy = [ "default.target" ];
-    path = [ pkgs.rxvt_unicode-with-plugins ];
-    serviceConfig = {
-      Restart = "always";
-      ExecStart = "${pkgs.rxvt_unicode-with-plugins}/bin/urxvtd -q -o";
-    };
-  };
-
   systemd.user.services.i3lock-auto = {
     enable = true;
     description = "Automatically lock screen after 15 minutes";
@@ -285,17 +298,7 @@ in {
     path = with pkgs; [ xautolock i3lock-fancy ];
     serviceConfig = {
       Restart = "always";
-      ExecStart = "${pkgs.xautolock}/bin/xautolock -time 15 -locker ${pkgs.i3lock-fancy}/bin/i3lock-fancy -detectsleep";
-    };
-  };
-
-  systemd.user.services.i3lock-sleep = {
-    enable = true;
-    description = "Automatically lock screen before going to sleep";
-    wantedBy = [ "default.target" ];
-    serviceConfig = {
-      Restart = "always";
-      ExecStart = "${pkgs.xss-lock}/bin/xss-lock ${pkgs.i3lock-fancy}/bin/i3lock-fancy";
+      ExecStart = "${pkgs.xautolock}/bin/xautolock -lockaftersleep -detectsleep -time 15 -locker ${pkgs.i3lock-fancy}/bin/i3lock-fancy";
     };
   };
 

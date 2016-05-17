@@ -1,8 +1,7 @@
-{ i3, i3status, xrandr, feh, pa_applet, py3status, lib, rofi-menugen
-, writeScript, rxvt_unicode-with-plugins, ipython, gnome_keyring, redshift
-, alot, networkmanagerapplet, base16, base16Theme, i3_tray_output, rofi
-, rofi-pass, i3lock-fancy, xbacklight
-, dark ? true
+{ i3, i3status, xrandr, feh, py3status, lib, rofi-menugen, writeScript
+, termite, ipython, gnome_keyring, redshift, alot, networkmanagerapplet
+, base16, rofi, rofi-pass, i3lock-fancy, xbacklight
+, base16Theme, i3_tray_output, themeDark, themeLigth
 }:
 
 let
@@ -291,9 +290,7 @@ bindsym $mod+Shift+o exec --no-startup-id ${powerManagement}
 bindsym $mod+Shift+b exec --no-startup-id ${brigtnessManagement}
 
 # start a terminal
-bindsym $mod+Return exec urxvtc
-bindsym $mod+Shift+Return exec urxvtc -name LURxvt
-#bindsym $mod+Return exec st
+bindsym $mod+Return exec ${termite}/bin/termite
 
 # ipython
 bindsym $mod+Shift+i [instance="ipython"] scratchpad show
@@ -338,12 +335,11 @@ bindsym $mod+a focus parent
 #bindcode $mod+d focus child
 
 # reload the configuration file
-bindsym $mod+Shift+C exec "rm -f /tmp/i3-config && cp /etc/i3-config-${if dark then "dark" else "light"} /tmp/i3-config && i3-msg reload"
-bindsym $mod+Shift+D exec "rm -f /tmp/i3-config && cp /etc/i3-config-${if dark then "light" else "dark"} /tmp/i3-config && i3-msg reload"
+bindsym $mod+Shift+C exec "${themeLigth} && i3-msg reload"
+bindsym $mod+Shift+D exec "${themeDark} && i3-msg reload"
 
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
-bindsym $mod+Shift+R exec "rm -f /tmp/i3-config && cp /etc/i3-config-${if dark then "dark" else "light"} /tmp/i3-config && i3-msg restart"
-#bindsym $mod+Shift+R restart
+bindsym $mod+Shift+R restart
 
 
 # exit i3 (logs you out of your X session)
@@ -375,10 +371,9 @@ ${getBarColors i3Theme}
 # TODO: move this section to systemd
 exec --no-startup-id ${feh}/bin/feh  --bg-scale $HOME/wallpaper_latest.png
 exec_always xset s 900
-exec --no-startup-id ${pa_applet}/bin/pa-applet
-exec --no-startup-id ${rxvt_unicode-with-plugins}/bin/urxvtc -name ipython -e ${ipython}/bin/ipython
 exec --no-startup-id ${networkmanagerapplet}/bin/nm-applet
-exec --no-startup-id ${rxvt_unicode-with-plugins}/bin/urxvtc -name alot -e ${alot}/bin/alot
+exec --no-startup-id ${termite}/bin/termite --name alot -e ${alot}/bin/alot
+exec --no-startup-id ${termite}/bin/termite --name ipython -e ${ipython}/bin/ipython
 exec --no-startup-id ${gnome_keyring}/bin/gnome-keyring
 exec --no-startup-id ${redshift}/bin/redshift -l 46.055556:14.508333 -t 5700:3600
 

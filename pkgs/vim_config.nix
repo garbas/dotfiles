@@ -1,4 +1,4 @@
-{ pkgs, base16, base16Theme }:
+{ pkgs, base16Theme }:
 {
   customRC = ''
 
@@ -19,7 +19,7 @@ let maplocalleader = "\\"
 
 let g:gist_detect_filetype = 1
 let g:gist_open_browser_after_post = 1
-let g:gist_browser_command = "${pkgs.firefox} %URL%"
+let g:gist_browser_command = "${pkgs.firefox-developer-bin} %URL%"
 
 let g:ctrlp_dont_split = "NERD_tree_2"
 let g:ctrlp_extensions = ["undo", "bookmarkdir", "funky"]
@@ -172,7 +172,7 @@ set noswapfile                    " It's 2012, Vim.
 " Color scheme {{{
 
 let base16colorspace=256
-let g:base16_shell_path="${base16}/shell"
+let g:base16_shell_path="${pkgs.base16}/shell"
 
 syntax on
 filetype on
@@ -573,8 +573,8 @@ endfunc
 
 " }}}
 
-${builtins.readFile "${base16}/vim/base16-${base16Theme}.vim"}
-${builtins.readFile "${base16}/vim-airline/base16-${base16Theme}.vim"}
+${builtins.readFile "${pkgs.base16}/vim/base16-${base16Theme}.vim"}
+${builtins.readFile "${pkgs.base16}/vim-airline/base16-${base16Theme}.vim"}
 
   '';
   vam.pluginDictionaries = [
