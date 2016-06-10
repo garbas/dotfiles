@@ -29,9 +29,7 @@ let
 
 in {
 
-  boot.blacklistedKernelModules = [ "snd_pcsp" "pcspkr" ];
-  boot.kernelModules = [ "fbcon" "intel_agp" "i915" ];
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  imports = [ ./common.nix ];
 
   environment.etc."Xmodmap".text = import ./../pkgs/xmodmap_config.nix { };
 
@@ -128,12 +126,6 @@ in {
       gnome3.defaultIconTheme
       gnome3.gnome_themes_standard
 
-      # nix tools
-      nix-prefetch-scripts
-      nix-repl
-      nixops
-      nodePackages.npm2nix
-      nox
     ];
 
   fonts.enableFontDir = true;
@@ -150,53 +142,14 @@ in {
     nerdfonts
   ];
 
-  i18n.consoleFont = "Lat2-Terminus16";
-  i18n.consoleKeyMap = "us";
-  i18n.defaultLocale = "en_US.UTF-8";
-
   networking.extraHosts = ''
     81.4.127.29 floki floki.garbas.si
     127.0.0.1 ${config.networking.hostName}
     ::1 ${config.networking.hostName}
   '';
-  networking.networkmanager.enable = true;
-  networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ 80 8080 8000 24800 ];
-  networking.nat.enable = true;
-  networking.nat.internalInterfaces = ["ve-+"];
-  networking.nat.externalInterface = "wlp3s0";
 
-  nix.package = pkgs.nixUnstable;
-  nix.binaryCachePublicKeys = [
-    "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
-    "hydra.garbas.si-1:haasp6o2+/uevXZ5i9q4BrgyIu2xL2zAf6hk90EsoRk="
-  ];
-  nix.trustedBinaryCaches = [ "https://hydra.nixos.org" "http://hydra.garbas.si" ];
-  nix.extraOptions = ''
-    gc-keep-outputs = true
-    gc-keep-derivations = true
-    auto-optimise-store = true
-    build-use-chroot = relaxed
-  '';
-
-  nixpkgs.config.allowBroken = false;
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.allowUnfreeRedistributable = true;
-  nixpkgs.config.packageOverrides = pkgs: (import ./../pkgs { inherit pkgs; }) // {
-    termite = pkgs.termite.override { configFile="/tmp/termite-config"; };
-  };
-
-
-  nixpkgs.config.firefox.enableAdobeFlash = true;
-  nixpkgs.config.firefox.enableGoogleTalkPlugin = true;
-  nixpkgs.config.firefox.jre = false;
-  nixpkgs.config.zathura.useMupdf = true;
-
-  programs.ssh.forwardX11 = false;
-  programs.ssh.startAgent = true;
   programs.zsh.enable = true;
 
-  security.sudo.enable = true;
   security.polkit.extraConfig = ''
     polkit.addRule(function(action, subject) {
       var YES = polkit.Result.YES;
@@ -225,47 +178,12 @@ in {
     });
   '';
 
-  services.dbus.enable = true;
-  services.locate.enable = true;
-  services.nixosManual.showManual = true;
-  services.openssh.enable = true;
-
-  services.printing.enable = true;
-  services.printing.drivers = [ pkgs.brother-hl2030 ];
-
-  services.xserver.autorun = true;
-  services.xserver.enable = true;
-  services.xserver.exportConfiguration = true;
-  services.xserver.layout = "us";
-  services.xserver.videoDrivers = [ "intel" ];
-  services.xserver.deviceSection = ''
-    Option "Backlight" "intel_backlight"
-    BusID "PCI:0:2:0"
-  '';
-
-  services.xserver.desktopManager.default = "none";
-  services.xserver.desktopManager.xterm.enable = false;
-
-  services.xserver.windowManager.default = "i3";
-  services.xserver.windowManager.i3.enable = true;
-  services.xserver.windowManager.i3.configFile = "/etc/i3-config";
-
   services.xserver.displayManager.sessionCommands = ''
     ${themeDark}
   '';
 
-  services.xserver.displayManager.slim.defaultUser = "rok";
-  services.xserver.displayManager.slim.theme = pkgs.nixos_slim_theme;
-
-  systemd.extraConfig = ''
-    DefaultCPUAccounting=true
-    DefaultBlockIOAccounting=true
-    DefaultMemoryAccounting=true
-    DefaultTasksAccounting=true
-  '';
-
   systemd.user.services.dunst = {
-    enable = true;
+    enable = false;
     description = "Lightweight and customizable notification daemon";
     wantedBy = [ "default.target" ];
     path = [ pkgs.dunst ];
@@ -276,7 +194,7 @@ in {
   };
 
   systemd.user.services.udiskie = {
-    enable = true;
+    enable = false;
     description = "Removable disk automounter";
     wantedBy = [ "default.target" ];
     path = with pkgs; [
@@ -292,7 +210,7 @@ in {
   };
 
   systemd.user.services.i3lock-auto = {
-    enable = true;
+    enable = false;
     description = "Automatically lock screen after 15 minutes";
     wantedBy = [ "default.target" ];
     path = with pkgs; [ xautolock i3lock-fancy ];
@@ -302,10 +220,8 @@ in {
     };
   };
 
-  users.mutableUsers = false;
-  users.users."root".shell = "/run/current-system/sw/bin/zsh";
   users.users."rok" = {
-    hashedPassword = "11HncXhIWAVWo";
+    hashedPassword = "$6$PS.1SD6/$kUv8wdXYH00dEvpqlC9SyX/E3Zm3HLPNmsxLwteJSQgpXDOfFZhWXkHby6hvZ.kFN2JbgXqJvwZfjOunBpcHX0";
     isNormalUser = true;
     uid = 1000;
     description = "Rok Garbas";
@@ -315,10 +231,7 @@ in {
     shell = "/run/current-system/sw/bin/zsh";
   };
 
-  time.timeZone = "Europe/Berlin";
-
   virtualisation.docker.enable = true;
   virtualisation.docker.socketActivation = true;
-  virtualisation.virtualbox.host.enable = true;
 
 }

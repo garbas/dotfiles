@@ -44,4 +44,21 @@
 
   networking.hostName = "nemo";
 
+  services.xserver.displayManager.slim.defaultUser = "rok";
+  services.xserver.desktopManager.default = "none";
+
+  # XXX: is this needed
+  services.xserver.videoDrivers = [ "intel" ];
+  services.xserver.deviceSection = ''
+    Option "Backlight" "intel_backlight"
+    BusID "PCI:0:2:0"
+  '';
+
+  systemd.user.services.dunst.enable = true;
+  systemd.user.services.udiskie.enable = true;
+  systemd.user.services.i3lock-auto.enable = true;
+
+  services.xserver.windowManager.default = "i3";
+  services.xserver.windowManager.i3.enable = true;
+  services.xserver.windowManager.i3.configFile = "/etc/i3-config";
 }

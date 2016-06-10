@@ -3,7 +3,7 @@
 {
   imports =
     [ ./hw/lenovo-x220.nix 
-      (import ./rok.nix { i3_tray_output = "LVDS1"; })
+      (import ./marta.nix { })
     ];
 
   boot.initrd.kernelModules = [ "dm_mod" "dm-crypt" "ext4" "ecb" ];
@@ -21,7 +21,16 @@
   fileSystems."/boot".label = "boot";
   fileSystems."/tmp".device = "tmpfs";
   fileSystems."/tmp".fsType = "tmpfs";
-  fileSystems."/tmp".options = "nosuid,nodev,relatime";
+  fileSystems."/tmp".options = [ "nosuid" "nodev" "relatime" ];
+
+  services.xserver.videoDrivers = [ "intel" ];
+  services.xserver.deviceSection = ''
+    Option "Backlight" "intel_backlight"
+    BusID "PCI:0:2:0"
+  '';
+
+  services.xserver.desktopManager.gnome3.enable = true;
+  services.xserver.displayManager.gdm.enable = true;
 
   nix.extraOptions = ''
     build-cores = 4
@@ -30,5 +39,7 @@
 
   networking.hostName = "oskar";
 
-  #i18n.consoleFont = "lat9w-16";
+  services.xserver.displayManager.slim.defaultUser = "marta";
+  services.xserver.desktopManager.default = "gnome3";
+
 }
