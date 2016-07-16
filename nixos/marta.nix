@@ -20,6 +20,19 @@
     neovim
   ];
 
+  fonts.enableFontDir = true;
+  fonts.enableGhostscriptFonts = true;
+  fonts.fonts = with pkgs; [
+    anonymousPro
+    corefonts
+    dejavu_fonts
+    freefont_ttf
+    liberation_ttf
+    source-code-pro
+    terminus_font
+    ttf_bitstream_vera
+  ];
+
   users.users."marta" = {
     hashedPassword = "$6$7dMLWxcLDtuSYeR$JtD.4LVc3SwB2JZzcjHFllyxtg2hZvoXZ.SJ7SHXaEzJAoFr2t8Sjpmbk3/VNmLNMcIxmOpx.icLy.y5lpSom/";
     isNormalUser = true;
