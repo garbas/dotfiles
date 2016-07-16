@@ -17,6 +17,7 @@
     libreoffice
     sublime
     shotwell
+    neovim
   ];
 
   users.users."marta" = {
