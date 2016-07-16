@@ -183,76 +183,9 @@ in {
     });
   '';
 
-  # --
-
-  services.dbus.enable = true;
-  services.locate.enable = true;
-  services.nixosManual.showManual = true;
-  services.openssh.enable = true;
-
-  services.printing.enable = true;
-  services.printing.drivers = [ pkgs.brother-hl2030 pkgs.hplipWithPlugin ];
-
-  services.xserver.autorun = true;
-  services.xserver.enable = true;
-  services.xserver.exportConfiguration = true;
-  services.xserver.layout = "us";
-  services.xserver.videoDrivers = [ "intel" ];
-  services.xserver.deviceSection = ''
-    Option "Backlight" "intel_backlight"
-    BusID "PCI:0:2:0"
-  '';
-
-  services.xserver.desktopManager.default = "none";
-  services.xserver.desktopManager.xterm.enable = false;
-
-  services.xserver.windowManager.default = "i3";
-  services.xserver.windowManager.i3.enable = true;
-  services.xserver.windowManager.i3.configFile = "/tmp/config/i3";
-
-  # -
-
   services.xserver.displayManager.sessionCommands = ''
     ${themeDark}
   '';
-
-  systemd.user.services.dunst = {
-    enable = false;
-    description = "Lightweight and customizable notification daemon";
-    wantedBy = [ "default.target" ];
-    path = [ pkgs.dunst ];
-    serviceConfig = {
-      Restart = "always";
-      ExecStart = "${pkgs.dunst}/bin/dunst";  # TODO configure theme
-    };
-  };
-
-  systemd.user.services.udiskie = {
-    enable = false;
-    description = "Removable disk automounter";
-    wantedBy = [ "default.target" ];
-    path = with pkgs; [
-      gnome3.defaultIconTheme
-      gnome3.gnome_themes_standard
-      pythonPackages.udiskie
-    ];
-    environment.XDG_DATA_DIRS="${pkgs.gnome3.defaultIconTheme}/share:${pkgs.gnome3.gnome_themes_standard}/share";
-    serviceConfig = {
-      Restart = "always";  # there is no tray icon
-      ExecStart = "${pkgs.pythonPackages.udiskie}/bin/udiskie --automount --notify --tray --use-udisks2";
-    };
-  };
-
-  systemd.user.services.i3lock-auto = {
-    enable = false;
-    description = "Automatically lock screen after 15 minutes";
-    wantedBy = [ "default.target" ];
-    path = with pkgs; [ xautolock i3lock-fancy ];
-    serviceConfig = {
-      Restart = "always";  # TODO: lockaftersleep does not work
-      ExecStart = "${pkgs.xautolock}/bin/xautolock -lockaftersleep -detectsleep -time 15 -locker ${pkgs.i3lock-fancy}/bin/i3lock-fancy";
-    };
-  };
 
   users.users."rok" = {
     hashedPassword = "$6$PS.1SD6/$kUv8wdXYH00dEvpqlC9SyX/E3Zm3HLPNmsxLwteJSQgpXDOfFZhWXkHby6hvZ.kFN2JbgXqJvwZfjOunBpcHX0";

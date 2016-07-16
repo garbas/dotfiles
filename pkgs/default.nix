@@ -22,8 +22,8 @@ rec {
     ghostscript = pkgs.ghostscript.override { x11Support = false; cupsSupport = true; };
   };
 
-  #firefox = pkgs.firefox-beta-bin;
-  firefox = pkgs.firefox-developer-bin;
+  firefox = pkgs.firefox-beta-bin;
+  #firefox = pkgs.firefox-developer-bin;
 
   weechat = pkgs.weechat.override {
     extraBuildInputs = [ pkgs.pythonPackages.websocket_client ];
