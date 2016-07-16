@@ -14,6 +14,7 @@
 
   hardware.bluetooth.enable = true;
   hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.package = pkgs.pulseaudioFull;
   hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
 
   services.acpid.enable = true;
