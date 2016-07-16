@@ -7,6 +7,9 @@
       ${xinput}/bin/xinput set-int-prop $id "Evdev Wheel Emulation Timeout" 8 200 2>/dev/null &
       ${xinput}/bin/xinput set-int-prop $id "Evdev Wheel Emulation Axes" 8 6 7 4 5 2>/dev/null &
   done
+  for id in `${xinput}/bin/xinput list |grep -i touchpad |cut -d= -f2 |cut -d'[' -f1`; do
+      ${xinput}/bin/xinput set-prop $id "Device Enabled" 0 2>/dev/null &
+  done
 
   # bell off
   ${xset}/bin/xset b off &

@@ -1,4 +1,4 @@
-{ fasd, xdg_utils, neovim, less, ... }:
+{ fzf, xdg_utils, neovim, less, ... }:
 ''
 
 # Color output (auto set to 'no' on dumb terminals).
@@ -68,15 +68,38 @@ zstyle ':prezto:module:terminal:window-title' format '%n@%m: %s'
 # -------------------------------------------------
 
 
-# Custom Aliases
-alias j='${fasd}/bin/fasd -d'
-alias jj='${fasd}/bin/fasd -si'
-alias o='${fasd}/bin/fasd -a -e ${xdg_utils}/bin/xdg-open'
-alias v='${fasd}/bin/fasd -f -e ${neovim}/bin/nvim'
+# fd - cd to selected directory
+j() {
+  local dir
+  dir=$(find ''${1:-*} -path '*/\.*' -prune \
+                  -o -type d -print 2> /dev/null | ${fzf}/bin/fzf +m) &&
+  cd "$dir"
+}
 
+# fda - including hidden directories
+ja() {
+  local dir
+  dir=$(find ''${1:-.} -type d 2> /dev/null | ${fzf}/bin/fzf +m) && cd "$dir"
+}
+
+# fdr - cd to selected parent directory
+jj() {
+  local declare dirs=()
+  get_parent_dirs() {
+    if [[ -d "''${1}" ]]; then dirs+=("$1"); else return; fi
+    if [[ "''${1}" == '/' ]]; then
+      for _dir in "''${dirs[@]}"; do echo $_dir; done
+    else
+      get_parent_dirs $(dirname "$1")
+    fi
+  }
+  local DIR=$(get_parent_dirs $(realpath "''${1:-$(pwd)}") | ${fzf}/bin/fzf-tmux --tac)
+  cd "$DIR"
+}
 
 export EDITOR='${neovim}/bin/nvim'
 export VISUAL='${neovim}/bin/nvim'
 export PAGER='${less}/bin/less -R'
+
 ''
 

@@ -1,6 +1,6 @@
 { stdenv, fetchurl, buildFHSUserEnv, makeWrapper, dpkg, alsaLib, alsaUtils
 , alsaOss, alsaTools, alsaPlugins, libidn, utillinux, mesa_glu, qt4, zlib
-, patchelf
+, patchelf, gnome2, libpng12, fontconfig, freetype, libffi, file
 , libXext, libXv, libX11, libXfixes, libXrandr, libXScrnSaver
 }:
 
@@ -10,8 +10,8 @@ let
     builder = ./builder.sh;
     inherit dpkg;
     src = fetchurl {
-      url = "https://v.mozilla.com/upload/VidyoDesktopInstaller-ubuntu64-TAG_VD_3_3_0_027.deb";
-      sha256 = "045f9z421qpcm45bmh98f3h7bd46rdjvcbdpv4rlw9ribncv66dc";
+      url = "https://demo.vidyo.com/upload/VidyoDesktopInstaller-ubuntu64-TAG_VD_3_6_3_017.deb";
+      sha256 = "01spq6r49myv82fdimvq3ykwb1lc5bymylzcydfdp9xz57f5a94x";
     };
     buildInputs = [ makeWrapper ];
   };
@@ -21,8 +21,10 @@ in buildFHSUserEnv {
   targetPkgs = pkgs: [ VidyoDesktopDeb ];
   multiPkgs = pkgs: [
     patchelf dpkg alsaLib alsaUtils alsaOss alsaTools alsaPlugins
-    libidn utillinux mesa_glu qt4 zlib libXext libXv libX11 libXfixes
-    libXrandr libXScrnSaver
+    libidn utillinux mesa_glu zlib libXext libXv libX11 libXfixes
+    libXrandr libXScrnSaver libpng12 fontconfig freetype libffi
+    gnome2.zenity
+    qt4 file
   ];
   extraBuildCommands = ''
     ln -s ${VidyoDesktopDeb}/opt $out/opt

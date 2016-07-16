@@ -1,6 +1,6 @@
 { i3, i3status, xrandr, feh, py3status, lib, rofi-menugen, writeScript
 , termite, ipython, gnome_keyring, redshift, alot, networkmanagerapplet
-, base16, rofi, rofi-pass, i3lock-fancy, xbacklight
+, base16, rofi, rofi-pass, i3lock-fancy, xbacklight, pa_applet
 , base16Theme, i3_tray_output, themeDark, themeLigth
 }:
 
@@ -51,7 +51,7 @@ set $mod Mod4
 
 # monitors
 set $mon_lap ${i3_tray_output}
-set $mon_ext VGA1
+set $mon_ext HDMI1
 
 # > horizontal | vertical | auto
 default_orientation horizontal
@@ -369,6 +369,7 @@ ${getBarColors i3Theme}
 #{{{ Autostart
 
 # TODO: move this section to systemd
+exec --no-startup-id ${pa_applet}/bin/pa-applet
 exec --no-startup-id ${feh}/bin/feh  --bg-scale $HOME/wallpaper_latest.png
 exec_always xset s 900
 exec --no-startup-id ${networkmanagerapplet}/bin/nm-applet

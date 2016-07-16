@@ -2,14 +2,38 @@
 
 { pkgs, config, ... }:
 
+# TODO:
+#
+# email (need to reconfigure mail stuff)
+#  pythonPackages.alot
+#  pythonPackages.afew  # set with timer
+#  msmtp
+#  notmuch
+#  isync
+#  w3m
+#
+#xautolocakk
+#  http://rabexc.org/posts/awesome-xautolock-battery
+#  https://faq.i3wm.org/question/5102/i3lock-how-to-enable-auto-lock-after-wake-up-from-suspend-solved.1.html
+#
+# to setup
+#  https://certbot.eff.org/#pip-nginx
+#
+# to package
+#  https://pypi.python.org/pypi/weetwit
+#  http://turses.readthedocs.io/en/latest/user/configuration.html#twitter
+#  https://github.com/eliangcs/http-prompt
+
 let
 
   base16Theme = "default";
 
   themeUpdateScript = theme: ''
-    rm -f /tmp/theme-config
-    echo -n "${theme}" > /tmp/theme-config
-    cp -f /etc/termite-config-${theme} /tmp/termite-config
+    rm -rf /tmp/config
+    mkdir -p /tmp/config
+    echo -n "${theme}" > /tmp/config/theme
+    cp -f /etc/termite-config-${theme} /tmp/config/termite
+    cp -f /etc/i3-config /tmp/config/i3
     source /etc/setxkbmap-config
     mkdir -p ~/.vim/backup
   '';
@@ -19,13 +43,13 @@ let
 
   i3Packages = with pkgs; {
     inherit i3 i3status feh termite rofi-menugen networkmanagerapplet
-      redshift base16 rofi rofi-pass i3lock-fancy;
+      redshift base16 rofi rofi-pass i3lock-fancy pa_applet;
     inherit (xorg) xrandr xbacklight;
     inherit (pythonPackages) ipython alot py3status;
     inherit (gnome3) gnome_keyring;
   };
   setxkbmapPackages = with pkgs.xorg; { inherit xinput xset setxkbmap xmodmap; };
-  zshPackages = with pkgs; { inherit fasd xdg_utils neovim less zsh-prezto; };
+  zshPackages = with pkgs; { inherit fzf xdg_utils neovim less zsh-prezto; };
 
 in {
 
@@ -69,23 +93,6 @@ in {
 
       termite.terminfo
 
-      # email (TODO: we need to reconfigure mail system)
-      pythonPackages.alot
-      pythonPackages.afew  # set with timer
-      msmtp
-      notmuch
-      isync
-      w3m
-
-      # TODO: needed for vim's syntastic
-      csslint
-      ctags
-      htmlTidy
-      phantomjs
-      pythonPackages.docutils
-      pythonPackages.flake8
-
-
       # console applications
       gitAndTools.gitflow
       gitAndTools.tig
@@ -109,17 +116,15 @@ in {
       which
       asciinema
       pavucontrol
+      mpv
 
       # gui applications
-      #chromium
-      firefox-beta-bin
+      chromium
+      firefox
       pavucontrol
       skype  # doesnt work for some time
-      vlc
-      mplayer
       zathura
       VidyoDesktop
-      #tdesktop
 
       # gnome3 theme
       gnome3.dconf
@@ -178,6 +183,35 @@ in {
     });
   '';
 
+  # --
+
+  services.dbus.enable = true;
+  services.locate.enable = true;
+  services.nixosManual.showManual = true;
+  services.openssh.enable = true;
+
+  services.printing.enable = true;
+  services.printing.drivers = [ pkgs.brother-hl2030 pkgs.hplipWithPlugin ];
+
+  services.xserver.autorun = true;
+  services.xserver.enable = true;
+  services.xserver.exportConfiguration = true;
+  services.xserver.layout = "us";
+  services.xserver.videoDrivers = [ "intel" ];
+  services.xserver.deviceSection = ''
+    Option "Backlight" "intel_backlight"
+    BusID "PCI:0:2:0"
+  '';
+
+  services.xserver.desktopManager.default = "none";
+  services.xserver.desktopManager.xterm.enable = false;
+
+  services.xserver.windowManager.default = "i3";
+  services.xserver.windowManager.i3.enable = true;
+  services.xserver.windowManager.i3.configFile = "/tmp/config/i3";
+
+  # -
+
   services.xserver.displayManager.sessionCommands = ''
     ${themeDark}
   '';
@@ -189,7 +223,7 @@ in {
     path = [ pkgs.dunst ];
     serviceConfig = {
       Restart = "always";
-      ExecStart = "${pkgs.dunst}/bin/dunst";
+      ExecStart = "${pkgs.dunst}/bin/dunst";  # TODO configure theme
     };
   };
 
@@ -204,7 +238,7 @@ in {
     ];
     environment.XDG_DATA_DIRS="${pkgs.gnome3.defaultIconTheme}/share:${pkgs.gnome3.gnome_themes_standard}/share";
     serviceConfig = {
-      Restart = "always";
+      Restart = "always";  # there is no tray icon
       ExecStart = "${pkgs.pythonPackages.udiskie}/bin/udiskie --automount --notify --tray --use-udisks2";
     };
   };
@@ -215,7 +249,7 @@ in {
     wantedBy = [ "default.target" ];
     path = with pkgs; [ xautolock i3lock-fancy ];
     serviceConfig = {
-      Restart = "always";
+      Restart = "always";  # TODO: lockaftersleep does not work
       ExecStart = "${pkgs.xautolock}/bin/xautolock -lockaftersleep -detectsleep -time 15 -locker ${pkgs.i3lock-fancy}/bin/i3lock-fancy";
     };
   };

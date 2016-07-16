@@ -9,6 +9,17 @@ let maplocalleader = ","
 set number
 set norelativenumber
 
+" history / backup / undo
+set history=1000
+set undofile
+set undoreload=10000
+set undodir=~/.vim/tmp/undo/
+set backup
+set backupdir=~/.vim/backup/
+set backupskip=/tmp/*,/private/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*
+set noswapfile
+set directory=~/.vim/tmp/swap/
+
 " Save when losing focus
 au FocusLost * :wa
 
@@ -98,7 +109,7 @@ set noswapfile                    " It's 2012, Vim.
 let base16colorspace=256
 let g:base16_shell_path="${pkgs.base16}/shell"
 
-if readfile('/tmp/theme-config')[0] == 'dark'
+if readfile('/tmp/config/theme')[0] == 'dark'
   set background=dark
 else
   set background=light
@@ -162,9 +173,68 @@ let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
 
+" vim-startify
+
+let g:startify_enable_special         = 0
+let g:startify_files_number           = 8
+let g:startify_relative_path          = 1
+let g:startify_change_to_dir          = 1
+let g:startify_update_oldfiles        = 1
+let g:startify_session_autoload       = 1
+let g:startify_session_persistence    = 1
+let g:startify_session_delete_buffers = 1
+
+let g:startify_list_order = [
+  \ ['   Bookmarks:'],
+  \ 'bookmarks',
+  \ ['   Sessions:'],
+  \ 'sessions',
+  \ ['   Recent in this dir:'],
+  \ 'dir',
+  \ ['   Recent:'],
+  \ 'files',
+  \ ]
+
+let g:startify_bookmarks = [
+  \ { 'c': '~/dev/dotfiles/pkgs/nvim_config.nix' },
+  \ { 'n': '~/dev/nixos/nixpkgs' },
+  \ '~/dev/mozilla/relengapi/src/relengapi_tools/',
+  \ ]
+
+let g:startify_custom_footer =
+  \ ["", "   Vim is charityware. Please read ':help uganda'.", ""]
+
+hi StartifyBracket ctermfg=240
+hi StartifyFile    ctermfg=147
+hi StartifyFooter  ctermfg=240
+hi StartifyHeader  ctermfg=114
+hi StartifyNumber  ctermfg=215
+hi StartifyPath    ctermfg=245
+hi StartifySlash   ctermfg=240
+hi StartifySpecial ctermfg=240
+
 " deoplete.
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
+let g:deoplete#sources = {}
+let g:deoplete#sources._ = ['buffer', 'file', 'omni', 'ultisnips']
+"let g:deoplete#sources.python = ['jedi']
+"let g:deoplete#sources.rust = ['racer']
+"let g:deoplete#sources.javascript = ['termjs']
+
+set completeopt=longest,menuone,preview  " Better Completion
+
+" Let <Tab> also do completion
+inoremap <silent><expr> <Tab>
+\ pumvisible() ? "\<C-n>" :
+\ deoplete#mappings#manual_complete()
+
+" Close the documentation window when completion is done
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+
+
+"neomake
+autocmd! BufWritePost * Neomake
 
 
 " vim-airline
@@ -190,7 +260,6 @@ if has("nvim")
   autocmd BufLeave term://* stopinsert
 endif
 
-
 ${builtins.readFile "${pkgs.base16}/vim/base16-${base16Theme}.vim"}
 ${builtins.readFile "${pkgs.base16}/vim-airline/base16-${base16Theme}.vim"}
 
@@ -200,27 +269,29 @@ ${builtins.readFile "${pkgs.base16}/vim-airline/base16-${base16Theme}.vim"}
         "UltiSnips"
         "commentary"
         "deoplete-nvim"
+        "floobits-neovim"
         "fugitive"
-        "fzf"
         "fzf-vim"
+        "fzfWrapper"
         "goyo"
+        "neoformat"
         "neomake"
         "rust-vim"
         "sensible"
+        "vim-leader-guide"  # needs to be loaded before spacevim
         "spacevim"
         "surround"
-        "unite-vim"
-        "vim-addon-nix"
         "vim-airline"
         "vim-airline-themes"
         "vim-css-color"
         "vim-eunuch"
         "vim-expand-region"
         "vim-gista"
-        "vim-leader-guide"
         "vim-multiple-cursors"
+        "vim-nix"
         "vim-orgmode"
         "vim-peekaboo"
+        "vim-polyglot"
         "vim-racer"
         "vim-signature"
         "vim-signify"
@@ -229,9 +300,25 @@ ${builtins.readFile "${pkgs.base16}/vim-airline/base16-${base16Theme}.vim"}
         "vim-webdevicons"
         "vimpreviewpandoc"
 
+        #"deoplete-jedi"
+
         # TODO:
+        # tab doesn work
         # https://github.com/zchee/deoplete-jedi
         # https://github.com/carlitux/deoplete-ternjs
+        # ligatures
+        #   https://github.com/neovim/neovim/issues/1408
+        #   https://github.com/i-tu/Hasklig
+        #   https://github.com/romeovs/creep/blob/master/creep.vim
+        # https://github.com/jaxbot/github-issues.vim
+        # https://github.com/codegram/vim-codereview
+        # vim + javascript
+        #   http://www.panozzaj.com/blog/2015/08/28/must-have-vim-javascript-setup/
+        #   https://davidosomething.com/blog/vim-for-javascript/
+        #   http://oli.me.uk/2013/06/29/equipping-vim-for-javascript/
+        #   https://www.reddit.com/r/vim/comments/3ixtpg/vimjsindent/
+        # nice example of configuration of pluggins
+        #   https://github.com/luan/vimfiles
       ];
     }
   ];

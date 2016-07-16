@@ -22,6 +22,8 @@ rec {
     ghostscript = pkgs.ghostscript.override { x11Support = false; cupsSupport = true; };
   };
 
+  #firefox = pkgs.firefox-beta-bin;
+  firefox = pkgs.firefox-developer-bin;
 
   weechat = pkgs.weechat.override {
     extraBuildInputs = [ pkgs.pythonPackages.websocket_client ];
@@ -45,9 +47,9 @@ rec {
   rofi = pkgs.rofi.override { i3Support = true; };
 
   VidyoDesktop = import ./VidyoDesktop {
-    inherit (pkgs) stdenv fetchurl buildFHSUserEnv makeWrapper dpkg  alsaLib
-      alsaUtils alsaOss alsaTools alsaPlugins libidn utillinux mesa_glu qt4
-      zlib patchelf;
+    inherit (pkgs) stdenv fetchurl buildFHSUserEnv makeWrapper dpkg alsaLib
+      alsaUtils alsaOss alsaTools alsaPlugins libidn utillinux mesa_glu
+      zlib patchelf gnome2 libpng12 fontconfig freetype libffi qt4 file;
     inherit (pkgs.xorg) libXext libXv libX11 libXfixes libXrandr libXScrnSaver;
   };
 
