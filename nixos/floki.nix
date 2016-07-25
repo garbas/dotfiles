@@ -16,22 +16,6 @@ let
 
   _pkgs = import <nixpkgs> {};
 
-  hydraSrc = _pkgs.fetchFromGitHub {
-    owner = "NixOS";
-    repo = "hydra";
-    #rev = "633381a5010e8b859b0d0eb20e21a61aa50f8aba";
-    #sha256 = "12pbzp79hmzchmkq7mzh20iw2slbrizdbxr6w7akybgc791f8b74";
-    rev = "993647d1e3b43f1f9b7dc2ebce889b475d156bb9";
-    sha256 = "115z4prns7mxf8yxygvficq6c00gzi1qizj121qqpl1af521f8r9";
-  };
-
-  hydraRelease = import "${hydraSrc}/release.nix" {
-    inherit hydraSrc;
-    officialRelease = true;
-  };
-
-  hydraModule = import "${hydraSrc}/hydra-module.nix";
-
   # https://logentries.com/doc/nixos/
   logentries-crt = _pkgs.fetchurl {
     url = https://bits.lecdn.net/certs/1/logentries.all.crt;
@@ -99,16 +83,12 @@ let
     }
   '';
 
-  hydra = builtins.getAttr config.nixpkgs.system hydraRelease.build;
-
 in {
 
   assertions = pkgs.lib.singleton {
     assertion = pkgs.system == "x86_64-linux";
     message = "unsupported system ${pkgs.system}";
   };
-
-  imports = [ hydraModule ];
 
   nix.distributedBuilds = true;
   nix.nrBuildUsers = 30;
@@ -128,7 +108,7 @@ in {
   nix.gc.options = ''--max-freed "$((12 * 1024**3 - 1024 * $(df -P -k /nix/store | tail -n 1 | ${pkgs.gawk}/bin/awk '{ print $4 }')))"'';
 
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.packageOverrides = pkgs: import ./../pkgs { inherit pkgs; };
+  nixpkgs.config.packageOverrides = pkgs: import ./../pkgs { inherit pkgs; i3_tray_output = ""; };
 
   #
   # Initialization commands
@@ -145,7 +125,7 @@ in {
   #   - chmod 444 /etc/nix/hydra.garbas.si-1/public
   services.hydra.enable = true;
   services.hydra.dbi = "dbi:Pg:dbname=hydra;user=hydra;";
-  services.hydra.package = hydra;
+  #services.hydra.package = hydra;
   services.hydra.hydraURL = "http://hydra.garbas.si/";
   services.hydra.listenHost = "0.0.0.0";
   services.hydra.port = 3000;
