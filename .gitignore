@@ -6,3 +6,6 @@
 /pkgs/weechat/slack.cache
 /pkgs/weechat/weechat.log
 /result
+/.-rplugin~
+/.floo
+/.flooignore

@@ -1,8 +1,10 @@
+{ i3_tray_output }:
+
 { pkgs, config, ... }:
 {
 
   boot.blacklistedKernelModules = [ "snd_pcsp" "pcspkr" ];
-  boot.kernelModules = [ "fbcon" "intel_agp" "i915" ];
+  boot.kernelModules = [ "intel_agp" "i915" ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   environment.systemPackages = with pkgs; [
@@ -51,9 +53,7 @@
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
-  nixpkgs.config.packageOverrides = pkgs: (import ./../pkgs { inherit pkgs; }) // {
-    termite = pkgs.termite.override { configFile="/tmp/termite-config"; };
-  };
+  nixpkgs.config.packageOverrides = pkgs: (import ./../pkgs { inherit pkgs i3_tray_output; });
   nixpkgs.config.firefox.enableAdobeFlash = true;
   nixpkgs.config.firefox.enableGoogleTalkPlugin = true;
   nixpkgs.config.firefox.jre = false;

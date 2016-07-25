@@ -3,7 +3,9 @@
 { pkgs, config, ... }:
 {
 
-  imports = [ ./common.nix ];
+  imports =
+    [ ( import ./common.nix { i3_tray_output = ""; }  )
+    ];
 
   services.nixosManual.showManual = true;
   services.openssh.enable = true;

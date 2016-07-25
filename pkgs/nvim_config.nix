@@ -1,4 +1,4 @@
-{ pkgs, base16Theme }:
+{ pkgs, theme }:
 {
   customRC = ''
 
@@ -105,11 +105,7 @@ set directory=~/.vim/tmp/swap//    " swap files
 set backup                        " enable backups
 set noswapfile                    " It's 2012, Vim.
 
-" theme
-let base16colorspace=256
-let g:base16_shell_path="${pkgs.base16}/shell"
-
-if readfile('/tmp/config/theme')[0] == 'dark'
+if readfile('/tmp/theme-brightness')[0] == 'dark'
   set background=dark
 else
   set background=light
@@ -260,10 +256,10 @@ if has("nvim")
   autocmd BufLeave term://* stopinsert
 endif
 
-${builtins.readFile "${pkgs.base16}/vim/base16-${base16Theme}.vim"}
-${builtins.readFile "${pkgs.base16}/vim-airline/base16-${base16Theme}.vim"}
+${builtins.readFile "${theme}/vim.dark"}
 
   '';
+
   vam.pluginDictionaries = [
     { names = [
         "UltiSnips"

@@ -1,6 +1,22 @@
-{ pkgs, base16Theme ? "default" }:
+{ pkgs
+, i3_tray_output
+}:
 
 rec { 
+
+  garbas_config = import ../config { inherit pkgs base16-builder i3_tray_output; };
+
+  # ERRORS:
+  # Jul 17 00:34:05 nemo kernel: zswap: default zpool zbud not available
+  # Jul 17 00:34:05 nemo kernel: zswap: pool creation failed
+  # Jul 17 00:34:05 nemo systemd-modules-load[2041]: Failed to find module 'fbcon'
+  # Jul 17 00:34:08 nemo bluetoothd[2335]: Failed to obtain handles for "Service Changed" characteristic
+  # Jul 17 00:34:13 nemo rtkit-daemon[3050]: Failed to make ourselves RT: Operation not permitted
+  # Jul 17 00:34:13 nemo systemd[3020]: Failed to start Lightweight and customizable notification daemon.
+  # Jul 17 11:43:35 nemo py3status[12340]: py3status: Instance `battery_level 0`, user method `battery_level` failed (Attri
+  # 
+
+
   # TODO:
   #  - py3status configured
   #  - replace offlineimap with isync and add to systemd
@@ -33,16 +49,15 @@ rec {
     inherit (pkgs) stdenv fetchgit;
   };
 
-  st = pkgs.st.override {
-    conf = import ./st_config.nix {
-      theme = builtins.readFile "${pkgs.base16}/st/base16-${base16Theme}.light.c";
+  base16-builder = (import ./base16-builder {
+    inherit pkgs;
+    src = pkgs.fetchFromGitHub {
+      owner = "base16-builder";
+      repo = "base16-builder";
+      rev = "fa72b56be3a44e79467303a19adbe0ca62ba198a";
+      sha256 = "1c5d1a9k0j0qw41bf6xckki3z5g14k7zwwwbp9g2p2yzccxzjy1s";
     };
-  };
-
-  neovim = pkgs.neovim.override {
-    vimAlias = true;
-    configure = import ./nvim_config.nix { inherit pkgs base16Theme; };
-  };
+  }).package;
 
   rofi = pkgs.rofi.override { i3Support = true; };
 
@@ -51,6 +66,16 @@ rec {
       alsaUtils alsaOss alsaTools alsaPlugins libidn utillinux mesa_glu
       zlib patchelf gnome2 libpng12 fontconfig freetype libffi qt4 file;
     inherit (pkgs.xorg) libXext libXv libX11 libXfixes libXrandr libXScrnSaver;
+  };
+
+
+  # should be part of config really
+
+  termite = pkgs.termite.override { configFile = "/tmp/config/termite"; };
+
+  neovim = pkgs.neovim.override {
+    vimAlias = true;
+    configure = import ./nvim_config.nix { inherit pkgs; inherit (garbas_config) theme; };
   };
 
 }

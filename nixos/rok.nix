@@ -24,72 +24,21 @@
 #  http://turses.readthedocs.io/en/latest/user/configuration.html#twitter
 #  https://github.com/eliangcs/http-prompt
 
-let
+{
 
-  base16Theme = "default";
+  imports =
+    [ ( import ./common.nix { inherit i3_tray_output; }  )
+    ];
 
-  themeUpdateScript = theme: ''
-    rm -rf /tmp/config
-    mkdir -p /tmp/config
-    echo -n "${theme}" > /tmp/config/theme
-    cp -f /etc/termite-config-${theme} /tmp/config/termite
-    cp -f /etc/i3-config /tmp/config/i3
-    source /etc/setxkbmap-config
-    mkdir -p ~/.vim/backup
-  '';
+  environment.etc = pkgs.garbas_config.environment_etc;
 
-  themeDark = pkgs.writeScript "theme-dark" (themeUpdateScript "dark");
-  themeLigth = pkgs.writeScript "theme-light" (themeUpdateScript "light");
-
-  i3Packages = with pkgs; {
-    inherit i3 i3status feh termite rofi-menugen networkmanagerapplet
-      redshift base16 rofi rofi-pass i3lock-fancy pa_applet;
-    inherit (xorg) xrandr xbacklight;
-    inherit (pythonPackages) ipython alot py3status;
-    inherit (gnome3) gnome_keyring;
-  };
-  setxkbmapPackages = with pkgs.xorg; { inherit xinput xset setxkbmap xmodmap; };
-  zshPackages = with pkgs; { inherit fzf xdg_utils neovim less zsh-prezto; };
-
-in {
-
-  imports = [ ./common.nix ];
-
-  environment.etc."Xmodmap".text = import ./../pkgs/xmodmap_config.nix { };
-
-  environment.etc."gitconfig".text = import ./../pkgs/git_config.nix {
-    inherit (pkgs) neovim;
-  };
-
-  environment.etc."i3-config".text = import ./../pkgs/i3_config.nix (i3Packages // {
-    inherit base16Theme i3_tray_output themeDark themeLigth;
-    inherit (pkgs) lib writeScript;
-  });
-
-  environment.etc."i3status-config".text = import ./../pkgs/i3status_config.nix {
-    inherit base16Theme;
-    inherit (pkgs) lib base16;
-  };
-
-  environment.etc."setxkbmap-config".text = import ./../pkgs/setxkbmap_config.nix setxkbmapPackages;
-
-  environment.etc."zlogin".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zlogin";
-  environment.etc."zlogout".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zlogout";
-  environment.etc."zpreztorc".text = import ./../pkgs/zsh_config.nix (zshPackages);
-  environment.etc."zprofile.local".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zprofile";
-  environment.etc."zshenv.local".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zshenv";
-  environment.etc."zshrc.local".text = builtins.readFile "${pkgs.zsh-prezto}/runcoms/zshrc";
-
-  environment.etc."termite-config-dark".text = import ./../pkgs/termite_config.nix { inherit pkgs base16Theme; dark = true; };
-  environment.etc."termite-config-light".text = import ./../pkgs/termite_config.nix { inherit pkgs base16Theme; dark = false; };
 
   environment.systemPackages = with pkgs;
-    (builtins.attrValues (
-      i3Packages //
-      setxkbmapPackages //
-      zshPackages //
-      {})) ++
+    garbas_config.system_packages ++
     [
+
+      garbas_config.update_xkbmap
+      garbas_config.theme_switch
 
       termite.terminfo
 
@@ -117,12 +66,14 @@ in {
       asciinema
       pavucontrol
       mpv
+      youtube-dl
+      tree
 
       # gui applications
       chromium
       firefox
       pavucontrol
-      skype  # doesnt work for some time
+      skype
       zathura
       VidyoDesktop
 
@@ -153,38 +104,39 @@ in {
     ::1 ${config.networking.hostName}
   '';
 
+  programs.xonsh.enable = true;
   programs.zsh.enable = true;
 
-  security.polkit.extraConfig = ''
-    polkit.addRule(function(action, subject) {
-      var YES = polkit.Result.YES;
-      // NOTE: there must be a comma at the end of each line except for the last:
-      var permission = {
-        // required for udisks1:
-        "org.freedesktop.udisks.filesystem-mount": YES,
-        "org.freedesktop.udisks.luks-unlock": YES,
-        "org.freedesktop.udisks.drive-eject": YES,
-        "org.freedesktop.udisks.drive-detach": YES,
-        // required for udisks2:
-        "org.freedesktop.udisks2.filesystem-mount": YES,
-        "org.freedesktop.udisks2.encrypted-unlock": YES,
-        "org.freedesktop.udisks2.eject-media": YES,
-        "org.freedesktop.udisks2.power-off-drive": YES,
-        // required for udisks2 if using udiskie from another seat (e.g. systemd):
-        "org.freedesktop.udisks2.filesystem-mount-other-seat": YES,
-        "org.freedesktop.udisks2.filesystem-unmount-others": YES,
-        "org.freedesktop.udisks2.encrypted-unlock-other-seat": YES,
-        "org.freedesktop.udisks2.eject-media-other-seat": YES,
-        "org.freedesktop.udisks2.power-off-drive-other-seat": YES
-      };
-      if (subject.isInGroup("wheel")) {
-        return permission[action.id];
-      }
-    });
-  '';
+  #security.polkit.extraConfig = ''
+  #  polkit.addRule(function(action, subject) {
+  #    var YES = polkit.Result.YES;
+  #    // NOTE: there must be a comma at the end of each line except for the last:
+  #    var permission = {
+  #      // required for udisks1:
+  #      "org.freedesktop.udisks.filesystem-mount": YES,
+  #      "org.freedesktop.udisks.luks-unlock": YES,
+  #      "org.freedesktop.udisks.drive-eject": YES,
+  #      "org.freedesktop.udisks.drive-detach": YES,
+  #      // required for udisks2:
+  #      "org.freedesktop.udisks2.filesystem-mount": YES,
+  #      "org.freedesktop.udisks2.encrypted-unlock": YES,
+  #      "org.freedesktop.udisks2.eject-media": YES,
+  #      "org.freedesktop.udisks2.power-off-drive": YES,
+  #      // required for udisks2 if using udiskie from another seat (e.g. systemd):
+  #      "org.freedesktop.udisks2.filesystem-mount-other-seat": YES,
+  #      "org.freedesktop.udisks2.filesystem-unmount-others": YES,
+  #      "org.freedesktop.udisks2.encrypted-unlock-other-seat": YES,
+  #      "org.freedesktop.udisks2.eject-media-other-seat": YES,
+  #      "org.freedesktop.udisks2.power-off-drive-other-seat": YES
+  #    };
+  #    if (subject.isInGroup("wheel")) {
+  #      return permission[action.id];
+  #    }
+  #  });
+  #'';
 
   services.xserver.displayManager.sessionCommands = ''
-    ${themeDark}
+    ${pkgs.garbas_config.theme_switch}/bin/switch-theme
   '';
 
   users.users."rok" = {

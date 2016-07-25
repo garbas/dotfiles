@@ -54,45 +54,45 @@
     BusID "PCI:0:2:0"
   '';
 
-  systemd.user.services.dunst = {
-    enable = true;
-    description = "Lightweight and customizable notification daemon";
-    wantedBy = [ "default.target" ];
-    path = [ pkgs.dunst ];
-    serviceConfig = {
-      Restart = "always";
-      ExecStart = "${pkgs.dunst}/bin/dunst";  # TODO configure theme
-    };
-  };
+  #systemd.user.services.dunst = {
+  #  enable = true;
+  #  description = "Lightweight and customizable notification daemon";
+  #  wantedBy = [ "default.target" ];
+  #  path = [ pkgs.dunst ];
+  #  serviceConfig = {
+  #    Restart = "always";
+  #    ExecStart = "${pkgs.dunst}/bin/dunst";  # TODO configure theme
+  #  };
+  #};
 
-  systemd.user.services.udiskie = {
-    enable = true;
-    description = "Removable disk automounter";
-    wantedBy = [ "default.target" ];
-    path = with pkgs; [
-      gnome3.defaultIconTheme
-      gnome3.gnome_themes_standard
-      pythonPackages.udiskie
-    ];
-    environment.XDG_DATA_DIRS="${pkgs.gnome3.defaultIconTheme}/share:${pkgs.gnome3.gnome_themes_standard}/share";
-    serviceConfig = {
-      Restart = "always";  # there is no tray icon
-      ExecStart = "${pkgs.pythonPackages.udiskie}/bin/udiskie --automount --notify --tray --use-udisks2";
-    };
-  };
+  #systemd.user.services.udiskie = {
+  #  enable = true;
+  #  description = "Removable disk automounter";
+  #  wantedBy = [ "default.target" ];
+  #  path = with pkgs; [
+  #    gnome3.defaultIconTheme
+  #    gnome3.gnome_themes_standard
+  #    pythonPackages.udiskie
+  #  ];
+  #  environment.XDG_DATA_DIRS="${pkgs.gnome3.defaultIconTheme}/share:${pkgs.gnome3.gnome_themes_standard}/share";
+  #  serviceConfig = {
+  #    Restart = "always";  # there is no tray icon
+  #    ExecStart = "${pkgs.pythonPackages.udiskie}/bin/udiskie --automount --notify --tray --use-udisks2";
+  #  };
+  #};
 
-  systemd.user.services.i3lock-auto = {
-    enable = true;
-    description = "Automatically lock screen after 15 minutes";
-    wantedBy = [ "default.target" ];
-    path = with pkgs; [ xautolock i3lock-fancy ];
-    serviceConfig = {
-      Restart = "always";  # TODO: lockaftersleep does not work
-      ExecStart = "${pkgs.xautolock}/bin/xautolock -lockaftersleep -detectsleep -time 15 -locker ${pkgs.i3lock-fancy}/bin/i3lock-fancy";
-    };
-  };
+  #systemd.user.services.i3lock-auto = {
+  #  enable = true;
+  #  description = "Automatically lock screen after 15 minutes";
+  #  wantedBy = [ "default.target" ];
+  #  path = with pkgs; [ xautolock i3lock-fancy ];
+  #  serviceConfig = {
+  #    Restart = "always";  # TODO: lockaftersleep does not work
+  #    ExecStart = "${pkgs.xautolock}/bin/xautolock -lockaftersleep -detectsleep -time 15 -locker ${pkgs.i3lock-fancy}/bin/i3lock-fancy";
+  #  };
+  #};
 
   services.xserver.windowManager.default = "i3";
   services.xserver.windowManager.i3.enable = true;
-  services.xserver.windowManager.i3.configFile = "/etc/i3-config";
+  services.xserver.windowManager.i3.configFile = "/tmp/config/i3";
 }
