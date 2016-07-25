@@ -5,9 +5,7 @@ let
   isGmail = secrets.gmail_user != null ||
             secrets.gmail_pass != null;
 
-  isSSL = secrets.nginx_garbas_ssl_certificate != null ||
-          secrets.nginx_garbas_ssl_certificate_key != null ||
-          secrets.nginx_garbas_ssl_dhparam != null;
+  isSSL = secrets.nginx_garbas_ssl_dhparam != null;
 
   isDD = secrets.datadog_api_key != null ||
          secrets.datadog_postgresql_password != null;
@@ -27,23 +25,16 @@ in
 { config, pkgs, lib, ... }:
 let
 
-  createSite = domain: config:
+  createSite = domain: domainConfig:
     ''
-      server {
-        listen                  80;
-        server_name             ${domain};
-    '' + (lib.optionalString isSSL ''
-        return                  301 https://${domain}$request_uri;
-      }
-
       server {
         listen                  443 ssl;
         server_name             ${domain};
 
         # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
         ssl                         on;
-        ssl_certificate             ${secrets.nginx_garbas_ssl_certificate};
-        ssl_certificate_key         ${secrets.nginx_garbas_ssl_certificate_key};
+        ssl_certificate             ${config.security.acme.directory}/${domain}/fullchain.pem;
+        ssl_certificate_key         ${config.security.acme.directory}/${domain}/key.pem;
         ssl_session_timeout         1d;
         ssl_session_cache           shared:SSL:50m;
 
@@ -51,9 +42,9 @@ let
         ssl_dhparam                 ${secrets.nginx_garbas_ssl_dhparam};
 
         # modern configuration.
-        ssl_protocols               TLSv1.1 TLSv1.2;
-        ssl_ciphers                 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK';
-        ssl_prefer_server_ciphers   on;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA';
 
         # HSTS (ngx_http_headers_module is required) (15768000 seconds = 6 months)
         add_header                  Strict-Transport-Security max-age=15768000;
@@ -67,8 +58,7 @@ let
 
         resolver                    127.0.0.1 [::1];
 
-    '') + config + ''
-
+        ${domainConfig}
       }
     '';
 
@@ -79,16 +69,11 @@ let
     }
 
     location /__status__ {
-        stub_status;
+      stub_status;
     }
   '';
 
 in {
-
-  assertions = pkgs.lib.singleton {
-    assertion = pkgs.system == "x86_64-linux";
-    message = "unsupported system ${pkgs.system}";
-  };
 
   nix.distributedBuilds = true;
   nix.nrBuildUsers = 30;
@@ -126,8 +111,8 @@ in {
   services.hydra.enable = true;
   services.hydra.dbi = "dbi:Pg:dbname=hydra;user=hydra;";
   #services.hydra.package = hydra;
-  services.hydra.hydraURL = "http://hydra.garbas.si/";
-  services.hydra.listenHost = "0.0.0.0";
+  services.hydra.hydraURL = "https://hydra.garbas.si/";
+  services.hydra.listenHost = "127.0.0.1";
   services.hydra.port = 3000;
   services.hydra.extraConfig = "binary_cache_secret_key_file = /etc/nix/hydra.garbas.si-1/secret";
   services.hydra.minimumDiskFree = 2;  # in GB
@@ -185,6 +170,7 @@ in {
     git
     gnumake
     rxvt_unicode.terminfo
+    termite.terminfo
   ];
 
   users.mutableUsers = false;
@@ -249,23 +235,52 @@ in {
     access_log              syslog:server=unix:/dev/log;
     error_log               syslog:server=unix:/dev/log;
 
-    ${createStaticSite "garbas.si"}
-
     server {
-      listen                  80;
-      server_name             hydra.garbas.si;
+      server_name _;
+      listen 80;
+      listen [::]:80;
+
+      location /.well-known/acme-challenge {
+        root /var/www/challenges;
+      }
+
       location / {
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Forwarded-Host $http_host;
-        proxy_set_header X-Forwarded-Proto https;
-        proxy_set_header X-Forwarded-Port 443;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Request-Base "http://hydra.garbas.si";
-        proxy_pass http://${config.services.hydra.listenHost}:${builtins.toString config.services.hydra.port}/;
+        return 301 https://$host$request_uri;
       }
     }
-  '';
+  '' + (createStaticSite "garbas.si")
+     + (createSite "hydra.garbas.si"
+        ''
+        location / {
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Forwarded-Host $http_host;
+          proxy_set_header X-Forwarded-Proto https;
+          proxy_set_header X-Forwarded-Port 443;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Request-Base "https://hydra.garbas.si";
+          proxy_pass http://${config.services.hydra.listenHost}:${builtins.toString config.services.hydra.port}/;
+        }
+        ''
+       );
+
+  security.acme.certs."garbas.si" = {
+    webroot = "/var/www/challenges";
+    email = "rok@garbas.si";
+    group = "nginx";
+  };
+
+  security.acme.certs."db.garbas.si" = {
+    webroot = "/var/www/challenges";
+    email = "rok@garbas.si";
+    group = "nginx";
+  };
+
+  security.acme.certs."hydra.garbas.si" = {
+    webroot = "/var/www/challenges";
+    email = "rok@garbas.si";
+    group = "nginx";
+  };
 
   services.dd-agent.enable = isDD;
   services.dd-agent.api_key = lib.optionalString isDD secrets.datadog_api_key;
