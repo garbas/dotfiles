@@ -42,7 +42,7 @@
     "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
     "hydra.garbas.si-1:haasp6o2+/uevXZ5i9q4BrgyIu2xL2zAf6hk90EsoRk="
   ];
-  nix.trustedBinaryCaches = [ "https://hydra.nixos.org" "http://hydra.garbas.si" ];
+  nix.trustedBinaryCaches = [ "https://hydra.nixos.org" "https://hydra.garbas.si" ];
   nix.extraOptions = ''
     gc-keep-outputs = true
     gc-keep-derivations = true
