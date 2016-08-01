@@ -58,6 +58,13 @@ let
 
         resolver                    127.0.0.1 [::1];
 
+        # test -> https://mozilla.github.io/http-observatory-website/analyze.html?host=garbas.si
+        # example -> https://gist.github.com/plentz/6737338
+        add_header                  X-Frame-Options SAMEORIGIN;
+        add_header                  X-Content-Type-Options nosniff;
+        add_header                  X-XSS-Protection "1; mode=block";
+        add_header                  Content-Security-Policy "default-src https:";
+
         ${domainConfig}
       }
     '';
@@ -234,6 +241,8 @@ in {
 
     access_log              syslog:server=unix:/dev/log;
     error_log               syslog:server=unix:/dev/log;
+
+    server_tokens off;
 
     server {
       server_name _;
