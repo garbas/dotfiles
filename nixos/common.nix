@@ -5,7 +5,7 @@
 
   boot.blacklistedKernelModules = [ "snd_pcsp" "pcspkr" ];
   boot.kernelModules = [ "intel_agp" "i915" ];
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_4_6;
 
   environment.systemPackages = with pkgs; [
 
@@ -42,12 +42,12 @@
     "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
     "hydra.garbas.si-1:haasp6o2+/uevXZ5i9q4BrgyIu2xL2zAf6hk90EsoRk="
   ];
+  nix.useSandbox = true;
   nix.trustedBinaryCaches = [ "https://hydra.nixos.org" "https://hydra.garbas.si" ];
   nix.extraOptions = ''
     gc-keep-outputs = true
     gc-keep-derivations = true
     auto-optimise-store = true
-    build-use-chroot = relaxed
   '';
 
   nixpkgs.config.allowBroken = false;

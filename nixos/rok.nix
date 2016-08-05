@@ -42,6 +42,8 @@
 
       termite.terminfo
 
+      xsel # needed for neovim to support copy/paste
+
       # console applications
       gitAndTools.gitflow
       gitAndTools.tig
@@ -68,14 +70,16 @@
       mpv
       youtube-dl
       tree
+      pythonPackages.Flootty
 
       # gui applications
-      chromium
+      #chromium
       firefox
       pavucontrol
-      skype
+      #skype
       zathura
       VidyoDesktop
+      obs-studio
 
       # gnome3 theme
       gnome3.dconf

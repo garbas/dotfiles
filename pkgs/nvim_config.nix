@@ -295,6 +295,7 @@ ${builtins.readFile "${theme}/vim.dark"}
         "vim-startify"
         "vim-webdevicons"
         "vimpreviewpandoc"
+        "vim-auto-save"
 
         #"deoplete-jedi"
 

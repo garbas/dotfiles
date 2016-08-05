@@ -1,4 +1,4 @@
-{ writeText, neovim }:
+{ writeText, neovim, gnupg }:
 
 let
   self = writeText "config-git"
@@ -40,6 +40,13 @@ let
 
     [push]
       default = simple
+
+    [commit]
+      gpgsign = true
+
+    [gpg]
+      program = ${gnupg}/bin/gpg2
+
     '';
 in {
   light = self;

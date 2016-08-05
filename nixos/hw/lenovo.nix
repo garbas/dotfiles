@@ -12,6 +12,13 @@
   '';
   boot.kernelModules = [ "kvm-intel" ];
 
+  hardware.trackpoint = {
+    enable = true;
+    sensitivity = 220;
+    speed = 0;
+    emulateWheel = true;
+  };
+
   hardware.bluetooth.enable = true;
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.package = pkgs.pulseaudioFull;
