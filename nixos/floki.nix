@@ -243,9 +243,9 @@ in {
   services.nginx.enable = true;
   services.nginx.config = ''
     worker_processes 2;
-    events {
-      worker_connections  2048;
-    }
+    #events {
+    #  worker_connections  2048;
+    #}
   '';
   services.nginx.httpConfig = ''
 
