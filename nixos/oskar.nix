@@ -42,4 +42,8 @@
   services.xserver.displayManager.slim.defaultUser = "marta";
   services.xserver.desktopManager.default = "gnome3";
 
+  system.stateVersion = "16.09";
+  system.autoUpgrade.enable = true;
+  system.autoUpgrade.channel = "https://nixos.org/channels/nixos-16.09";
+
 }
