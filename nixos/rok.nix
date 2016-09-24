@@ -45,46 +45,19 @@
       xsel # needed for neovim to support copy/paste
 
       # console applications
-      gitAndTools.gitflow
       gitAndTools.tig
       gitFull
       gnumake
-      gnupg
       htop
-      keybase
-      mercurialFull
       mosh
       neovim
       ngrok
-      pass
       scrot
-      st  # backup terminal
-      taskwarrior
       unrar
       unzip
-      vifm
       wget
       which
-      asciinema
-      pavucontrol
-      mpv
-      youtube-dl
       tree
-      pythonPackages.Flootty
-
-      # gui applications
-      #chromium
-      firefox
-      pavucontrol
-      #skype
-      zathura
-      VidyoDesktop
-      obs-studio
-
-      # gnome3 theme
-      gnome3.dconf
-      gnome3.defaultIconTheme
-      gnome3.gnome_themes_standard
 
     ];
 

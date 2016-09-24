@@ -95,4 +95,35 @@
   services.xserver.windowManager.default = "i3";
   services.xserver.windowManager.i3.enable = true;
   services.xserver.windowManager.i3.configFile = "/tmp/config/i3";
+
+  environment.systemPackages = with pkgs;
+    [
+      gnupg
+      gitAndTools.gitflow
+      keybase
+      mercurialFull
+      pass
+      taskwarrior
+      st  # backup terminal
+      vifm
+      asciinema
+      mpv
+      youtube-dl
+      pythonPackages.Flootty
+
+      # gui applications
+      pavucontrol
+      #chromium
+      firefox
+      pavucontrol
+      #skype
+      zathura
+      VidyoDesktop
+      obs-studio
+
+      # gnome3 theme
+      gnome3.dconf
+      gnome3.defaultIconTheme
+      gnome3.gnome_themes_standard
+    ];
 }
