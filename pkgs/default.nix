@@ -59,8 +59,6 @@ rec {
     };
   }).package;
 
-  rofi = pkgs.rofi.override { i3Support = true; };
-
   VidyoDesktop = import ./VidyoDesktop {
     inherit (pkgs) stdenv fetchurl buildFHSUserEnv makeWrapper dpkg alsaLib
       alsaUtils alsaOss alsaTools alsaPlugins libidn utillinux mesa_glu
