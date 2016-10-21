@@ -6,6 +6,8 @@
   nixpkgs.config.allowUnfree = true;
   #nixpkgs.config.packageOverrides = pkgs: import ./../pkgs { inherit pkgs; i3_tray_output = ""; };
 
+  security.hideProcessInformation = true;
+
   services.xserver.enable = false;
 
   services.openssh.enable = true;
@@ -157,4 +159,7 @@
   services.grafana.security.adminPassword = secrets.grafana_password;
   services.grafana.security.secretKey = secrets.grafana_secretkey;
 
+  services.prometheus.enable = true;
+  services.prometheus.listenAddress = "127.0.0.1:9090";
+  
 }
