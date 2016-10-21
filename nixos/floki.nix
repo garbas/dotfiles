@@ -142,6 +142,19 @@
           acmeRoot = "/var/www/challenges";
           locations."/".root = /var/www/static/travis.garbas.si;
         };
+      "stats.garbas.si" =
+        { default = false;
+          forceSSL = true;
+          enableACME = true;
+          acmeRoot = "/var/www/challenges";
+          locations."/".proxyPass = "http://127.0.0.1:3000";
+        };
     };
+
+  services.grafana.enable = true;
+  services.grafana.rootUrl = "https://stats.garbas.si";
+  services.grafana.security.adminUser = secrets.grafana_user;
+  services.grafana.security.adminPassword = secrets.grafana_password;
+  services.grafana.security.secretKey = secrets.grafana_secretkey;
 
 }
