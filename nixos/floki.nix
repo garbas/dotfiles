@@ -161,5 +161,29 @@
 
   services.prometheus.enable = true;
   services.prometheus.listenAddress = "127.0.0.1:9090";
-  
+  services.prometheus.scrapeConfigs = [
+    { job_name = "prometheus";
+      scrape_interval = "5s";
+      static_configs = [
+        {
+	  targets = [ "127.0.0.1:9090" ];
+	  labels = {};
+        }
+      ];
+    }
+    { job_name = "node";
+      scrape_interval = "5s";
+      static_configs = [
+        {
+	  targets = [ "127.0.0.1:9100" ];
+	  labels = {};
+        }
+      ];
+    }
+  ];
+
+  services.prometheus.nodeExporter.enable = true;
+  services.prometheus.nodeExporter.listenAddress = "127.0.0.1";
+  services.prometheus.nodeExporter.port = 9100;
+
 }
