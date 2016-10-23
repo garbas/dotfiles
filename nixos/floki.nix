@@ -3,7 +3,21 @@
 { config, pkgs, lib, ... }:
 {
 
+  nix.package = pkgs.nixUnstable;
+  nix.binaryCachePublicKeys = [
+    "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
+  ];
+  nix.useSandbox = true;
+  nix.trustedBinaryCaches = [ "https://hydra.nixos.org" ];
+  nix.extraOptions = ''
+    gc-keep-outputs = true
+    gc-keep-derivations = true
+    auto-optimise-store = true
+  '';
+
+  nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfreeRedistributable = true;
   nixpkgs.config.packageOverrides = pkgs: import ./../pkgs { inherit pkgs; };
 
   security.hideProcessInformation = true;
