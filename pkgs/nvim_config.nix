@@ -257,7 +257,13 @@
       autocmd BufLeave term://* stopinsert
     endif
 
-  '' + pkgs.lib.optionalString (theme != null) (builtins.readFile "${theme}/vim.dark");
+  '' + pkgs.lib.optionalString (theme != null) ''
+    if !has('gui_running')
+      execute "silent !/bin/sh ${theme}/shell.".&background
+    endif
+    let base16colorspace = "256"
+    ${builtins.readFile "${theme}/vim.dark"}
+  '';
 
   vam.pluginDictionaries = [
     { names = [

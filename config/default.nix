@@ -8,6 +8,7 @@
       "st"
       "termite"
       "vim"
+      "shell"
     ]
 }:
 
