@@ -1,16 +1,12 @@
 { pkgs
-, i3_tray_output
+, garbas_config ? null
 }:
 
 let
 
   self = { 
 
-    garbas_config = import ../config {
-      inherit i3_tray_output;
-      inherit (self) base16-builder;
-      pkgs = pkgs // self;
-    };
+    inherit garbas_config;
 
     # ERRORS:
     # Jul 17 00:34:05 nemo kernel: zswap: default zpool zbud not available
@@ -55,16 +51,6 @@ let
       inherit (pkgs) stdenv fetchgit;
     };
 
-    base16-builder = (import ./base16-builder {
-      inherit pkgs;
-      src = pkgs.fetchFromGitHub {
-        owner = "base16-builder";
-        repo = "base16-builder";
-        rev = "fa72b56be3a44e79467303a19adbe0ca62ba198a";
-        sha256 = "1c5d1a9k0j0qw41bf6xckki3z5g14k7zwwwbp9g2p2yzccxzjy1s";
-      };
-    }).package;
-
     VidyoDesktop = import ./VidyoDesktop {
       inherit (pkgs) stdenv fetchurl buildFHSUserEnv makeWrapper dpkg alsaLib
         alsaUtils alsaOss alsaTools alsaPlugins libidn utillinux mesa_glu
@@ -79,7 +65,10 @@ let
 
     neovim = pkgs.neovim.override {
       vimAlias = true;
-      configure = import ./nvim_config.nix { inherit pkgs; inherit (self.garbas_config) theme; };
+      configure = import ./nvim_config.nix {
+        inherit pkgs;
+        theme = if garbas_config == null then null else garbas_config.theme;
+      };
     };
 
   };

@@ -4,7 +4,7 @@
 {
 
   nixpkgs.config.allowUnfree = true;
-  #nixpkgs.config.packageOverrides = pkgs: import ./../pkgs { inherit pkgs; i3_tray_output = ""; };
+  nixpkgs.config.packageOverrides = pkgs: import ./../pkgs { inherit pkgs; };
 
   security.hideProcessInformation = true;
 

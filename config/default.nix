@@ -1,19 +1,27 @@
 { pkgs
-, base16-builder
 , i3_tray_output
-}:
-
-let
-
-  defaultBrightness = "light";
-  scheme = "default";
-  templates =
+, defaultBrightness ? "light"
+, scheme ? "default"
+, templates ?
     [ "i3"
       "i3status"
       "st"
       "termite"
       "vim"
-    ];
+    ]
+}:
+
+let
+
+  base16-builder = (import ./base16-builder {
+    inherit pkgs;
+    src = pkgs.fetchFromGitHub {
+      owner = "base16-builder";
+      repo = "base16-builder";
+      rev = "fa72b56be3a44e79467303a19adbe0ca62ba198a";
+      sha256 = "1c5d1a9k0j0qw41bf6xckki3z5g14k7zwwwbp9g2p2yzccxzjy1s";
+    };
+  }).package;
 
   apps = {
 

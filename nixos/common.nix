@@ -1,7 +1,9 @@
 { i3_tray_output }:
 
 { pkgs, config, ... }:
-{
+let
+  garbas_config = import ../config { inherit i3_tray_output pkgs; };
+in {
 
   boot.blacklistedKernelModules = [ "snd_pcsp" "pcspkr" ];
   boot.kernelModules = [ "intel_agp" "i915" ];
@@ -53,7 +55,7 @@
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
-  nixpkgs.config.packageOverrides = pkgs: (import ./../pkgs { inherit pkgs i3_tray_output; });
+  nixpkgs.config.packageOverrides = pkgs: (import ./../pkgs { inherit pkgs garbas_config; });
   nixpkgs.config.firefox.enableAdobeFlash = true;
   nixpkgs.config.firefox.enableGoogleTalkPlugin = true;
   nixpkgs.config.firefox.jre = false;
