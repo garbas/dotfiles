@@ -57,10 +57,11 @@
   #systemd.user.services.dunst = {
   #  enable = true;
   #  description = "Lightweight and customizable notification daemon";
-  #  wantedBy = [ "default.target" ];
+  #  wantedBy = [ "multi-user.target" ];
   #  path = [ pkgs.dunst ];
   #  serviceConfig = {
   #    Restart = "always";
+  #    Environment = "DISPLAY=:0";
   #    ExecStart = "${pkgs.dunst}/bin/dunst";  # TODO configure theme
   #  };
   #};
@@ -113,7 +114,7 @@
 
       # gui applications
       pavucontrol
-      #chromium
+      chromium
       firefox
       pavucontrol
       #skype

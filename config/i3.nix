@@ -390,6 +390,6 @@ in {
   packages = {
     inherit i3 i3status xrandr feh py3status rofi-menugen termite ipython
       gnome_keyring redshift alot networkmanagerapplet rofi rofi-pass
-      i3lock-fancy xbacklight pa_applet;
+      i3lock-fancy xbacklight pa_applet theme_switch;
   };
 }

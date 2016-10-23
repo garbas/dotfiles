@@ -30,11 +30,11 @@ let
     };
    
     i3 = import ./i3.nix {
+      inherit i3_tray_output;
       inherit (pkgs) i3 i3status feh termite rofi-menugen networkmanagerapplet
         redshift rofi rofi-pass i3lock-fancy pa_applet
         lib writeText writeScript;
       inherit (self) theme theme_switch;
-      inherit i3_tray_output;
       inherit (pkgs.xorg) xrandr xbacklight;
       inherit (pkgs.pythonPackages) ipython alot py3status;
       inherit (pkgs.gnome3) gnome_keyring;
