@@ -7,7 +7,7 @@ in {
 
   boot.blacklistedKernelModules = [ "snd_pcsp" "pcspkr" ];
   boot.kernelModules = [ "intel_agp" "i915" ];
-  boot.kernelPackages = pkgs.linuxPackages_4_6;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   environment.systemPackages = with pkgs; [
 
