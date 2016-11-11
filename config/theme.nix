@@ -12,7 +12,8 @@ let
     { buildInputs = [ base16-builder ];
     }
     ''
-      mkdir $out
+      mkdir $out tmp-home
+      export HOME=$PWD/tmp-home
       for template in ${builtins.concatStringsSep " " templates}; do
         base16-builder -s ${scheme} -t $template -b light > $out/$template.light
         base16-builder -s ${scheme} -t $template -b dark  > $out/$template.dark
