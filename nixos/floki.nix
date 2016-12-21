@@ -141,6 +141,8 @@
   services.nginx.recommendedOptimisation = true;
   services.nginx.recommendedProxySettings = true;
   services.nginx.recommendedTlsSettings = true;
+  services.nginx.sslProtocols = "TLSv1.2";
+  services.nginx.sslCiphers = "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256";
   services.nginx.sslDhparam = secrets.nginx_garbas_ssl_dhparam;
   services.nginx.statusPage = true;
   services.nginx.virtualHosts =
@@ -150,6 +152,15 @@
           enableACME = true;
           acmeRoot = "/var/www/challenges";
           locations."/".root = /var/www/static/garbas.si;
+          extraConfig = ''
+            add_header           X-Frame-Options SAMEORIGIN;
+            add_header           X-Content-Type-Options nosniff;
+            add_header           X-XSS-Protection "1; mode=block";
+            add_header           Content-Security-Policy "default-src 'self'";
+            add_header           Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+            ssl_session_tickets  off;
+          '';
+
         };
       "travis.garbas.si" =
         { default = false;
