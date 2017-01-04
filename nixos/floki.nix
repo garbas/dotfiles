@@ -151,7 +151,7 @@
           forceSSL = true;
           enableACME = true;
           acmeRoot = "/var/www/challenges";
-          locations."/".root = /var/www/static/garbas.si;
+          locations."/".root = "/var/www/static/garbas.si";
           extraConfig = ''
             add_header           X-Frame-Options SAMEORIGIN;
             add_header           X-Content-Type-Options nosniff;
@@ -167,7 +167,7 @@
           forceSSL = true;
           enableACME = true;
           acmeRoot = "/var/www/challenges";
-          locations."/".root = /var/www/static/travis.garbas.si;
+          locations."/".root = "/var/www/static/travis.garbas.si";
         };
       "stats.garbas.si" =
         { default = false;
