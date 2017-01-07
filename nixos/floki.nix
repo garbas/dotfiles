@@ -156,7 +156,7 @@
             add_header           X-Frame-Options SAMEORIGIN;
             add_header           X-Content-Type-Options nosniff;
             add_header           X-XSS-Protection "1; mode=block";
-            add_header           Content-Security-Policy "default-src 'self'";
+            add_header           Content-Security-Policy "default-src 'self';script-src 'self' www.google-analytics.com;img-src 'self' www.google-analytics.com;";
             add_header           Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
             ssl_session_tickets  off;
           '';
