@@ -1,10 +1,12 @@
-{ pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
     [ ./hw/lenovo-x220.nix 
       ./marta.nix
     ];
+
+  services.thinkfan.enable = lib.mkForce false;
 
   boot.initrd.kernelModules =
     [ "dm_mod" "dm-crypt" "ext4" "ecb" ];

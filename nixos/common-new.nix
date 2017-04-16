@@ -3,6 +3,12 @@ let
   nixosVersion = "17.03";
 in {
 
+  systemd.services."systemd-vconsole-setup".serviceConfig.ExecStart =
+    lib.mkForce
+      [ ""
+        "${pkgs.systemd}/lib/systemd/systemd-vconsole-setup /dev/tty3"
+      ];
+
   i18n.consoleFont = "Lat2-Terminus16";
   i18n.consoleKeyMap = "us";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -32,7 +38,7 @@ in {
       cd /etc/nixos
       git clone git://github.com/NixOS/nixpkgs-unstable.git -b nixos-17.03
     fi
-    cd /etc/nixos/nixpkgs-channels 
+    cd /etc/nixos/nixpkgs-channels
     git pull
     if [ -e /etc/nixos/dotfiles ]; then
       cd /etc/nixos/dotfiles
