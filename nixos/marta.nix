@@ -1,16 +1,9 @@
-{ }:
-
-{ pkgs, config, ... }:
+{ config, pkgs, ... }:
 {
 
   imports =
-    [ ( import ./common.nix { i3_tray_output = ""; }  )
+    [ ./family.nix
     ];
-
-  services.nixosManual.showManual = true;
-  services.openssh.enable = true;
-  services.printing.enable = true;
-  services.printing.drivers = [ pkgs.brother-hl2030 pkgs.cups_filters ];
 
   environment.systemPackages = with pkgs; [
     chromium
@@ -22,19 +15,7 @@
     neovim
   ];
 
-  fonts.enableFontDir = true;
-  fonts.enableGhostscriptFonts = true;
-  fonts.fonts = with pkgs; [
-    anonymousPro
-    corefonts
-    dejavu_fonts
-    freefont_ttf
-    liberation_ttf
-    source-code-pro
-    terminus_font
-    ttf_bitstream_vera
-  ];
-
+  users.mutableUsers = false;
   users.users."marta" = {
     hashedPassword = "$6$7dMLWxcLDtuSYeR$JtD.4LVc3SwB2JZzcjHFllyxtg2hZvoXZ.SJ7SHXaEzJAoFr2t8Sjpmbk3/VNmLNMcIxmOpx.icLy.y5lpSom/";
     isNormalUser = true;
@@ -45,6 +26,6 @@
     home = "/home/marta";
   };
 
-  system.autoUpgrade.enable = true;
-  system.autoUpgrade.channel = "https://nixos.org/channels/nixos-unstable";
+  time.timeZone = "Europe/Berlin";
+
 }
