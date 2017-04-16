@@ -1,10 +1,6 @@
 { config, pkgs, ... }:
 {
 
-  imports =
-    [ ./family.nix
-    ];
-
   i18n.defaultLocale = "pl_PL.UTF-8";
 
   environment.systemPackages = with pkgs; [
