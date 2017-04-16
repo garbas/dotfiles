@@ -36,7 +36,7 @@ in {
   systemd.services.nixos-upgrade.preStart = ''
     if [ ! -e /etc/nixos/nixpkgs-channels ]; then
       cd /etc/nixos
-      git clone git://github.com/NixOS/nixpkgs-unstable.git -b nixos-17.03
+      git clone git://github.com/NixOS/nixpkgs-channels.git -b nixos-17.03
     fi
     cd /etc/nixos/nixpkgs-channels
     git pull
