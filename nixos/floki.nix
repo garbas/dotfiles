@@ -12,6 +12,8 @@
   nixpkgs.config.allowUnfreeRedistributable = true;
   nixpkgs.config.packageOverrides = pkgs: import ./../pkgs { inherit pkgs; };
 
+  security.hideProcessInformation = true;
+
   services.xserver.enable = false;
 
   services.openssh.enable = true;

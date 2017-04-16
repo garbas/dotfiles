@@ -3,8 +3,6 @@ let
   nixosVersion = "17.03";
 in {
 
-  boot.earlyVconsoleSetup = true;
-
   i18n.consoleFont = "Lat2-Terminus16";
   i18n.consoleKeyMap = "us";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -41,8 +39,6 @@ in {
       git pull
     fi
   '';
-
-  security.hideProcessInformation = true;
 
   environment.variables.NIX_PATH = lib.mkForce "nixpkgs=/etc/nixos/nixpkgs-channels:nixos-config=/etc/nixos/configuration.nix";
   environment.variables.GIT_EDITOR = lib.mkForce "nvim";
