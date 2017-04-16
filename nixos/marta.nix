@@ -1,6 +1,10 @@
 { config, pkgs, ... }:
 {
 
+  imports =
+    [ ./family.nix
+    ];
+
   environment.systemPackages = with pkgs; [
     chromium
     firefox

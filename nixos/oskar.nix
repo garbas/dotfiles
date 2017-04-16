@@ -3,8 +3,6 @@
 {
   imports =
     [ ./hw/lenovo-x220.nix 
-      ./common-new.nix
-      ./family.nix
       ./marta.nix
     ];
 

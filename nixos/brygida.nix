@@ -1,10 +1,14 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
 
-  i18n.defaultLocale = "pl_PL.UTF-8";
+  imports =
+    [ ./family.nix
+    ];
+
+  i18n.defaultLocale = lib.mkForce "pl_PL.UTF-8";
 
   environment.systemPackages = with pkgs; [
-    firefox-bin
+    firefox-beta-bin
     skype
     libreoffice
   ];
