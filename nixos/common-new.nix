@@ -1,6 +1,8 @@
 { config, pkgs, ... }:
 {
 
+  boot.earlyVconsoleSetup = true;
+
   i18n.consoleFont = "Lat2-Terminus16";
   i18n.consoleKeyMap = "us";
   i18n.defaultLocale = "en_US.UTF-8";
