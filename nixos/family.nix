@@ -1,9 +1,6 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
-let
-  nixosVersion = "17.03";
-in {
-
+{
   imports =
     [ ./common-new.nix
     ];
@@ -11,10 +8,6 @@ in {
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
   boot.loader.grub.device = "/dev/sda";
-
-  system.stateVersion = nixosVersion;
-  system.autoUpgrade.enable = true;
-  system.autoUpgrade.channel = "https://nixos.org/channels/nixos-${nixosVersion}";
 
   virtualisation.virtualbox.host.enable = true;
 

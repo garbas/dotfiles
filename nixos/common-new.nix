@@ -1,5 +1,7 @@
-{ config, pkgs, ... }:
-{
+{ config, pkgs, lib, ... }:
+let
+  nixosVersion = "17.03";
+in {
 
   i18n.consoleFont = "Lat2-Terminus16";
   i18n.consoleKeyMap = "us";
@@ -16,6 +18,33 @@
     gc-keep-derivations = true
     auto-optimise-store = true
   '';
+
+  system.stateVersion = nixosVersion;
+  system.autoUpgrade.enable = true;
+  system.autoUpgrade.channel = "https://nixos.org/channels/nixos-${nixosVersion}";
+  system.autoUpgrade.flags = lib.mkForce
+    [ "--no-build-output"
+      "-I" "nixpkgs=/etc/nixos/nixpkgs-channels"
+    ];
+  systemd.services.nixos-upgrade.path = [ pkgs.git ];
+  systemd.services.nixos-upgrade.preStart = ''
+    if [ ! -e /etc/nixos/nixpkgs-channels ]; then
+      cd /etc/nixos
+      git clone git://github.com/NixOS/nixpkgs-unstable.git -b nixos-17.03
+    fi
+    cd /etc/nixos/nixpkgs-channels 
+    git pull
+    if [ -e /etc/nixos/dotfiles ]; then
+      cd /etc/nixos/dotfiles
+      git pull
+    fi
+  '';
+
+  security.hideProcessInformation = true;
+
+  environment.variables.NIX_PATH = lib.mkForce "nixpkgs=/etc/nixos/nixpkgs-channels:nixos-config=/etc/nixos/configuration.nix";
+  environment.variables.GIT_EDITOR = lib.mkForce "nvim";
+  environment.variables.EDITOR = lib.mkForce "nvim";
 
   environment.systemPackages = with pkgs; [
     neovim
