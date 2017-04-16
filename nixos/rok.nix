@@ -59,19 +59,23 @@
       which
       tree
 
+      docker_compose
+      obs-studio
+      pgadmin
+      sshuttle
     ];
 
   fonts.enableFontDir = true;
   fonts.enableGhostscriptFonts = true;
   fonts.fonts = with pkgs; [
     anonymousPro
-    corefonts
+    #corefonts
     dejavu_fonts
     freefont_ttf
     liberation_ttf
     source-code-pro
     terminus_font
-    ttf_bitstream_vera
+    #ttf_bitstream_vera
     nerdfonts
   ];
 
@@ -128,6 +132,5 @@
   };
 
   virtualisation.docker.enable = true;
-  virtualisation.docker.socketActivation = true;
 
 }

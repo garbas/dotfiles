@@ -51,13 +51,7 @@ let
       inherit (pkgs) stdenv fetchgit;
     };
 
-    VidyoDesktop = import ./VidyoDesktop {
-      inherit (pkgs) stdenv fetchurl buildFHSUserEnv makeWrapper dpkg alsaLib
-        alsaUtils alsaOss alsaTools alsaPlugins libidn utillinux mesa_glu
-        zlib patchelf gnome2 libpng12 fontconfig freetype libffi qt4 file;
-      inherit (pkgs.xorg) libXext libXv libX11 libXfixes libXrandr libXScrnSaver;
-    };
-
+    VidyoDesktop = import /home/rok/dev/nixos/nixpkgs-mozilla/pkgs/VidyoDesktop { inherit pkgs; };
 
     # should be part of config really
 

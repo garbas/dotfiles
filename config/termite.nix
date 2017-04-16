@@ -14,7 +14,7 @@ let
       urgent_on_bell = true
       clickable_url = true
 
-      font = MesloLGMDZ NF 9
+      font = Terminus 9
 
       scrollback_lines = 10000
       search_wrap = true

@@ -8,11 +8,15 @@ in {
   boot.blacklistedKernelModules = [ "snd_pcsp" "pcspkr" ];
   boot.kernelModules = [ "intel_agp" "i915" ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.zfs.enableUnstable = true;
+
+  #boot.kernelPackages = pkgs.linuxPackages_4_8;
+  #boot.kernelPackages = pkgs.linuxPackages_4_4;
 
   environment.systemPackages = with pkgs; [
 
-     # gui apps
-    firefox
+    # gui apps
+    firefox-beta-bin
     chromium
     vlc
     tdesktop
@@ -21,7 +25,7 @@ in {
     nix-prefetch-scripts
     nix-repl
     nixops
-    nodePackages.npm2nix
+    nodePackages.node2nix
     nox
 
   ];
