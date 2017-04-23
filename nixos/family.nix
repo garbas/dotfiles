@@ -21,7 +21,7 @@
   nixpkgs.config.zathura.useMupdf = true;
   # TODO: nixpkgs.config.packageOverrides = pkgs: (import ./../pkgs { inherit pkgs garbas_config; });
 
-  programs.ssh.forwardX11 = true;
+  programs.ssh.forwardX11 = false;
   programs.ssh.startAgent = true;
 
   networking.networkmanager.enable = true;
