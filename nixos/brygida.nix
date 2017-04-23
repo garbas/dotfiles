@@ -11,6 +11,7 @@
     firefox-beta-bin
     skype
     libreoffice
+    tdesktop
   ];
 
   services.xserver.layout = "pl";
