@@ -2,7 +2,7 @@ All the Nix I have
 ==================
 
 Purpose of this repository is to collect all of my Nix/NixOS configuration in
-one place. This repository is not ment for you to depend on it, but it is
+one place. This repository is not meant for you to depend on it, but it is
 a showcase how
 
 Take good things from it. Complain about the weird things. Or just stop and say
