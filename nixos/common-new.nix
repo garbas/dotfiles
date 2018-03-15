@@ -27,16 +27,16 @@ in {
 
   system.stateVersion = nixosVersion;
   system.autoUpgrade.enable = true;
-  system.autoUpgrade.channel = "https://nixos.org/channels/nixos-${nixosVersion}";
   system.autoUpgrade.flags = lib.mkForce
-    [ "--no-build-output"
+    [ "--fast"
+      "--no-build-output"
       "-I" "nixpkgs=/etc/nixos/nixpkgs-channels"
     ];
   systemd.services.nixos-upgrade.path = [ pkgs.git ];
   systemd.services.nixos-upgrade.preStart = ''
     if [ ! -e /etc/nixos/nixpkgs-channels ]; then
       cd /etc/nixos
-      git clone git://github.com/NixOS/nixpkgs-channels.git -b nixos-17.03
+      git clone git://github.com/NixOS/nixpkgs-channels.git -b nixos-${nixosVersion}
     fi
     cd /etc/nixos/nixpkgs-channels
     git pull
