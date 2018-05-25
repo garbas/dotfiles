@@ -13,6 +13,7 @@
     sublime
     shotwell
     neovim
+    tdesktop
   ];
 
   users.mutableUsers = false;
