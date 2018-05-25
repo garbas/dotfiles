@@ -76,7 +76,6 @@ in {
   services.openssh.enable = true;
 
   services.printing.enable = true;
-  services.printing.drivers = [ pkgs.brother-hl2030 ];
 
   services.xserver.autorun = true;
   services.xserver.enable = true;

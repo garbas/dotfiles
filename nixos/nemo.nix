@@ -33,15 +33,15 @@
   fileSystems."/var".fsType = "zfs";
   fileSystems."/var".options = [ "defaults" "noatime" "acl" ];
 
-  # hostId needed for zsh
-  # cksum /etc/machine-id | while read c rest; do printf "%x" $c; done
-  networking.hostId = "5eb7479f";
 
   nix.extraOptions = ''
     build-cores = 4
   '';
   nix.maxJobs = 4;
 
+  # hostId needed for zsh
+  # cksum /etc/machine-id | while read c rest; do printf "%x" $c; done
+  networking.hostId = "5eb7479f";
   networking.hostName = "nemo";
 
   services.xserver.displayManager.slim.defaultUser = "rok";
