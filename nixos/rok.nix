@@ -85,8 +85,12 @@
     ::1 ${config.networking.hostName}
   '';
 
-  programs.xonsh.enable = true;
+  #programs.xonsh.enable = true;
   programs.zsh.enable = true;
+  programs.zsh.enableCompletion = true;
+  programs.zsh.syntaxHighlighting.enable = true;
+  programs.zsh.syntaxHighlighting.highlighters = [ "main" "brackets" "cursor" "root" "line" ];
+  programs.zsh.enableAutosuggestions = true;
 
   #security.polkit.extraConfig = ''
   #  polkit.addRule(function(action, subject) {

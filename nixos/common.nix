@@ -17,13 +17,12 @@ in {
 
     # gui apps
     firefox-beta-bin
-    chromium
+    # TODO: chromium
     vlc
     tdesktop
 
     # nix tools
     nix-prefetch-scripts
-    nix-repl
     nixops
     nodePackages.node2nix
     nox
@@ -59,9 +58,9 @@ in {
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
   nixpkgs.config.packageOverrides = pkgs: (import ./../pkgs { inherit pkgs garbas_config; });
-  nixpkgs.config.firefox.enableAdobeFlash = true;
+  #nixpkgs.config.firefox.enableAdobeFlash = true;
   nixpkgs.config.firefox.enableGoogleTalkPlugin = true;
-  nixpkgs.config.firefox.jre = false;
+  #nixpkgs.config.firefox.jre = false;
   nixpkgs.config.zathura.useMupdf = true;
 
 
@@ -76,6 +75,9 @@ in {
   services.openssh.enable = true;
 
   services.printing.enable = true;
+  services.printing.drivers = with pkgs; [
+    hplip
+  ];
 
   services.xserver.autorun = true;
   services.xserver.enable = true;

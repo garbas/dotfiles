@@ -54,7 +54,7 @@ let
 
       # monitors
       set $mon_lap ${i3_tray_output}
-      set $mon_ext HDMI1
+      set $mon_ext DP1
 
       # > horizontal | vertical | auto
       default_orientation horizontal
@@ -74,25 +74,13 @@ let
       mode "monitor_select" {
 
         # only one
-        bindsym 1 exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --off --output $mon_ext1 --off --output $mon_ext2 --off ; mode "default"
+        bindsym 1 exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --off; mode "default"
 
         # office
-        bindsym o exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext2 --auto --left-of $mon_lap ; mode "default"
-        #bindsym o exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext2 --rotate left --auto --left-of $mon_lap ; mode "default"
-
-        # left and right
-        bindsym l exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --left-of $mon_lap ; mode "default"
-        bindsym r exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --right-of $mon_lap ; mode "default"
-
-        # up and down
-        bindsym u exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --above $mon_lap ; mode "default"
-        bindsym d exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --below $mon_lap ; mode "default"
+        bindsym o exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --above $mon_lap ; mode "default"
 
         # clone
         bindsym c exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --auto --output $mon_ext --auto --same-as $mon_lap ; mode "default"
-
-        # presentation
-        bindsym p exec --no-startup-id ${xrandr}/bin/xrandr --output $mon_lap --off --output $mon_ext1 --auto ; mode "default"
 
         # back to normal: Enter or Escape
         bindsym Return mode "default"

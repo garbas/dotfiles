@@ -34,8 +34,14 @@
   fileSystems."/var".options = [ "defaults" "noatime" "acl" ];
 
 
+  nix.binaryCaches =
+    [ "https://cache.nixos.org"
+      "https://cache.mozilla-releng.net"
+    ];
   nix.extraOptions = ''
     build-cores = 4
+    require-sigs = false
+    trusted-users = root
   '';
   nix.maxJobs = 4;
 
@@ -114,12 +120,12 @@
 
       # gui applications
       pavucontrol
-      chromium
+      # TODO: chromium
       firefox
       pavucontrol
       #skype
       zathura
-      VidyoDesktop
+      #VidyoDesktop
       obs-studio
 
       # gnome3 theme
