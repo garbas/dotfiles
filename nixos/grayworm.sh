@@ -164,7 +164,6 @@ zpool create -O atime=off \
              -O snapdir=visible \
              -O xattr=sa \
              -o ashift=12 \
-             -o reservation=1G \
              -o altroot=/mnt \
             rpool /dev/mapper/root
 
