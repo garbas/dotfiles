@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# https://github.com/techhazard/nixos-iso/tree/master/techhazard
+
+
 set -e
 # DEBUG
 # set -x
@@ -21,13 +24,13 @@ if [ "$passphrase" = "" ]; then
     exit 1
 fi
 
+modprobe zfs
+
+
 #-----------------------------------------------------------------------------#
 # 1. Partitioning
 #-----------------------------------------------------------------------------#
-#
-# Borrowed from
-# https://github.com/techhazard/nixos-iso/blob/master/techhazard/partition.sh
-#
+
 # We will create a new GPT table:
 #
 # o:         create new GPT table
@@ -115,7 +118,7 @@ echo " DONE"
 
 echo -n "2. Format EFI (boot) partition ..."
 
-mkfs.vfat /dev/disk/by-partlabel/efiboot
+mkfs.vfat /dev/disk/by-partlabel/efiboot >/dev/null
 
 echo " DONE"
 
@@ -127,7 +130,7 @@ echo " DONE"
 echo -n "3. Format Luks (root) partition ..."
 
 # temporary keyfile, will be removed (8k, ridiculously large)
-dd if=/dev/urandom of=/tmp/keyfile bs=1k count=8
+dd if=/dev/urandom of=/tmp/keyfile bs=1k count=8 >/dev/null
 
 # formats the partition with luks and adds the temporary keyfile.
 echo "YES" | cryptsetup luksFormat /dev/disk/by-partlabel/cryptroot --key-size 512 --hash sha512 --key-file /tmp/keyfile
@@ -141,3 +144,87 @@ cryptsetup luksRemoveKey /dev/disk/by-partlabel/cryptroot /tmp/keyfile
 rm -f /tmp/keyfile
 
 echo " DONE"
+
+
+#-----------------------------------------------------------------------------#
+# 4. Format ZFS pool (zroot)
+#-----------------------------------------------------------------------------#
+
+echo -n "4. Format ZFS pool (zroot) ..."
+
+zpool create -O atime=off \
+             -O compression=lz4 \
+             -O normalization=formD \
+             -O snapdir=visible \
+             -O xattr=sa \
+             -o ashift=12 \
+             -o altroot=/mnt \
+            rpool /dev/mapper/root
+
+mem="$(grep MemTotal /proc/meminfo | awk '{print $2$3}')"
+
+zfs create -o mountpoint=none             rpool/ROOT
+zfs create -o mountpoint=legacy           rpool/ROOT/NIXOS
+zfs create -o mountpoint=legacy           rpool/HOME
+zfs create -o compression=off \
+           -V "${mem}" \
+           -b $(getconf PAGESIZE) \
+           -o compression=zle \
+           -o logbias=throughput \
+           -o sync=always \
+           -o primarycache=metadata \
+           -o secondarycache=none \
+           -o com.sun:auto-snapshot=false rpool/SWAP
+
+mkswap -L SWAP /dev/zvol/rpool/SWAP
+swapon /dev/zvol/rpool/SWAP
+
+echo " DONE"
+
+
+#-----------------------------------------------------------------------------#
+# 5. Mounting partitations /mnt, /mnt/boot, /mnt/home
+#-----------------------------------------------------------------------------#
+
+echo -n "5. Mounting partitations /mnt, /mnt/boot, /mnt/home ..."
+
+mount -t zfs rpool/ROOT/NIXOS /mnt
+
+mkdir -p /mnt/home
+mount -t zfs rpool/HOME /mnt/home
+
+mkdir -p /mnt/boot
+mount /dev/disk/by-partlabel/efiboot /mnt/boot
+
+zpool set bootfs="rpool/ROOT/NIXOS" rpool
+zfs set com.sun:auto-snapshot=true "rpool/HOME"
+
+echo " DONE"
+
+
+#-----------------------------------------------------------------------------#
+# 6. Checkout configuration and install NixOS
+#-----------------------------------------------------------------------------#
+
+mkdir -p /mnt/etc/nixos
+
+pushd /mnt/etc/nixos
+    if [ -e dotfiles ]; then
+        git clone https://github.com/garbas/dotfiles
+    else
+        pushd dotfiles
+            git pull
+        popd
+    fi
+    if [ -e nixpkgs-channels ]; then
+        git clone https://github.com/NixOS/nixpkgs-channels
+    else
+        pushd nixpkgs-channels
+            git pull
+        popd
+    fi
+    rm -f configuration.nix
+    ln -s configuration.nix dotfiles/nixos/grayworm.nix
+popd
+
+nixos-install -I /mnt/etc/nixos/nixpkgs-channels
