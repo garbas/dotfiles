@@ -298,7 +298,7 @@
             "vim-signify"
             "vim-snippets"
             "vim-startify"
-            "vim-webdevicons"
+            "vim-devicons"
     #        "vimpreviewpandoc"
             "vim-auto-save"
 

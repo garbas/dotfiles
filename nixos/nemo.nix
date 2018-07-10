@@ -16,6 +16,7 @@
   boot.zfs.devNodes = "/dev/mapper";
   boot.zfs.forceImportAll = true;
   boot.zfs.forceImportRoot = true;
+  #boot.zfs.enableUnstable = true;
 
   fileSystems."/".device = "rpool/ROOT";
   fileSystems."/".encrypted.enable = true;
