@@ -170,19 +170,10 @@ zpool create -O atime=off \
 
 mem="$(grep MemTotal /proc/meminfo | awk '{print $2$3}')"
 
-zfs create -o mountpoint=none             rpool/ROOT
-zfs create -o mountpoint=legacy           rpool/ROOT/NIXOS
-zfs create -o mountpoint=legacy \
-           -o com.sun:auto-snapshot=true  rpool/HOME
-zfs create -o compression=off \
-           -V "${mem}" \
-           -b $(getconf PAGESIZE) \
-           -o compression=zle \
-           -o logbias=throughput \
-           -o sync=always \
-           -o primarycache=metadata \
-           -o secondarycache=none \
-           -o com.sun:auto-snapshot=false rpool/SWAP
+zfs create -o mountpoint=none -o reservation=1G rpool/ROOT
+zfs create -o mountpoint=legacy -o reservation=1G rpool/ROOT/NIXOS
+zfs create -o mountpoint=legacy -o reservation=1G -o com.sun:auto-snapshot=true  rpool/HOME
+zfs create -V "${mem}" -b $(getconf PAGESIZE) -o compression=zle -o logbias=throughput -o sync=always -o primarycache=metadata -o secondarycache=none -o com.sun:auto-snapshot=false rpool/SWAP
 
 mkswap -L SWAP /dev/zvol/rpool/SWAP
 swapon /dev/zvol/rpool/SWAP
