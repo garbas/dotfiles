@@ -143,8 +143,8 @@ echo "YES" | cryptsetup luksFormat /dev/disk/by-partlabel/cryptroot --key-size 5
 
 echo "$passphrase" | cryptsetup luksAddKey /dev/disk/by-partlabel/cryptroot --key-file /tmp/keyfile
 
-# mount the cryptdisk at /dev/mapper/nixroot
-cryptsetup luksOpen /dev/disk/by-partlabel/cryptroot nixroot -d /tmp/keyfile
+# mount the cryptdisk at /dev/mapper/root
+cryptsetup luksOpen /dev/disk/by-partlabel/cryptroot root -d /tmp/keyfile
 # remove the temporary keyfile
 cryptsetup luksRemoveKey /dev/disk/by-partlabel/cryptroot /tmp/keyfile
 rm -f /tmp/keyfile
@@ -164,6 +164,7 @@ zpool create -O atime=off \
              -O snapdir=visible \
              -O xattr=sa \
              -o ashift=12 \
+             -o reservation=1G \
              -o altroot=/mnt \
             rpool /dev/mapper/root
 
@@ -171,7 +172,8 @@ mem="$(grep MemTotal /proc/meminfo | awk '{print $2$3}')"
 
 zfs create -o mountpoint=none             rpool/ROOT
 zfs create -o mountpoint=legacy           rpool/ROOT/NIXOS
-zfs create -o mountpoint=legacy           rpool/HOME
+zfs create -o mountpoint=legacy \
+           -o com.sun:auto-snapshot=true  rpool/HOME
 zfs create -o compression=off \
            -V "${mem}" \
            -b $(getconf PAGESIZE) \
@@ -203,7 +205,6 @@ mkdir -p /mnt/boot
 mount /dev/disk/by-partlabel/efiboot /mnt/boot
 
 zpool set bootfs="rpool/ROOT/NIXOS" rpool
-zfs set com.sun:auto-snapshot=true "rpool/HOME"
 
 echo " DONE"
 

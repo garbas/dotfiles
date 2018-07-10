@@ -10,7 +10,6 @@ let
   luksdevice = {};
   luksdevice.name = "root";
   luksdevice.device = "/dev/disk/by-partlabel/cryptroot";
-  luksdevice.preLVM = true;
 
 in {
 
@@ -18,7 +17,6 @@ in {
 
   nix.maxJobs = 8;
   nixpkgs.overlays = [ (import nixpkgs-mozilla) ];
-  boot.initrd.luks.devices = [ luksdevice ];
   boot.loader.systemd-boot.enable = true;
   boot.supportedFilesystems = [ "zfs" ];
   boot.zfs.devNodes = "/dev/mapper";
@@ -26,21 +24,18 @@ in {
   boot.zfs.forceImportRoot = true;
   #boot.zfs.enableUnstable = true;
 
+  # TODO: configure them
+  services.zfs.autoScrub.enable = true;
+  services.zfs.autoSnapshot.enable = true;
+
   fileSystems."/".device = "rpool/ROOT";
-  fileSystems."/".encrypted.blkDev = "/dev/sda2";
+  fileSystems."/".encrypted.blkDev = "/dev/disk/by-partlabel/cryptroot";
+  fileSystems."/".encrypted.blkDev = "/dev/disk/by-partlabel/cryptroot";
   fileSystems."/".encrypted.enable = true;
-  fileSystems."/".encrypted.label = "root_crypt";
+  fileSystems."/".encrypted.enable = true;
   fileSystems."/".fsType = "zfs";
-
-  fileSystems."/boot".device = "/dev/sda1";
+  fileSystems."/boot".device = "/dev/disk/by-partlabel/efiboot";
   fileSystems."/boot".fsType = "vfat";
-
   fileSystems."/home".device = "rpool/HOME";
   fileSystems."/home".fsType = "zfs";
-  fileSystems."/tmp".device = "tmpfs";
-  fileSystems."/tmp".fsType = "tmpfs";
-  fileSystems."/tmp".options = [ "nosuid" "nodev" "relatime" ];
-  fileSystems."/var".device = "rpool/VAR";
-  fileSystems."/var".fsType = "zfs";
-  fileSystems."/var".options = [ "defaults" "noatime" "acl" ];
 }
