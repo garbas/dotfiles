@@ -6,15 +6,20 @@
 #-----------------------------------------------------------------------------#
 
 diskdevice=$1
+passphrase=$2
 
 if [ "$diskdevice" = "" ]; then
     echo "ERROR: First argument should be disk device (eg. /dev/sda)."
     exit 1
 fi
 
+if [ "$passphrase" = "" ]; then
+    echo "ERROR: Second argument should be passphrase for your root Luks partition."
+    exit 1
+fi
 
 #-----------------------------------------------------------------------------#
-# 1. Partition
+# 1. Partitioning
 #-----------------------------------------------------------------------------#
 #
 # Borrowed from
@@ -55,6 +60,7 @@ fi
 # 
 # w:	     write changes and quit
 #         y: confirm write
+echo -n "1. Partitioning ${diskdevice} ..."
 gdisk ${diskdevice} >/dev/null <<end_of_commands
 o
 Y
@@ -75,3 +81,61 @@ encryptedroot
 w
 y
 end_of_commands
+
+# check for the newly created partitions
+# this sometimes gives unrelated errors
+# so we change it to  `partprobe || true`
+partprobe "${rootdisk}" >/dev/null || true
+
+# wait for label to show up
+while [[ ! -e /dev/disk/by-partlabel/efiboot ]];
+do
+	sleep 2;
+done
+
+# wait for label to show up
+while [[ ! -e /dev/disk/by-partlabel/cryptroot ]];
+do
+	sleep 2;
+done
+
+# check if both labels exist
+ls /dev/disk/by-partlabel/efiboot   >/dev/null
+ls /dev/disk/by-partlabel/cryptroot >/dev/null
+
+echo " DONE"
+
+
+
+#-----------------------------------------------------------------------------#
+# 2. Format EFI (boot) partition
+#-----------------------------------------------------------------------------#
+
+echo -n "2. Format EFI (boot) partition ..."
+
+mkfs.vfat /dev/disk/by-partlabel/efiboot
+
+echo " DONE"
+
+
+#-----------------------------------------------------------------------------#
+# 3. Format Luks (root) partition
+#-----------------------------------------------------------------------------#
+
+echo -n "3. Format Luks (root) partition ..."
+
+# temporary keyfile, will be removed (8k, ridiculously large)
+dd if=/dev/urandom of=/tmp/keyfile bs=1k count=8
+
+# formats the partition with luks and adds the temporary keyfile.
+echo "YES" | cryptsetup luksFormat /dev/disk/by-partlabel/cryptroot --key-size 512 --hash sha512 --key-file /tmp/keyfile
+
+echo "$passphrase" | cryptsetup luksAddKey /dev/disk/by-partlabel/cryptroot --key-file /tmp/keyfile
+
+# mount the cryptdisk at /dev/mapper/nixroot
+cryptsetup luksOpen /dev/disk/by-partlabel/cryptroot nixroot -d /tmp/keyfile
+# remove the temporary keyfile
+cryptsetup luksRemoveKey /dev/disk/by-partlabel/cryptroot /tmp/keyfile
+rm -f /tmp/keyfile
+
+echo " DONE"
