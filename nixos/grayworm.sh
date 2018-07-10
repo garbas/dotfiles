@@ -28,14 +28,12 @@ fi
 # Borrowed from
 # https://github.com/techhazard/nixos-iso/blob/master/techhazard/partition.sh
 #
-# The actual command is below the comment block.
-# we will create a new GPT table
+# We will create a new GPT table:
 #
 # o:         create new GPT table
 #         y: confirm creation
 #
-# with the new partition table,
-# we now create the EFI partition
+# With the new partition table, we now create the EFI partition:
 #
 # n:         create new partion
 #         1: partition number
@@ -43,8 +41,7 @@ fi
 #     +512M: make it 512MB big
 #      EF00: set an EFI partition type
 #
-# With the EFI partition, we
-# use the rest of the disk for LUKS
+# With the EFI partition, we use the rest of the disk for LUKS:
 #
 # n:         create new partition
 #         2: partition number
@@ -52,7 +49,7 @@ fi
 #   <empty>: use all remaining space
 #      8300: set generic linux partition type
 #
-# We only need to set the partition labels 
+# We only need to set the partition labels:
 #
 # c:         change partition label
 #         1: partition to label
@@ -70,17 +67,19 @@ Y
 n
 1
 
-512+
++512M
 EF00
 n
 2
+
+
 8300
 c
 1
 efiboot
 c
 2
-encryptedroot
+cryptroot
 w
 y
 end_of_commands
