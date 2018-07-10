@@ -216,6 +216,7 @@ pushd /mnt/etc/nixos
             git pull
         popd
     fi
+
     if [ -e nixpkgs-channels ]; then
         git clone https://github.com/NixOS/nixpkgs-channels
     else
@@ -223,6 +224,7 @@ pushd /mnt/etc/nixos
             git pull
         popd
     fi
+
     rm -f configuration.nix
     ln -s configuration.nix dotfiles/nixos/grayworm.nix
 popd
