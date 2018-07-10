@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e
+# DEBUG
+# set -x
 
 #-----------------------------------------------------------------------------#
 # 1. Ensure
@@ -85,7 +88,7 @@ end_of_commands
 # check for the newly created partitions
 # this sometimes gives unrelated errors
 # so we change it to  `partprobe || true`
-partprobe "${rootdisk}" >/dev/null || true
+partprobe "${diskdevice}" >/dev/null || true
 
 # wait for label to show up
 while [[ ! -e /dev/disk/by-partlabel/efiboot ]];
