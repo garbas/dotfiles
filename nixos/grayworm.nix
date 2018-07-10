@@ -3,8 +3,8 @@
 let
   # TODO: pin external repos bellow
   # TODO: until https://github.com/NixOS/nixos-hardware/pull/60 gets merged
-  # nixos-hardware = builtins.fetchTarball https://github.com/NixOS/nixpkgs-hardware/archive/master.tar.gz;
-  nixos-hardware = builtins.fetchTarball https://github.com/azazel75/nixpkgs-hardware/archive/master.tar.gz;
+  # nixos-hardware = builtins.fetchTarball https://github.com/NixOS/nixos-hardware/archive/master.tar.gz;
+  nixos-hardware = builtins.fetchTarball https://github.com/azazel75/nixos-hardware/archive/master.tar.gz;
   nixpkgs-mozilla = builtins.fetchTarball https://github.com/mozilla/nixpkgs-mozilla/archive/master.tar.gz;
 
   luksdevice = {};

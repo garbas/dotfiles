@@ -223,7 +223,7 @@ pushd /mnt/etc/nixos
     fi
 
     rm -f configuration.nix
-    ln -s configuration.nix dotfiles/nixos/grayworm.nix
+    ln -s dotfiles/nixos/grayworm.nix configuration.nix
 popd
 
 nixos-install -I /mnt/etc/nixos/nixpkgs-channels
