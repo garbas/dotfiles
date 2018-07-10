@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# https://github.com/techhazard/nixos-iso/tree/master/techhazard
+# To install run: curl https://link.garbas.si/grayworm | sh
+# Borrowed stuff from https://github.com/techhazard/nixos-iso/tree/master/techhazard
 
 
 set -e
@@ -24,7 +25,12 @@ if [ "$passphrase" = "" ]; then
     exit 1
 fi
 
-modprobe zfs
+modprobe zfs || {
+    echo "ERROR: Add 'boot.supportedFilesystems = [ \"zfs\" ];'"
+    echo "       to /etc/nixos/configuration.nix"
+    echo "       and run 'nixos-rebuild switch'"
+    exit 1
+}
 
 
 #-----------------------------------------------------------------------------#
@@ -130,7 +136,7 @@ echo " DONE"
 echo -n "3. Format Luks (root) partition ..."
 
 # temporary keyfile, will be removed (8k, ridiculously large)
-dd if=/dev/urandom of=/tmp/keyfile bs=1k count=8 >/dev/null
+dd if=/dev/urandom of=/tmp/keyfile bs=1k count=8 &>/dev/null
 
 # formats the partition with luks and adds the temporary keyfile.
 echo "YES" | cryptsetup luksFormat /dev/disk/by-partlabel/cryptroot --key-size 512 --hash sha512 --key-file /tmp/keyfile

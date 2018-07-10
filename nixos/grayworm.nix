@@ -20,6 +20,11 @@ in {
   nixpkgs.overlays = [ (import nixpkgs-mozilla) ];
   boot.initrd.luks.devices = [ luksdevice ];
   boot.loader.systemd-boot.enable = true;
+  boot.supportedFilesystems = [ "zfs" ];
+  boot.zfs.devNodes = "/dev/mapper";
+  boot.zfs.forceImportAll = true;
+  boot.zfs.forceImportRoot = true;
+  #boot.zfs.enableUnstable = true;
 
   fileSystems."/".device = "rpool/ROOT";
   fileSystems."/".encrypted.blkDev = "/dev/sda2";
