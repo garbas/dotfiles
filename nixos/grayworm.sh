@@ -7,8 +7,8 @@
 
 diskdevice=$1
 
-if [ "$rootdisk" = "" ]; then
-    echo "First argument should be disk device (eg. /dev/sda)."
+if [ "$diskdevice" = "" ]; then
+    echo "ERROR: First argument should be disk device (eg. /dev/sda)."
     exit 1
 fi
 
