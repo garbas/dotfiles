@@ -63,7 +63,6 @@ in {
   #nixpkgs.config.firefox.jre = false;
   nixpkgs.config.zathura.useMupdf = true;
 
-
   programs.ssh.forwardX11 = false;
   programs.ssh.startAgent = true;
 
