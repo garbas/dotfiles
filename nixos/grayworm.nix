@@ -16,14 +16,21 @@ in
 
 {
   imports =
-    #[ "${nixos-hardware}/lenovo/thinkpad/x1/6th-gen/QHD/default.nix"
     [ "${nixos-hardware}/lenovo/thinkpad/x1/6th-gen/default.nix"
-    #  <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
+      <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
+
+  # make suspend work on gen6
+  boot.kernelParams = [
+    "mem_sleep_default=deep"
+  ];
+  boot.initrd.prepend = [
+    "${./grayworm_acpi_override}"
+  ];
 
   fileSystems."/" =
     { device = "rpool/ROOT/NIXOS";
@@ -69,20 +76,30 @@ in
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
   nixpkgs.config.firefox.enableGoogleTalkPlugin = true;
+  nixpkgs.config.pulseaudio = true;
+
   nixpkgs.overlays = [
     (import nixpkgs-mozilla)
   ];
-  
+
   networking.hostId = "4214f894";
   networking.hostName = "grayworm"; # Define your hostname.
+
   networking.nat.enable = true;
   networking.nat.internalInterfaces = ["ve-+"];
   networking.nat.externalInterface = "wlp3s0";
+
   networking.extraHosts = ''
     81.4.127.29 floki floki.garbas.si
     127.0.0.1 ${config.networking.hostName}
     ::1 ${config.networking.hostName}
   '';
+
+  networking.firewall.enable = true;
+  networking.firewall.allowedTCPPorts = [ 22 ];
+  networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
+
+  networking.networkmanager.enable = true;
 
   i18n = {
     consoleFont = "Lat2-Terminus16";
@@ -92,37 +109,63 @@ in
 
   time.timeZone = "Europe/Berlin";
 
+  environment.variables.NIX_PATH = lib.mkForce "nixpkgs=/etc/nixos/nixpkgs-channels:nixos-config=/etc/nixos/configuration.nix";
+  environment.variables.GIT_EDITOR = lib.mkForce "emacseditor";
+  environment.variables.EDITOR = lib.mkForce "emacseditor";
   environment.shellAliases =
     { dotfiles = "git --git-dir=$HOME/.dotfiles --work-tree=$HOME";
-    };
+    }
+    ;
 
   environment.systemPackages = with pkgs; [
     VidyoDesktop
     alacritty
     asciinema
-    gnupg
     docker_compose
     gitAndTools.gitflow
+    gitAndTools.hub
     gitFull
     gnome3.dconf
     gnome3.defaultIconTheme
     gnome3.gnome_themes_standard
+    gnupg
     htop
+    i3status
+    ispell
+    iw
     keybase
     latest.firefox-nightly-bin
     mercurialFull
     mpv
+    networkmanagerapplet
     ngrok
     obs-studio
+    pa_applet
     pass
+    pasystray
+    pavucontrol
     pgadmin
     pythonPackages.Flootty
+    pythonPackages.py3status
+    rofi
+    rofi-menugen
+    rofi-pass
+    spotify
     sshuttle
     tig
     tree
     vim
+    volumeicon
     wget
     which
+    xclip
+    xlibs.xbacklight
+    xlibs.xbacklight
+    xlibs.xcursorthemes
+    xlibs.xev
+    xlibs.xmodmap
+    xlibs.xset
+    xsel
     youtube-dl
     zathura
   ];
@@ -138,10 +181,10 @@ in
   programs.gnupg.agent.enable = true;
   programs.gnupg.agent.enableSSHSupport = true;
   programs.gnupg.agent.enableBrowserSocket = true;
-  programs.info.enable = true;
+  documentation.info.enable = true;
   programs.mosh.enable = true;
   programs.zsh.enable = true;
-  programs.zsh.enableAutosuggestions = true;
+  programs.zsh.autosuggestions.enable = true;
   programs.zsh.enableCompletion = true;
   programs.zsh.ohMyZsh.enable = true;
   programs.zsh.ohMyZsh.plugins =
@@ -155,17 +198,24 @@ in
   services.openssh.enable = true;
   services.openssh.permitRootLogin = "yes";
 
-  networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
-
   services.printing.enable = true;
   services.printing.drivers = with pkgs; [
     hplip
   ];
 
   sound.enable = true;
+
   hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.support32Bit = true;
+  hardware.pulseaudio.package = pkgs.pulseaudioFull;
+  hardware.pulseaudio.extraConfig = ''
+    load-module module-switch-on-connect
+  '';
+
+  hardware.opengl = {
+    driSupport = true;
+    driSupport32Bit = true;
+  };
 
   services.xserver.autorun = true;
   services.xserver.enable = true;
@@ -182,7 +232,6 @@ in
 
   services.dbus.enable = true;
   services.locate.enable = true;
-
   security.sudo.enable = true;
 
   users.defaultUserShell = pkgs.zsh;
@@ -192,7 +241,7 @@ in
     isNormalUser = true;
     uid = 1000;
     description = "Rok Garbas";
-    extraGroups = [ "wheel" "vboxusers" "networkmanager" "docker" ] ;
+    extraGroups = [ "audio" "wheel" "vboxusers" "networkmanager" "docker" ] ;
     group = "users";
     home = "/home/rok";
   };
@@ -200,7 +249,7 @@ in
   virtualisation.docker.enable = true;
   virtualisation.virtualbox.host.enable = true;
 
-  system.stateVersion = "18.03"; # Did you read the comment?
+  system.nixos.stateVersion = "18.03"; # Did you read the comment?
 
   services.emacs.enable = true;
   services.emacs.defaultEditor = true;
@@ -208,6 +257,14 @@ in
 
   services.zfs.autoScrub.enable = true;
   services.zfs.autoSnapshot.enable = true;
+
+  services.syncthing.enable = true;
+  services.syncthing.openDefaultPorts = true;
+  services.syncthing.user = "rok";
+  services.syncthing.dataDir = "/home/rok/.local/syncthing";
+
+  #services.autorandr.defaultTarget = "mobile";
+  #services.autorandr.enable = true;
 
   fonts.enableFontDir = true;
   fonts.enableGhostscriptFonts = true;
@@ -218,5 +275,11 @@ in
     liberation_ttf
     source-code-pro
     terminus_font
+    font-awesome_5
+    material-icons
+    noto-fonts
+    noto-fonts-cjk
+    noto-fonts-emoji
+    #noto-fonts-extra
   ];
 }
