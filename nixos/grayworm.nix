@@ -215,6 +215,9 @@ in {
     notmuch
     isync
     afew
+    alot
+    mailcap
+    w3m
     imapnotify
     msmtp
 
@@ -442,13 +445,13 @@ in {
   # TODO: virtualisation.docker.storageDriver = "overlay2";
   virtualisation.virtualbox.host.enable = true;
 
-  services.zfs.autoScrub.enable = true;
-  services.zfs.autoSnapshot.enable = true;
+  ### services.zfs.autoScrub.enable = true;
+  ### services.zfs.autoSnapshot.enable = true;
 
-  services.syncthing.enable = true;
-  services.syncthing.openDefaultPorts = true;
-  services.syncthing.user = "rok";
-  services.syncthing.dataDir = "/home/rok/.local/syncthing";
+  ### services.syncthing.enable = true;
+  ### services.syncthing.openDefaultPorts = true;
+  ### services.syncthing.user = "rok";
+  ### services.syncthing.dataDir = "/home/rok/.local/syncthing";
 
   # services.autorandr.defaultTarget = "mobile";
   # services.autorandr.enable = true;
