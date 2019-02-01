@@ -44,6 +44,8 @@ in {
   boot.loader.grub.device = "/dev/sda";
 
   networking.hostName = "floki";
+  networking.firewall.allowedTCPPorts = [ 22 80 443 ];
+  networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
 
   i18n = {
     defaultLocale = "en_US.UTF-8";
@@ -55,6 +57,7 @@ in {
   environment.etc."gitconfig".source = ./gitconfig;
   environment.systemPackages = with pkgs; [
     git
+    mosh
     neovim
     termite.terminfo
   ];
