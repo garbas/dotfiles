@@ -6,6 +6,10 @@
 
 let
   custom_overlay = self: super: {
+    neovim = super.neovim.override {
+      vimAlias = true;
+      configure = import ./vim_config.nix { inherit pkgs; };
+    };
   };
 in {
   imports =
