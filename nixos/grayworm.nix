@@ -176,7 +176,7 @@ in {
   networking.nat.externalInterface = "wlp3s0";
 
   networking.extraHosts = ''
-    81.4.127.29 floki floki.garbas.si
+    116.203.16.150 floki floki.garbas.si
     127.0.0.1 ${config.networking.hostName}
     ::1 ${config.networking.hostName}
   '';
@@ -223,17 +223,17 @@ in {
 
     # editors
     neovim
-    (vscode-with-extensions.override {
-       vscodeExtensions = with vscode-extensions; [
-         bbenoist.Nix
-         ms-vscode.cpptools
-         ms-python.python
-         WakaTime.vscode-wakatime
-         vscodevim.vim
-         github.vscode-pull-request-github
-         akamud.vscode-theme-onelight
-       ];
-    })
+    # (vscode-with-extensions.override {
+    #    vscodeExtensions = with vscode-extensions; [
+    #      bbenoist.Nix
+    #      ms-vscode.cpptools
+    #      ms-python.python
+    #      WakaTime.vscode-wakatime
+    #      vscodevim.vim
+    #      github.vscode-pull-request-github
+    #      akamud.vscode-theme-onelight
+    #    ];
+    # })
 
 
     # IM clients
