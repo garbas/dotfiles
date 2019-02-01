@@ -27,7 +27,13 @@ in {
 
   swapDevices = [ ];
 
+  nix.package = pkgs.nixUnstable;
   nix.maxJobs = lib.mkDefault 2;
+  nix.useSandbox = true;
+  nix.trustedBinaryCaches = [ "https://hydra.nixos.org" ];
+  nix.binaryCachePublicKeys = [
+    "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
+  ];
 
   nixpkgs.overlays = [
     custom_overlay
