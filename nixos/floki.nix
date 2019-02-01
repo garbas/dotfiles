@@ -53,6 +53,7 @@ in {
     termite.terminfo
   ];
 
+  security.hideProcessInformation = true;
   security.sudo.enable = true;
 
   services.openssh.enable = true;
