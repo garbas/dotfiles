@@ -4,7 +4,10 @@
 
 { config, pkgs, lib, ... }:
 
-{
+let
+  custom_overlay = self: super: {
+  };
+in {
   imports =
     [ <nixpkgs/nixos/modules/profiles/qemu-guest.nix>
     ];
@@ -21,6 +24,10 @@
   swapDevices = [ ];
 
   nix.maxJobs = lib.mkDefault 2;
+
+  nixpkgs.overlays = [
+    custom_overlay
+  ];
 
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
@@ -43,6 +50,7 @@
   ];
 
   security.sudo.enable = true;
+
   services.openssh.enable = true;
 
   # services.weechat.enable = true;
@@ -57,12 +65,8 @@
     group = "users";
     home = "/home/rok";
   };
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
+  # disable as much as possible
   hardware.pulseaudio.enable = false;
   services.printing.enable = false;
   services.xserver.enable = false;

@@ -427,7 +427,9 @@ in {
   services.timesyncd.enable = true;
   services.dbus.enable = true;
   services.locate.enable = true;
+
   security.sudo.enable = true;
+  security.hideProcessInformation = true;
 
   users.defaultUserShell = pkgs.zsh;
   users.mutableUsers = false;
