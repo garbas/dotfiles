@@ -22,11 +22,26 @@ let
       rev = "c876bb8f8749d53ef759de809ce2aa68a8cce20e";
       sha256 = "0zb0yjygmm9glihkhzkax3f223dzqzhpmj25243ygkgzl1pb8sg1";
     }) { pkgs = self; }).package;
+    weechat = super.weechat.override {
+      configure = { ... }: {
+        scripts = with self.weechatScripts; [
+          weechat-matrix-bridge
+          wee-slack
+        ];
+      };
+    };
+
   };
 in {
   imports =
     [ <nixpkgs/nixos/modules/profiles/qemu-guest.nix>
     ];
+
+  services.weechat.enable = true;
+  programs.screen.screenrc = ''
+    multiuser on
+    acladd rok
+  '';
 
   boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "sd_mod" "sr_mod" ];
   boot.kernelModules = [ ];
@@ -70,11 +85,13 @@ in {
   environment.systemPackages = with pkgs; [
     git
     gnumake
+    htop
     mosh
     neovim
-    termite.terminfo
-    pypi2nix
     node2nix
+    pypi2nix
+    termite.terminfo
+    tig
   ];
 
   security.hideProcessInformation = true;
@@ -110,8 +127,6 @@ in {
 
         };
     };
-
-  # services.weechat.enable = true;
 
   users.mutableUsers = false;
   users.users.root.hashedPassword = "$6$PS.1SD6/$kUv8wdXYH00dEvpqlC9SyX/E3Zm3HLPNmsxLwteJSQgpXDOfFZhWXkHby6hvZ.kFN2JbgXqJvwZfjOunBpcHX0";
