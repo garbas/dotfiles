@@ -206,6 +206,8 @@ in {
   environment.variables.NIX_PATH = lib.mkForce "nixpkgs=/etc/nixos/nixpkgs-channels:nixos-config=/etc/nixos/configuration.nix";
   environment.variables.GIT_EDITOR = lib.mkForce "nvim +startinsert +0";
   environment.variables.EDITOR = lib.mkForce "nvim";
+  # Trick firefox so it doesn't create new profiles, see https://github.com/mozilla/nixpkgs-mozilla/issues/163
+  environment.variables.SNAP_NAME = "firefox";
   environment.shellAliases =
     { dotfiles = "git --git-dir=$HOME/.dotfiles --work-tree=$HOME";
     };
@@ -252,7 +254,6 @@ in {
     gnumake
     gnupg
     htop
-    keybase
     mpv
     ngrok
     scrot
@@ -357,6 +358,8 @@ in {
   ];
   services.avahi.enable = true;
   services.avahi.nssmdns = true;
+
+  services.keybase.enable = true;
 
   services.udev.packages = with pkgs; [ uhk-agent ];
 
