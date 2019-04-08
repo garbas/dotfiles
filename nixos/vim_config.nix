@@ -74,6 +74,8 @@ let
         # Keymap-display loosely inspired by emacs's guide-key.
         # https://github.com/hecal3/vim-leader-guide
         "vim-leader-guide"
+        #
+        "fzf-vim"
       ];
       config = ''
         let g:startify_enable_special         = 0
@@ -140,6 +142,8 @@ let
         "vim-auto-save"
         # 
         "vim-expand-region"
+        # Focused mode
+        "goyo"
       ];
       config = ''
         " Use region expanding
@@ -152,17 +156,40 @@ let
       '';
     }
 
-    # "neoformat"
-    # "commentary"
-    # "ale"
-    # "UltiSnips"
-    # "vim-snippets"
-    # "deoplete-nvim"
-    # "fzf-vim"
-    # "fzfWrapper"
-    # "goyo"
-    # "neoformat"
-    # "neomake"
+    # PROGRAMMING (GENERAL)
+    { plugins = [
+        # linting and formatting
+        "ale"
+        # language server
+        "LanguageClient-neovim"
+        # autocompletion
+        #"coc"
+        # snippets
+        #"coc-ultisnips"
+        "ultisnips"
+        "vim-snippets"
+        # commenting
+        "vim-commentary"
+      ];
+      config = ''
+      '';
+    }
+
+    # PROGRAMMING (RUST)
+    { plugins = [
+        "rust-vim"
+      ];
+      config = ''
+      '';
+    }
+
+    # PROGRAMMING (RUST)
+    { plugins = [
+      ];
+      config = ''
+      '';
+    }
+
     # "vim-css-color"
   ];
 in {
