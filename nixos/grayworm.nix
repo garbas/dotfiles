@@ -89,10 +89,7 @@ let
         EOF
       '';
 
-    neovim = super.neovim.override {
-      vimAlias = true;
-      configure = import ./vim_config.nix { inherit pkgs; };
-    };
+      neovim = import ./vim.nix { pkgs = super; };
   };
 
 in {

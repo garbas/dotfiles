@@ -2,44 +2,84 @@
 }:
 
 let
+  inherit (pkgs) fetchFromGitHub;
+
+  yarn2nix-src = fetchFromGitHub {
+    owner = "moretea";
+    repo = "yarn2nix";
+    rev = "780e33a07fd821e09ab5b05223ddb4ca15ac663f";
+    sha256 = "1f83cr9qgk95g3571ps644rvgfzv2i4i7532q8pg405s4q5ada3h";
+  };
+
+  yarn2nix = import yarn2nix-src { inherit pkgs; };
+
+  coc = yarn2nix.mkYarnPackage {
+    name = "coc.nvim";
+    src = ./coc.nvim;
+    patchPhase = ''
+      sed -i -e "s|if executable('yarn')|if executable('${pkgs.yarn}/bin/yarn')|" autoload/coc/util.vim
+    '';
+    postInstall = ''
+      export HOME=$TMPDIR/coc-$RANDOM
+      OLD_NODE_MODULES=`realpath $out/libexec/coc.nvim/deps/coc.nvim/node_modules`
+      rm -rf $out/libexec/coc.nvim/deps/coc.nvim/node_modules
+      mkdir $out/libexec/coc.nvim/deps/coc.nvim/node_modules
+      for item in $out/libexec/coc.nvim/node_modules/*; do
+        name=`basename $item`
+        if [ "$name" == "coc.nvim" ]; then
+          continue
+        fi
+        ln -s "$out/libexec/coc.nvim/node_modules/$name" "$out/libexec/coc.nvim/deps/coc.nvim/node_modules/$name"
+      done
+      if [ -e "$out/libexec/coc.nvim/node_modules/.bin" ]; then
+        ln -s "$out/libexec/coc.nvim/node_modules/.bin" "$out/libexec/coc.nvim/deps/coc.nvim/node_modules/.bin"
+      fi
+      pushd $out/libexec/coc.nvim/deps/coc.nvim
+        yarn build
+      popd
+    '';
+
+  };
+
+  vimPlugins = pkgs.lib.fix' (pkgs.lib.extends
+    (self: super: {
+
+      coc = pkgs.vimUtils.buildVimPluginFrom2Nix {
+        pname = "coc";
+        version = "2019-04-04";
+        src = "${coc}/libexec/coc.nvim/deps/coc.nvim";
+      };
+
+    })
+    (self: pkgs.vimPlugins));
+
   preConfig = ''
-    let mapleader = "\<Space>"
+    let mapleader="\<Space>"
     let maplocalleader = ","
   '';
   postConfig = ''
   '';
-  pluginsWithConfig = [
+  pluginsWithConfig = with vimPlugins; [
 
     # SENSIBLE DEFAULTS
     { plugins = [
         # One step above 'nocompatible' mode
         # https://github.com/tpope/vim-sensible
-        "sensible"
+        sensible
+
         # One step above sensible.vim more defaults to agree on
         # https://github.com/jeffkreeftmeijer/neovim-sensible
-        "neovim-sensible"
-      ];
-      config = "";
-    }
-
-    # LANGUAGE SUPPORT (HIGHLIGHTING)
-    { plugins = [
-        # A collection of language packs for Vim.
-        # https://github.com/sheerun/vim-polyglot
-        "vim-polyglot"
-        # Support for writing Nix expressions in vim.
-        # https://github.com/LnL7/vim-nix
-        "vim-nix"
+        neovim-sensible
       ];
       config = "";
     }
 
     # THEME
     { plugins = [
-        "vim-one"
-        "vim-airline"
-        "vim-airline-themes"
-        "vim-devicons"
+        vim-one
+        vim-airline
+        vim-airline-themes
+        vim-devicons
       ];
       config = ''
         set termguicolors
@@ -47,35 +87,21 @@ let
         set background=light
         let g:one_allow_italics = 1
         let g:airline_theme='one'
+
+        let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
+        let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
       '';
     }
 
-    # VERSION CONTROLS
+    # CORE
     { plugins = [
-        # A Git wrapper
-        # https://github.com/tpope/vim-fugitive
-        "fugitive"
-        # Plugin which manipulate gists in Vim. 
-        # https://github.com/lambdalisue/vim-gista
-        "vim-gista"
-      ];
-      config = ''
-      '';
-    }
-
-    # NAVIGATION
-    { plugins = [
-        # Plugin to toggle, display and navigate marks
-        # https://github.com/kshenoy/vim-signature
-        "vim-signature"
         # The fancy start screen for Vim.
         # https://github.com/mhinz/vim-startify
-        "vim-startify"
+        vim-startify
+
         # Keymap-display loosely inspired by emacs's guide-key.
         # https://github.com/hecal3/vim-leader-guide
-        "vim-leader-guide"
-        #
-        "fzf-vim"
+        vim-leader-guide
       ];
       config = ''
         let g:startify_enable_special         = 0
@@ -116,21 +142,66 @@ let
         hi StartifySlash   ctermfg=240
         hi StartifySpecial ctermfg=240
 
-        " TODO: implement the following leader key mapping
-        " https://github.com/kshenoy/vim-signature#installation
         let g:lmap =  {}
 
-        " Git
-        let g:lmap.g = {
-                \'name' : 'Git Menu',
-                \'s' : ['Gstatus', 'Git Status'],
-                \'p' : ['Gpull',   'Git Pull'],
-                \'u' : ['Gpush',   'Git Push'],
-                \'c' : ['Gcommit', 'Git Commit'],
-                \'w' : ['Gwrite',  'Git Write'],
-                \'i' : ['Gista post --public',  'Public Gist'],
-                \'I' : ['Gista post --private',  'Private Gist'],
-                \}
+        "" Git
+        "let g:lmap.g = {
+        "        \'name' : 'Git Menu',
+        "        \'s' : ['Gstatus', 'Git Status'],
+        "        \'p' : ['Gpull',   'Git Pull'],
+        "        \'u' : ['Gpush',   'Git Push'],
+        "        \'c' : ['Gcommit', 'Git Commit'],
+        "        \'w' : ['Gwrite',  'Git Write'],
+        "        \'i' : ['Gista post --public',  'Public Gist'],
+        "        \'I' : ['Gista post --private',  'Private Gist'],
+        "        \}
+
+        " TODO: implement the following leader key mapping
+        " https://github.com/kshenoy/vim-signature#installation
+
+        "call leaderGuide#register_prefix_descriptions("<Space>", "g:lmap")
+        nnoremap <silent> <leader> :<c-u>LeaderGuide '<Space>'<CR>
+        vnoremap <silent> <leader> :<c-u>LeaderGuideVisual '<Space>'<CR>
+
+      '';
+    }
+
+    # LANGUAGE SUPPORT (HIGHLIGHTING)
+    { plugins = [
+        # A collection of language packs for Vim.
+        # https://github.com/sheerun/vim-polyglot
+        vim-polyglot
+        # Support for writing Nix expressions in vim.
+        # https://github.com/LnL7/vim-nix
+        vim-nix
+      ];
+      config = "";
+    }
+
+
+    # VERSION CONTROLS
+    { plugins = [
+        # A Git wrapper
+        # https://github.com/tpope/vim-fugitive
+        fugitive
+        # Plugin which manipulate gists in Vim. 
+        # https://github.com/lambdalisue/vim-gista
+        vim-gista
+        # Show a diff using Vim its sign column.
+        # https://github.com/mhinz/vim-signify
+        vim-signify
+      ];
+      config = ''
+      '';
+    }
+
+    # NAVIGATION
+    { plugins = [
+        # Plugin to toggle, display and navigate marks
+        # https://github.com/kshenoy/vim-signature
+        vim-signature
+      ];
+      config = ''
       '';
     }
 
@@ -139,11 +210,11 @@ let
         # AutoSave - automatically save changes to disk without having to
         # use :w (or any binding to it) every time a buffer has been modified.
         # https://github.com/vim-scripts/vim-auto-save
-        "vim-auto-save"
+        vim-auto-save
         # 
-        "vim-expand-region"
+        vim-expand-region
         # Focused mode
-        "goyo"
+        goyo
       ];
       config = ''
         " Use region expanding
@@ -158,45 +229,42 @@ let
 
     # PROGRAMMING (GENERAL)
     { plugins = [
-        # linting and formatting
-        "ale"
-        # language server
-        "LanguageClient-neovim"
-        # autocompletion
-        #"coc"
-        # snippets
-        #"coc-ultisnips"
-        "ultisnips"
-        "vim-snippets"
-        # commenting
-        "vim-commentary"
+        # TODO: https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions#use-vims-plugin-manager-for-coc-extension
+        coc
+        vim-snippets
+        vim-commentary
       ];
       config = ''
+        let g:coc_node_path = '${pkgs.nodejs}/bin/node'
+
+        " Use <Tab> and <S-Tab> for navigate completion list:
+        inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+        inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+        " Use <cr> to confirm complete
+        inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+        " Close preview window when completion is done.
+        autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
+
+
       '';
     }
 
-    # PROGRAMMING (RUST)
-    { plugins = [
-        "rust-vim"
-      ];
-      config = ''
-      '';
-    }
+    # # PROGRAMMING (RUST)
+    # { plugins = [
+    #   ];
+    #   config = ''
+    #   '';
+    # }
 
-    # PROGRAMMING (RUST)
-    { plugins = [
-      ];
-      config = ''
-      '';
-    }
-
-    # "vim-css-color"
   ];
+
 in {
   customRC = preConfig +
              (builtins.concatStringsSep "\n\n" (builtins.map (x: x.config) pluginsWithConfig)) +
              postConfig;
   packages.myVimPackages = {
-    start = map (name: pkgs.vimPlugins."${name}") (pkgs.lib.flatten (builtins.map (x: x.plugins) pluginsWithConfig));
+    start = pkgs.lib.flatten (builtins.map (x: x.plugins) pluginsWithConfig);
   };
 }
