@@ -109,27 +109,47 @@ in {
   services.nginx.sslCiphers = "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256";
   services.nginx.sslDhparam = "/etc/ssl/certs/dhparam.pem";
   services.nginx.statusPage = true;
+  services.nginx.appendHttpConfig = ''
+    limit_req_zone $binary_remote_addr zone=weechat:10m rate=5r/m;  # Setup brute force protection
+  '';
   services.nginx.virtualHosts =
     { "garbas.si" =
         { default = true;
           forceSSL = true;
           enableACME = true;
           acmeRoot = "/var/www/challenges";
-          locations."/".root = "/home/rok/blog";
           extraConfig = ''
-            add_header           X-Frame-Options SAMEORIGIN;
-            add_header           X-Content-Type-Options nosniff;
-            add_header           X-XSS-Protection "1; mode=block";
-            add_header           Content-Security-Policy "default-src 'self';script-src 'self' www.google-analytics.com;img-src 'self' www.google-analytics.com;";
-            add_header           Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
             ssl_session_tickets  off;
           '';
+          locations =
+            { "/weechat" =
+                { proxyPass = "http://localhost:8888/weechat";
+                  proxyWebsockets = true;
+                  extraConfig = ''
+                    proxy_read_timeout 604800;                # Prevent idle disconnects
+                    proxy_set_header X-Real-IP $remote_addr;  # Let Weechat see client's IP
+                    limit_req zone=weechat burst=1 nodelay;   # Brute force prevention
+                  '';
+                };
+              "/" =
+                { root = "/var/www/garbas.si";
+                  extraConfig = ''
+                    add_header           X-Frame-Options SAMEORIGIN;
+                    add_header           X-Content-Type-Options nosniff;
+                    add_header           X-XSS-Protection "1; mode=block";
+                    add_header           Content-Security-Policy "default-src 'self';script-src 'self' www.google-analytics.com;img-src 'self' www.google-analytics.com;";
+                    add_header           Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+                  '';
+                };
+            };
 
         };
     };
 
   users.mutableUsers = false;
   users.users.root.hashedPassword = "$6$PS.1SD6/$kUv8wdXYH00dEvpqlC9SyX/E3Zm3HLPNmsxLwteJSQgpXDOfFZhWXkHby6hvZ.kFN2JbgXqJvwZfjOunBpcHX0";
+  users.users."nginx".extraGroups = [ "weechat" "rok" ];
+  users.users."weechat".extraGroups = [ "nginx" ];
   users.users."rok" = {
     hashedPassword = "$6$PS.1SD6/$kUv8wdXYH00dEvpqlC9SyX/E3Zm3HLPNmsxLwteJSQgpXDOfFZhWXkHby6hvZ.kFN2JbgXqJvwZfjOunBpcHX0";
     isNormalUser = true;
@@ -137,7 +157,7 @@ in {
     description = "Rok Garbas";
     extraGroups = [
       "wheel"  # sudo
-      "nginx"  # to publish /home/rok/blog/
+      "nginx"  # to publish
     ] ;
     group = "users";
     home = "/home/rok";
