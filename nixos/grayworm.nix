@@ -210,6 +210,9 @@ in {
     };
 
   environment.systemPackages = with pkgs; [
+    # mozilla
+    phlay
+
     # email
     notmuch
     isync
@@ -238,6 +241,7 @@ in {
     # IM clients
     skype
     VidyoDesktop
+    zoom-us
 
     # terminals
     alacritty

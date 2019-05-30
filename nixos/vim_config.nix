@@ -88,8 +88,8 @@ let
         let g:one_allow_italics = 1
         let g:airline_theme='one'
 
-        let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
-        let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
+        "let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
+        "let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
       '';
     }
 
@@ -230,22 +230,22 @@ let
     # PROGRAMMING (GENERAL)
     { plugins = [
         # TODO: https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions#use-vims-plugin-manager-for-coc-extension
-        coc
+        #coc
         vim-snippets
         vim-commentary
       ];
       config = ''
-        let g:coc_node_path = '${pkgs.nodejs}/bin/node'
+        "let g:coc_node_path = '${pkgs.nodejs}/bin/node'
 
-        " Use <Tab> and <S-Tab> for navigate completion list:
-        inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-        inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+        "" Use <Tab> and <S-Tab> for navigate completion list:
+        "inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+        "inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-        " Use <cr> to confirm complete
-        inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+        "" Use <cr> to confirm complete
+        "inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-        " Close preview window when completion is done.
-        autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
+        "" Close preview window when completion is done.
+        "autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
 
       '';
