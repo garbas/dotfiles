@@ -233,6 +233,7 @@ let
         #coc
         vim-snippets
         vim-commentary
+        vim-better-whitespace
       ];
       config = ''
         "let g:coc_node_path = '${pkgs.nodejs}/bin/node'

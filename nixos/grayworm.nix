@@ -25,7 +25,7 @@ let
       };
       installPhase = ''
         mkdir $out
-	cp -R ./ $out/
+        cp -R ./ $out/
       '';
     };
 
@@ -33,8 +33,8 @@ let
       name = "oh-my-zsh-2018-11-27";
       src = self.fetchFromGitHub {
         owner = "robbyrussell";
-	repo = "oh-my-zsh";
-	rev = "2614b7ecdfe8b8f0cbeafffefb5925196f4011d4";
+        repo = "oh-my-zsh";
+        rev = "2614b7ecdfe8b8f0cbeafffefb5925196f4011d4";
         sha256 = "0yfk0x7xj640xn0klyggrncvmmm3b44ldfxfrr4mcixb1scfv5lb";
       };
       phases = "${old.phases} postInstall";
@@ -89,7 +89,7 @@ let
         EOF
       '';
 
-      neovim = import ./vim.nix { pkgs = super; };
+      neovim = import ./../../nvim-config { };
   };
 
 in {
@@ -149,9 +149,17 @@ in {
   nix.package = pkgs.nixUnstable;
   nix.maxJobs = lib.mkDefault 8;
   nix.useSandbox = true;
-  nix.trustedBinaryCaches = [ "https://hydra.nixos.org" ];
+  nix.trustedBinaryCaches = [
+    "https://hydra.nixos.org"
+    "https://cache.dhall-lang.org"
+  ];
+  nix.binaryCaches = [
+    "https://cache.nixos.org"
+    "https://cache.dhall-lang.org"
+  ];
   nix.binaryCachePublicKeys = [
     "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
+    "cache.dhall-lang.org:I9/H18WHd60olG5GsIjolp7CtepSgJmM2CsO813VTmM="
   ];
 
   nixpkgs.config.allowBroken = false;
@@ -207,6 +215,8 @@ in {
   environment.variables.SNAP_NAME = "firefox";
   environment.shellAliases =
     { dotfiles = "git --git-dir=$HOME/.dotfiles --work-tree=$HOME";
+      moz-cloudops-jenkins = "ssh -N jenkins-proxy & (sleep 5; firefox -P DeployMozAws https://deploy.mozaws.net) && sleep 5 && kill -9 $(jobs -p)";
+      moz-cloudops-jenkins2 = "ssh -N jenkins-proxy & (sleep 5; firefox -P DeployMozAws https://ops-master.jenkinsv2.prod.mozaws.net) && sleep 5 && kill -9 $(jobs -p)";
     };
 
   environment.systemPackages = with pkgs; [
@@ -225,6 +235,7 @@ in {
 
     # editors
     neovim
+    vscode
     # (vscode-with-extensions.override {
     #    vscodeExtensions = with vscode-extensions; [
     #      bbenoist.Nix
@@ -240,8 +251,18 @@ in {
 
     # IM clients
     skype
-    VidyoDesktop
     zoom-us
+
+    # mozilla
+    arcanist
+    ripgrep
+    jq
+    fzf
+    exercism
+    travis
+    entr
+    file
+    xorg.xbacklight
 
     # terminals
     alacritty
@@ -249,6 +270,7 @@ in {
     hyper
 
     # console programs
+    brightnessctl
     asciinema
     docker_compose
     entr
@@ -259,7 +281,7 @@ in {
     ngrok
     scrot
     pass
-    # XXX: sshuttle
+    sshuttle
     tig
     tree
     unzip
@@ -277,19 +299,18 @@ in {
     networkmanagerapplet
     pa_applet
     pasystray
-    pythonPackages.py3status
+    python3Packages.py3status
     i3status
 
     # browsers
     latest.firefox-nightly-bin
-    chromium
+    # XXX: chromium
     opera
 
     # GUI applications
-    blueman
-    # XXX: obs-studio
+    obs-studio
     pavucontrol
-    pgadmin
+    # XXX: pgadmin
     spotify
     uhk-agent
 
@@ -401,8 +422,8 @@ in {
 
   services.fstrim.enable = true;
   services.compton.enable = true;
-  services.compton.shadow = true;
-  services.compton.inactiveOpacity = "0.8";
+  #services.compton.shadow = true;
+  #services.compton.inactiveOpacity = "0.8";
   services.xserver.autorun = true;
   services.xserver.enable = true;
   services.xserver.exportConfiguration = true;
@@ -410,6 +431,7 @@ in {
   services.xserver.xkbOptions = "eurosign:e, ctrl:nocaps";
   services.xserver.autoRepeatDelay = 200;
   services.xserver.autoRepeatInterval = 25;
+  services.xserver.videoDrivers = ["intel"];
   services.xserver.synaptics.enable = false;
   services.xserver.libinput.enable = true;
   services.xserver.libinput.additionalOptions = ''
@@ -421,8 +443,13 @@ in {
   services.xserver.displayManager.lightdm.greeters.gtk.indicators = [ "~host" "~spacer" "~clock" "~spacer" "~a11y" "~session" "~power"];
   services.xserver.windowManager.i3.enable = true;
 
-  services.xserver.desktopManager.default = "none";
+  services.xserver.desktopManager.default = "xfce";
   services.xserver.desktopManager.xterm.enable = false;
+  services.xserver.desktopManager.xfce.enable = true;
+  services.xserver.desktopManager.xfce.noDesktop = true;
+  services.xserver.desktopManager.xfce.enableXfwm = false;
+  #services.xserver.desktopManager.default = "none";
+  #services.xserver.desktopManager.xterm.enable = false;
 
   # TODO: geoclue2 provider is not working
   # TODO: services.redshift.enable = true;
@@ -431,8 +458,11 @@ in {
   services.timesyncd.enable = true;
   services.dbus.enable = true;
   services.locate.enable = true;
+  services.blueman.enable = true;
+
 
   security.sudo.enable = true;
+  security.sudo.wheelNeedsPassword = false;
   security.hideProcessInformation = true;
 
   users.defaultUserShell = pkgs.zsh;
