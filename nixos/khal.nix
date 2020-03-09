@@ -4,10 +4,12 @@ let
   nixpkgs-mozilla-overlay = self: super: {};
   khal-overlay = self: super: {
     neovim = import ./../../nvim-config { inherit pkgs; };
+    dunst = super.dunst.override { dunstify = true; };
   };
 in {
   imports =
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
+      ./modules.nix
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
@@ -193,6 +195,8 @@ in {
   services.avahi.nssmdns = true;
   services.blueman.enable = true;
   services.dbus.enable = true;
+  services.dunst.enable = true;
+  services.dunst.config = import ./dunstrc.nix { inherit (pkgs) rofi; };
   services.fprintd.enable = true;
   services.fstrim.enable = true;
   services.greenclip.enable = true;
