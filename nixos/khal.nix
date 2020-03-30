@@ -3,17 +3,19 @@
 let
   nixpkgs-mozilla-overlay = self: super: {};
   khal-overlay = self: super: {
-    neovim = import ./../../nvim-config { inherit pkgs; };
+    neovim = import ./../../nvim-config { pkgs = super; };
     dunst = super.dunst.override { dunstify = true; };
   };
 in {
   imports =
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
+      ./../../nixos-hardware/dell/xps/13-7390/default.nix
       ./modules.nix
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ ];
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
@@ -104,11 +106,15 @@ in {
     # chat
     skype
     zoom-us
+    riot-desktop
 
     # terminals
     alacritty
     termite
     hyper
+
+    # nix tools
+    niv
 
     # browsers
     firefox
@@ -127,7 +133,8 @@ in {
     gnome3.defaultIconTheme
     hicolor-icon-theme
     rofi
-    rofi-menugen
+    # rofi-menugen  # TODO: do i need this?
+    # rofi-calc  # TODO: https://github.com/NixOS/nixpkgs/pull/83136
     volumeicon
     xclip
 
@@ -199,6 +206,7 @@ in {
   services.dunst.config = import ./dunstrc.nix { inherit (pkgs) rofi; };
   services.fprintd.enable = true;
   services.fstrim.enable = true;
+  services.fwupd.enable = true;
   services.greenclip.enable = true;
   services.kbfs.enable = true;
   services.keybase.enable = true;
