@@ -6,22 +6,7 @@
 
 let
   custom_overlay = self: super: {
-    neovim = super.neovim.override {
-      vimAlias = true;
-      configure = import ./vim_config.nix { inherit pkgs; };
-    };
-    pypi2nix = import (self.fetchFromGitHub {
-      owner = "garbas";
-      repo = "pypi2nix";
-      rev = "0498dac1c6c5ee445ed23056af0efb3e2358358d";
-      sha256 = "0nrz4863infjwipn3lgac42f4y3ld7045ls2q9z4z4x50xk7p4zm";
-    }) { pkgs = self; };
-    node2nix = (import (self.fetchFromGitHub {
-      owner = "svanderburg";
-      repo = "node2nix";
-      rev = "c876bb8f8749d53ef759de809ce2aa68a8cce20e";
-      sha256 = "0zb0yjygmm9glihkhzkax3f223dzqzhpmj25243ygkgzl1pb8sg1";
-    }) { pkgs = self; }).package;
+    neovim = import ./../../nvim-config { pkgs = self; };
     weechat = super.weechat.override {
       configure = { ... }: {
         scripts = with self.weechatScripts; [
@@ -88,7 +73,6 @@ in {
     htop
     mosh
     neovim
-    node2nix
     pypi2nix
     termite.terminfo
     tig
@@ -112,18 +96,19 @@ in {
   services.nginx.appendHttpConfig = ''
     limit_req_zone $binary_remote_addr zone=weechat:10m rate=5r/m;  # Setup brute force protection
   '';
+  security.acme.acceptTerms = true;
+  security.acme.email = "rok@garbas.si";
   services.nginx.virtualHosts =
     { "garbas.si" =
         { default = true;
           forceSSL = true;
           enableACME = true;
-          acmeRoot = "/var/www/challenges";
           extraConfig = ''
             ssl_session_tickets  off;
           '';
           locations =
             { "/weechat" =
-                { proxyPass = "http://localhost:8888/weechat";
+                { proxyPass = "https://localhost:8888/weechat";
                   proxyWebsockets = true;
                   extraConfig = ''
                     proxy_read_timeout 604800;                # Prevent idle disconnects
@@ -143,6 +128,19 @@ in {
                 };
             };
 
+        };
+      "url.garbas.si" =
+        { forceSSL = true;
+          enableACME = true;
+          acmeRoot = "/var/www/challenges";
+          extraConfig = ''
+            ssl_session_tickets  off;
+          '';
+          locations =
+            { "/" = 
+                { proxyPass = "http://localhost:8123";
+                };
+            };
         };
     };
 

@@ -66,7 +66,7 @@ let
         EOF
       '';
 
-    neovim = import ./../../nvim-config { };
+    neovim = import ./../../nvim-config { pkgs = self; };
   };
 in {
   imports =
