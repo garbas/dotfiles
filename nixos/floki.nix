@@ -6,7 +6,7 @@
 
 let
   custom_overlay = self: super: {
-    neovim = import ./../../nvim-config { pkgs = self; };
+    neovim = import ./../../nvim-config { pkgs = super; };
     weechat = super.weechat.override {
       configure = { ... }: {
         scripts = with self.weechatScripts; [
