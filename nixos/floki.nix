@@ -67,15 +67,40 @@ in {
 
 
   environment.etc."gitconfig".source = ./gitconfig;
+  environment.variables.NIX_PATH = lib.mkForce "nixpkgs=/etc/nixos/nixpkgs-channels:nixos-config=/etc/nixos/configuration.nix";
+  environment.variables.GIT_EDITOR = lib.mkForce "nvim";
+  environment.variables.EDITOR = lib.mkForce "nvim";
+  environment.variables.FZF_DEFAULT_COMMAND = "rg --files";
   environment.systemPackages = with pkgs; [
-    git
+    # editors
+    neovim
+
+    # nix tools
+    nixpkgs-fmt
+    niv
+    direnv
+
+    # version control
+    gitAndTools.gitflow
+    gitAndTools.hub
+    gitAndTools.gh
+    gitFull
+    git-lfs
+
+    # console tools
+    bat
+    fzf
     gnumake
     htop
     mosh
-    neovim
-    pypi2nix
+    ripgrep
+    sshuttle
     termite.terminfo
     tig
+    tree
+    unzip
+    wget
+    which
   ];
 
   security.hideProcessInformation = true;
