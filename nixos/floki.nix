@@ -47,6 +47,9 @@ in {
     "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
   ];
 
+  nixpkgs.config.allowBroken = false;
+  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfreeRedistributable = true;
   nixpkgs.overlays = [
     custom_overlay
   ];
@@ -197,6 +200,15 @@ in {
   services.xserver.enable = false;
   sound.enable = false;
 
-  system.stateVersion = "18.09";
+  services.minecraft-server.enable = true;
+  services.minecraft-server.declarative = true;
+  services.minecraft-server.eula = true;
+  services.minecraft-server.openFirewall = true;
+  services.minecraft-server.serverProperties =
+    { 
+      server-port = 25565;
+      max-players = 20;
+      enable-command-block = true;
+    };
 
 }
