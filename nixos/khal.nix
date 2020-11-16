@@ -2,9 +2,22 @@
 
 let
   nixpkgs-mozilla-overlay = self: super: {};
-  khal-overlay = self: super: {
+
+  rofi = pkgs.rofi.override {
+    plugins =
+      [ pkgs.rofi-calc
+        pkgs.rofi-emoji
+        pkgs.rofi-file-browser
+        pkgs.rofi-systemd
+      ];
+  };
+
+  custom-overlay = self: super: {
+
     neovim = import ./../../nvim-config { pkgs = super; };
+
     dunst = super.dunst.override { dunstify = true; };
+
     uhk-agent =
       let
         version = "1.2.12";
@@ -46,8 +59,19 @@ in {
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
+  boot.kernelModules = [
+    "kvm-intel"
+    "v4l2loopback"
+  ];
+  boot.extraModulePackages = [
+    (pkgs.linuxPackages.v4l2loopback.override { inherit (pkgs.linuxPackages_latest) kernel; })
+  ];
+  boot.extraModprobeConfig = ''
+    options kvm_intel nested=1
+    options kvm_intel emulate_invalid_guest_state=0
+    options kvm ignore_msrs=1
+    options v4l2loopback exclusive_caps=1 video_nr=9 card_label="obs"
+  '';
 
   fileSystems."/" =
     { device = "rpool/ROOT";
@@ -71,7 +95,7 @@ in {
   nix.maxJobs = lib.mkDefault 8;
   nix.package = pkgs.nixFlakes;
   nix.useSandbox = true;
-  nix.trustedUsers = ["@wheel"];
+  nix.trustedUsers = ["@wheel" "rok"];
   nix.distributedBuilds = true;
   nix.buildMachines = [
       # tweag remote builder
@@ -96,7 +120,7 @@ in {
   nixpkgs.config.pulseaudio = true;
   nixpkgs.overlays =
     [ nixpkgs-mozilla-overlay
-      khal-overlay
+      custom-overlay
     ];
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
@@ -137,41 +161,42 @@ in {
   environment.systemPackages = with pkgs; [
 
     # email
-    notmuch
-    isync
-    afew
-    alot
-    mailcap
-    w3m
-    imapnotify
-    msmtp
-    khal
-    khard
-    vdirsyncer
-    noti
+    #notmuch
+    #isync
+    #afew
+    #alot
+    #mailcap
+    #w3m
+    #imapnotify
+    #msmtp
+    #khal
+    #khard
+    #vdirsyncer
+    #noti
 
     # editors
     neovim
-    vscode
+    # vscode
 
     # chat
-    skype
+    #skype
     zoom-us
-    element-desktop
-    discord
+    #element-desktop
+    #discord
 
     # terminals
-    alacritty
+    #alacritty
     termite
 
     # nix tools
     nixpkgs-fmt
+    nixpkgs-review
     niv
     direnv
 
     # browsers
     firefox
-    chromium
+    #chromium
     opera
 
     # version control
@@ -181,14 +206,10 @@ in {
     gitFull
     git-town
     git-lfs
-    mercurialFull
+    #mercurialFull
 
     # i3 related
     rofi
-    rofi-calc
-    rofi-emoji
-    rofi-file-browser
-    rofi-systemd
     volumeicon
     xclip
 
@@ -199,13 +220,15 @@ in {
     i3status-rust
 
     # gui tools
-    dropbox
-    keybase-gui
-    obs-studio
+
+    #keybase-gui
     pavucontrol
     transmission-gtk
     uhk-agent
     zathura
+    obs-studio 
+    obs-wlrobs
+    obs-v4l2sink
 
     # console tools
     asciinema
@@ -266,13 +289,13 @@ in {
   services.blueman.enable = true;
   services.dbus.enable = true;
   services.dunst.enable = true;
-  services.dunst.config = import ./dunstrc.nix { inherit (pkgs) rofi; };
+  services.dunst.config = import ./dunstrc.nix { inherit rofi; };
   services.fprintd.enable = true;
   services.fstrim.enable = true;
   services.fwupd.enable = true;
   services.greenclip.enable = true;
-  services.kbfs.enable = true;
-  services.keybase.enable = true;
+  #services.kbfs.enable = true;
+  #services.keybase.enable = true;
   services.locate.enable = true;
   services.openssh.enable = true;
   services.printing.drivers = with pkgs; [ ]; # XXX: hplip ];
@@ -314,6 +337,7 @@ in {
 
   services.xserver.windowManager.i3.enable = true;
 
+  virtualisation.libvirtd.enable = true;
   virtualisation.docker.enable = true;
   # TODO:
   # make[4]: *** [/nix/store/7j21r60aa84gan4l9xfhsj08m1vxvbqi-linux-5.6.4-dev/lib/modules/5.6.4/source/scripts/Makefile.build:268: /build/virtualbox-6.1.4-modsrc/vboxdrv/r0drv/linux/memobj-r0drv-linux.o] Error 1
@@ -373,9 +397,18 @@ in {
   #virtualisation.virtualbox.host.enable = true;
 
   sound.enable = true;
+
   hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.package = pkgs.pkgs.pulseaudioFull;
+  hardware.pulseaudio.support32Bit = true;
+
   hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true;
+
+
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.package = pkgs.bluezFull;
+
 
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
@@ -391,14 +424,14 @@ in {
     isNormalUser = true;
     uid = 1000;
     description = "Rok Garbas";
-    extraGroups = [ "audio" "wheel" "vboxusers" "networkmanager" "docker" ] ;
+    extraGroups = [ "audio" "wheel" "vboxusers" "networkmanager" "docker" "libvirtd" ] ;
     group = "users";
     home = "/home/rok";
   };
 
   system.stateVersion = "20.09"; # Did you read the comment?
 
-  fonts.enableFontDir = true;
+  fonts.fontDir.enable = true;
   fonts.enableGhostscriptFonts = true;
   fonts.fonts = with pkgs; [
     anonymousPro
