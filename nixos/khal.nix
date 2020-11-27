@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+nixpkgs: nixos-hardware: { config, pkgs, lib, ... }:
 
 let
   nixpkgs-mozilla-overlay = self: super: {};
@@ -14,7 +14,7 @@ let
 
   custom-overlay = self: super: {
 
-    neovim = import ./../../nvim-config { pkgs = super; };
+    neovim = import ./nvim.nix { pkgs = super; };
 
     dunst = super.dunst.override { dunstify = true; };
 
@@ -51,8 +51,11 @@ let
   };
 in {
   imports =
-    [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
-      ./../../nixos-hardware/dell/xps/13-7390/default.nix
+    #[ "<nixpkgs/nixos/modules/installer/scan/not-detected.nix>"
+    #  ./../../nixos-hardware/dell/xps/13-7390/default.nix
+    #  ./modules.nix
+    [ "${nixpkgs}/nixos/modules/installer/scan/not-detected.nix"
+      "${nixos-hardware}/dell/xps/13-7390/default.nix"
       ./modules.nix
     ];
 
@@ -232,7 +235,7 @@ in {
 
     # console tools
     asciinema
-    awscli
+    # XXX: awscli2
     bat
     docker_compose
     entr
@@ -298,7 +301,7 @@ in {
   #services.keybase.enable = true;
   services.locate.enable = true;
   services.openssh.enable = true;
-  services.printing.drivers = with pkgs; [ ]; # XXX: hplip ];
+  services.printing.drivers = with pkgs; [ hplip ];
   services.printing.enable = true;
   services.timesyncd.enable = true;
   services.udev.packages = with pkgs; [ uhk-agent ];
