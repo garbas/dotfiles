@@ -179,7 +179,14 @@ in {
 
     # editors
     neovim
-    # vscode
+    (vscode-with-extensions.override {
+      vscodeExtensions = with vscode-extensions;
+        [ bbenoist.Nix
+          ms-python.python
+          ms-azuretools.vscode-docker
+          ms-vscode.cpptools
+        ];
+    })
 
     # chat
     #skype
@@ -296,9 +303,6 @@ in {
   services.fprintd.enable = true;
   services.fstrim.enable = true;
   services.fwupd.enable = true;
-  services.greenclip.enable = true;
-  #services.kbfs.enable = true;
-  #services.keybase.enable = true;
   services.locate.enable = true;
   services.openssh.enable = true;
   services.printing.drivers = with pkgs; [ hplip ];
