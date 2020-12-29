@@ -3,20 +3,20 @@ nixpkgs: nixos-hardware: { config, pkgs, lib, ... }:
 let
   nixpkgs-mozilla-overlay = self: super: {};
 
-  rofi = pkgs.rofi.override {
-    plugins =
-      [ pkgs.rofi-calc
-        pkgs.rofi-emoji
-        pkgs.rofi-file-browser
-        pkgs.rofi-systemd
-      ];
-  };
+  custom-overlay = import ./../pkgs/overlay.nix;
 
-  custom-overlay = self: super: {
-
-    neovim = import ./nvim.nix { pkgs = super; };
+  custom-overlay-old = self: super: {
 
     dunst = super.dunst.override { dunstify = true; };
+
+    neofetch = super.neofetch.overrideAttrs (old: {
+      patches = (self.lib.optionals (builtins.hasAttr "patches" old) old.patches) ++ [
+        (self.fetchurl { 
+          url = "https://github.com/dylanaraps/neofetch/pull/1134.patch";
+          sha256 = "sha256-flryIeD1P1tUPgfxgzaGLxveJUyzogCVuQHxII+DjYw=";
+        })
+      ];
+    });
 
     uhk-agent =
       let
@@ -102,19 +102,20 @@ in {
   nix.distributedBuilds = true;
   nix.buildMachines = [
       # tweag remote builder
-      {
-        hostName = "build01.tweag.io";
-        maxJobs = 24;
-        sshUser = "nix";
-        sshKey = "/root/.ssh/id-tweag-builder";
-        system = "x86_64-linux";
-        supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
-      }
+      #{
+      #  hostName = "build01.tweag.io";
+      #  maxJobs = 24;
+      #  sshUser = "nix";
+      #  sshKey = "/root/.ssh/id-tweag-builder";
+      #  system = "x86_64-linux";
+      #  supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
+      #}
     ];
   nix.extraOptions = ''
     experimental-features = nix-command flakes
     builders-use-substitutes = true
   '';
+  nix.registry.nixpkgs.flake = nixpkgs;
 
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
@@ -123,6 +124,7 @@ in {
   nixpkgs.config.pulseaudio = true;
   nixpkgs.overlays =
     [ nixpkgs-mozilla-overlay
+      custom-overlay-old
       custom-overlay
     ];
 
@@ -153,6 +155,14 @@ in {
 
   time.timeZone = "Europe/Ljubljana";
 
+  environment.shellAliases =
+  { grep = "rg";
+    ls = "exa";
+    find = "fd";
+    du = "dust";
+    ps = "procs";
+    cat = "bat";
+  };
   environment.variables.GDK_SCALE = "2";
   environment.variables.GDK_DPI_SCALE = "0.5";
   environment.variables.QT_AUTO_SCREEN_SCALE_FACTOR = "1";
@@ -177,6 +187,11 @@ in {
     #vdirsyncer
     #noti
 
+    # devops / cloud
+    minikube
+    kubectl
+    terraform
+
     # editors
     neovim
     (vscode-with-extensions.override {
@@ -189,10 +204,9 @@ in {
     })
 
     # chat
-    #skype
     zoom-us
-    #element-desktop
-    #discord
+    element-desktop
+    discord
 
     # terminals
     #alacritty
@@ -206,7 +220,7 @@ in {
 
     # browsers
     firefox
-    #chromium
+    chromium
     opera
 
     # version control
@@ -216,7 +230,8 @@ in {
     gitFull
     git-town
     git-lfs
-    #mercurialFull
+    mercurialFull
+    tig
 
     # i3 related
     rofi
@@ -231,7 +246,6 @@ in {
 
     # gui tools
 
-    #keybase-gui
     pavucontrol
     transmission-gtk
     uhk-agent
@@ -240,30 +254,51 @@ in {
     obs-wlrobs
     obs-v4l2sink
 
-    # console tools
-    asciinema
-    # XXX: awscli2
-    bat
-    docker_compose
+    # improved console utilities
+    bat            # cat
+    ripgrep        # grep
+    exa            # ls
+    fd             # find
+    procs          # ps
+    sd             # sed
+    dust           # du
+
+    # commonly used console utilities
+    jq
     entr
-    feh
-    file
+    neofetch
     fzf
-    gopass
-    htop
-    lastpass-cli
-    mpv
     ngrok
-    ripgrep
-    scrot
-    sshuttle
-    starship
-    tig
+    zoxide
+
+    # common console tools
+    file
     tree
     unzip
     wget
     which
+
+    # other console tools
+    asciinema
+    tokei        # show statistics about your code
+    hyperfine    # benchmarking tool
+    awscli2
+    docker_compose
+    feh
+    htop
+    mpv
+    scrot
+    sshuttle
     youtube-dl
+
+    # password managers
+    gopass
+    lastpass-cli
+    _1password
+    _1password-gui
+
+    # 
+    starship
   ];
 
 
@@ -281,25 +316,27 @@ in {
   programs.zsh.enableCompletion = true;
   programs.zsh.syntaxHighlighting.enable = true;
   programs.zsh.shellInit = ''
-    bindkey "^[[A" history-substring-search-up
-    bindkey "^[[B" history-substring-search-down
+    #bindkey "^[[A" history-substring-search-up
+    #bindkey "^[[B" history-substring-search-down
     eval "$(starship init zsh)"
     eval "$(direnv hook zsh)"
+    eval "$(zoxide init zsh)"
   '';
-  programs.zsh.ohMyZsh.enable = true;
-  programs.zsh.ohMyZsh.plugins =
-    [ "git"
-      "mosh"
-      "vi-mode"
-      "history-substring-search"
-    ];
+  #programs.zsh.ohMyZsh.enable = true;
+  #programs.zsh.ohMyZsh.plugins =
+  #  [ "git"
+  #    "mosh"
+  #    "fzf"
+  #    "vi-mode"
+  #    "history-substring-search"
+  #  ];
 
   services.avahi.enable = true;
   services.avahi.nssmdns = true;
   services.blueman.enable = true;
   services.dbus.enable = true;
   services.dunst.enable = true;
-  services.dunst.config = import ./dunstrc.nix { inherit rofi; };
+  services.dunst.config = import ./dunstrc.nix { inherit (pkgs) rofi; };
   services.fprintd.enable = true;
   services.fstrim.enable = true;
   services.fwupd.enable = true;
@@ -346,62 +383,7 @@ in {
 
   virtualisation.libvirtd.enable = true;
   virtualisation.docker.enable = true;
-  # TODO:
-  # make[4]: *** [/nix/store/7j21r60aa84gan4l9xfhsj08m1vxvbqi-linux-5.6.4-dev/lib/modules/5.6.4/source/scripts/Makefile.build:268: /build/virtualbox-6.1.4-modsrc/vboxdrv/r0drv/linux/memobj-r0drv-linux.o] Error 1
-  # make[4]: *** Waiting for unfinished jobs....
-  # In file included from /build/virtualbox-6.1.4-modsrc/vboxdrv/r0drv/linux/waitqueue-r0drv-linux.h:38,
-  #                  from /build/virtualbox-6.1.4-modsrc/vboxdrv/r0drv/linux/semevent-r0drv-linux.c:42:
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h: In function 'RTTimeSpecGetTimeval':
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h:379:13: error: dereferencing pointer to incomplete type 'struct timeval'
-  #   379 |     pTimeval->tv_sec = (time_t)i64;
-  #       |             ^~
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h:379:25: error: 'time_t' undeclared (first use in this function); did you mean 'ktime_t'?
-  #   379 |     pTimeval->tv_sec = (time_t)i64;
-  #       |                         ^~~~~~
-  #       |                         ktime_t
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h:379:25: note: each undeclared identifier is reported only once for each function it appears in
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h:379:32: error: expected ';' before 'i64'
-  #   379 |     pTimeval->tv_sec = (time_t)i64;
-  #       |                                ^~~
-  #       |                                ;
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h: In function 'RTTimeSpecSetTimeval':
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h:393:67: error: dereferencing pointer to incomplete type 'const struct timeval'
-  #   393 |     return RTTimeSpecAddMicro(RTTimeSpecSetSeconds(pTime, pTimeval->tv_sec), pTimeval->tv_usec);
-  #       |                                                                   ^~
-  # make[4]: *** [/nix/store/7j21r60aa84gan4l9xfhsj08m1vxvbqi-linux-5.6.4-dev/lib/modules/5.6.4/source/scripts/Makefile.build:267: /build/virtualbox-6.1.4-modsrc/vboxdrv/r0drv/linux/semevent-r0drv-linux.o] Error 1
-  # In file included from /build/virtualbox-6.1.4-modsrc/vboxdrv/r0drv/linux/waitqueue-r0drv-linux.h:38,
-  #                  from /build/virtualbox-6.1.4-modsrc/vboxdrv/r0drv/linux/semeventmulti-r0drv-linux.c:42:
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h: In function 'RTTimeSpecGetTimeval':
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h:379:13: error: dereferencing pointer to incomplete type 'struct timeval'
-  #   379 |     pTimeval->tv_sec = (time_t)i64;
-  #       |             ^~
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h:379:25: error: 'time_t' undeclared (first use in this function); did you mean 'ktime_t'?
-  #   379 |     pTimeval->tv_sec = (time_t)i64;
-  #       |                         ^~~~~~
-  #       |                         ktime_t
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h:379:25: note: each undeclared identifier is reported only once for each function it appears in
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h:379:32: error: expected ';' before 'i64'
-  #   379 |     pTimeval->tv_sec = (time_t)i64;
-  #       |                                ^~~
-  #       |                                ;
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h: In function 'RTTimeSpecSetTimeval':
-  # /build/virtualbox-6.1.4-modsrc/vboxdrv/include/iprt/time.h:393:67: error: dereferencing pointer to incomplete type 'const struct timeval'
-  #   393 |     return RTTimeSpecAddMicro(RTTimeSpecSetSeconds(pTime, pTimeval->tv_sec), pTimeval->tv_usec);
-  #       |                                                                   ^~
-  # make[4]: *** [/nix/store/7j21r60aa84gan4l9xfhsj08m1vxvbqi-linux-5.6.4-dev/lib/modules/5.6.4/source/scripts/Makefile.build:267: /build/virtualbox-6.1.4-modsrc/vboxdrv/r0drv/linux/semeventmulti-r0drv-linux.o] Error 1
-  # make[3]: *** [/nix/store/7j21r60aa84gan4l9xfhsj08m1vxvbqi-linux-5.6.4-dev/lib/modules/5.6.4/source/Makefile:1683: /build/virtualbox-6.1.4-modsrc/vboxdrv] Error 2
-  # make[2]: *** [/nix/store/7j21r60aa84gan4l9xfhsj08m1vxvbqi-linux-5.6.4-dev/lib/modules/5.6.4/source/Makefile:180: sub-make] Error 2
-  # make[2]: Leaving directory '/nix/store/7j21r60aa84gan4l9xfhsj08m1vxvbqi-linux-5.6.4-dev/lib/modules/5.6.4/build'
-  # make[1]: *** [/build/virtualbox-6.1.4-modsrc/vboxdrv/Makefile-footer.gmk:114: vboxdrv] Error 2
-  # make[1]: Leaving directory '/build/virtualbox-6.1.4-modsrc/vboxdrv'
-  # make: *** [Makefile:58: vboxdrv] Error 2
-  # builder for '/nix/store/0yflxycd2kc7x28a0jjh788cjab97n6k-virtualbox-modules-6.1.4-5.6.4.drv' failed with exit code 2
-  # cannot build derivation '/nix/store/w6phy8ydgbzml11yb4xy2f1s9xahnicg-kernel-modules.drv': 1 dependencies couldn't be built
-  # cannot build derivation '/nix/store/588dzq7cv60xa5f4lh1bnwqx90kc0aab-linux-5.6.4-modules.drv': 1 dependencies couldn't be built
-  # building '/nix/store/fxssfq5la12v6wb3zcw4ydd8nrk68vlf-vscode-1.44.1.drv'...
-  # cannot build derivation '/nix/store/i5a1dmrkzv0qb2q27g0wpn4zrrcygv9k-nixos-system-khal-20.09.git.b3c3a0bd183.drv': 1 dependencies couldn't be built
-  # error: build of '/nix/store/i5a1dmrkzv0qb2q27g0wpn4zrrcygv9k-nixos-system-khal-20.09.git.b3c3a0bd183.drv' failed
-  #virtualisation.virtualbox.host.enable = true;
+  virtualisation.virtualbox.host.enable = true;
 
   sound.enable = true;
 
@@ -448,6 +430,7 @@ in {
     source-code-pro
     terminus_font
     font-awesome_5
+    nerdfonts
     powerline-fonts
     material-icons
     noto-fonts

@@ -1,16 +1,25 @@
-{ nodejs
-, plugins
+{ default
+, theme
+
+, neovim
+
+, vimPlugins
+, nodejs
+, lib
 }:
-{
+
+let
   preConfig = ''
     set shell=/bin/sh
   '';
+
   postConfig = ''
   '';
+
   pluginsWithConfig = [
 
     # SENSIBLE DEFAULTS
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         # One step above 'nocompatible' mode
         # https://github.com/tpope/vim-sensible
         vim-sensible
@@ -23,22 +32,23 @@
     }
 
     # THEME / COLORS
-    { plugins = with plugins; [
-        vim-one
+    { plugins = with vimPlugins; [
         vim-airline
+        vim-airline-themes
         vim-devicons
       ];
       config = ''
         set termguicolors
-        colorscheme one
-        set background=light
+        set background=dark
         let g:one_allow_italics = 1
-        let g:airline_theme='one'
+        let g:airline_theme='onedark'
+
+        ${builtins.readFile theme.vim}
       '';
     }
 
     # CORE
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         # The fancy start screen for Vim.
         # https://github.com/mhinz/vim-startify
         vim-startify
@@ -156,7 +166,7 @@
     }
 
     # LANGUAGE SUPPORT (HIGHLIGHTING)
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         # A collection of language packs for Vim.
         # https://github.com/sheerun/vim-polyglot
         vim-polyglot
@@ -169,7 +179,7 @@
 
 
     # VERSION CONTROL
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         # A Git wrapper
         # https://github.com/tpope/vim-fugitive
         vim-fugitive
@@ -195,7 +205,7 @@
     }
 
     # NAVIGATION
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         # Plugin to toggle, display and navigate marks
         # https://github.com/kshenoy/vim-signature
         vim-signature
@@ -221,7 +231,7 @@
     }
 
     # EDITING
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         # AutoSave - automatically save changes to disk without having to
         # use :w (or any binding to it) every time a buffer has been modified.
         # https://github.com/vim-scripts/vim-auto-save
@@ -243,7 +253,7 @@
     }
 
     # PROGRAMMING (GENERAL)
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         # TODO: https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions#use-vims-plugin-manager-for-coc-extension
         coc-nvim
         coc-json
@@ -309,7 +319,7 @@
     }
 
     # PROGRAMMING (RUST)
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         #rust-vim
         # https://github.com/neoclide/coc-rls
         coc-rls
@@ -319,7 +329,7 @@
     }
 
     # PROGRAMMING (PYTHON)
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         #coc-python
       ];
       config = ''
@@ -327,7 +337,7 @@
     }
 
     # PROGRAMMING (HTML/CSS/JS/SVG)
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         coc-css
         coc-html
         #coc-jest
@@ -341,7 +351,7 @@
     }
 
     # PROGRAMMING (ELM)
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         # TODO:
         vim-elm-syntax
       ];
@@ -350,7 +360,7 @@
     }
 
     # PROGRAMMING (NIX)
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         # Support for writing Nix expressions in vim.
         # https://github.com/LnL7/vim-nix
         vim-nix
@@ -360,7 +370,7 @@
     }
 
     # PROGRAMMING (DHALL)
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         dhall-vim
       ];
       config = ''
@@ -368,18 +378,27 @@
     }
 
     # PROGRAMMING (HASKELL)
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
       ];
       config = ''
       '';
     }
 
     # PROGRAMMING (GO)
-    { plugins = with plugins; [
+    { plugins = with vimPlugins; [
         # TODO: coc-go
       ];
       config = ''
       '';
     }
   ];
+
+in neovim.override {
+  vimAlias = true;
+  configure = {
+    customRC = preConfig + (builtins.concatStringsSep "\n\n" (builtins.map (x: x.config) pluginsWithConfig)) + postConfig;
+    packages.myVimPackages = {
+      start = lib.flatten (builtins.map (x: x.plugins) pluginsWithConfig);
+    };
+  };
 }
