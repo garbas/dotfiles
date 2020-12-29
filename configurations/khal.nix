@@ -115,7 +115,6 @@ in {
     experimental-features = nix-command flakes
     builders-use-substitutes = true
   '';
-  nix.registry.nixpkgs.flake = nixpkgs;
 
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;

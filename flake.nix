@@ -4,11 +4,11 @@
 
   outputs = { self, nixpkgs, nixos-hardware }:
     let
-      mkNixosConfigurations name =
+      mkConfiguration = name:
         { "${name}" = nixpkgs.lib.nixosSystem
             { system = "x86_64-linux";
               modules =
-                [ ((import "./configurations/${name}.nix") nixpkgs nixos-hardware)
+                [ ((import (./. + "/configurations/${name}.nix")) nixpkgs nixos-hardware)
                   ({ ... }: {
                     system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
                     nix.registry.nixpkgs.flake = nixpkgs;
@@ -17,6 +17,6 @@
             };
         };
     in
-      { nixosConfigurations = builtins.map mkNixosConfigurations ["khal" "floki"]
+      { nixosConfigurations = mkConfiguration "khal" // mkConfiguration "floki";
       };
 }
