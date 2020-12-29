@@ -321,15 +321,9 @@ in {
     eval "$(starship init zsh)"
     eval "$(direnv hook zsh)"
     eval "$(zoxide init zsh)"
+    source ${pkgs.fzf}/share/fzf/completion.zsh
+    source ${pkgs.fzf}/share/fzf/key-bindings.zsh
   '';
-  #programs.zsh.ohMyZsh.enable = true;
-  #programs.zsh.ohMyZsh.plugins =
-  #  [ "git"
-  #    "mosh"
-  #    "fzf"
-  #    "vi-mode"
-  #    "history-substring-search"
-  #  ];
 
   services.avahi.enable = true;
   services.avahi.nssmdns = true;
@@ -383,7 +377,7 @@ in {
 
   virtualisation.libvirtd.enable = true;
   virtualisation.docker.enable = true;
-  virtualisation.virtualbox.host.enable = true;
+  # FIXME: virtualisation.virtualbox.host.enable = true;
 
   sound.enable = true;
 
