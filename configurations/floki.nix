@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, lib, ... }:
 
 let
@@ -59,7 +55,9 @@ in {
   boot.loader.grub.device = "/dev/sda";
 
   networking.hostName = "floki";
-  networking.firewall.allowedTCPPorts = [ 22 80 443 ];
+  networking.firewall.enable = true;
+  networking.firewall.allowedTCPPorts = [ 22 80 443 8888 25565 ];
+  networking.firewall.allowedUDPPorts = [ 25565 ];
   networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
 
   i18n = {
