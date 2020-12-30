@@ -64,14 +64,23 @@ rec {
                    lib;
   };
 
-  weechat = super.weechat.override {
-    configure = { ... }: {
-      scripts = with self.weechatScripts; [
-        weechat-matrix-bridge
-        wee-slack
-      ];
+  weechat = super.weechat.override
+    { configure = { ... }:
+      { scripts = with self.weechatScripts;
+          [ weechat-matrix-bridge
+            wee-slack
+          ];
+      };
     };
-  };
+
+  vscode-with-extensions = super.vscode-with-extensions.override
+    { vscodeExtensions = with self.vscode-extensions;
+        [ bbenoist.Nix
+          ms-python.python
+          ms-azuretools.vscode-docker
+          ms-vscode.cpptools
+        ];
+    };
 
   # dunst
   # zathura

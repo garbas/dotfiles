@@ -188,14 +188,7 @@ in {
 
     # editors
     neovim
-    (vscode-with-extensions.override {  # TODO: create a configurable package
-      vscodeExtensions = with vscode-extensions;
-        [ bbenoist.Nix
-          ms-python.python
-          ms-azuretools.vscode-docker
-          ms-vscode.cpptools
-        ];
-    })
+    vscode-with-extensions
 
     # chat
     zoom-us
@@ -239,7 +232,6 @@ in {
     i3status-rust
 
     # gui tools
-
     pavucontrol
     transmission-gtk
     uhk-agent
@@ -381,10 +373,8 @@ in {
   hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true;
 
-
   hardware.bluetooth.enable = true;
   hardware.bluetooth.package = pkgs.bluezFull;
-
 
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;

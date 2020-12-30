@@ -76,28 +76,59 @@ in {
     gitAndTools.gh
     gitFull
     git-lfs
-
-    # console tools
-    bat
-    fzf
-    gnumake
-    htop
-    mosh
-    ripgrep
-    sshuttle
-    termite.terminfo
     tig
+
+    # improved console utilities
+    bat            # cat
+    ripgrep        # grep
+    exa            # ls
+    fd             # find
+    procs          # ps
+    sd             # sed
+    dust           # du
+
+    # commonly used console utilities
+    jq
+    entr
+    neofetch
+    fzf
+    zoxide
+
+    # common console tools
+    file
     tree
     unzip
     wget
     which
+
+    # 
+    starship
+    termite.terminfo
+
+    # other console tools
+    htop
+    sshuttle
   ];
 
   documentation.info.enable = true;
 
+  programs.mosh.enable = true;
   programs.screen.screenrc = ''
     multiuser on
     acladd rok
+  '';
+  programs.zsh.autosuggestions.enable = true;
+  programs.zsh.enable = true;
+  programs.zsh.enableCompletion = true;
+  programs.zsh.syntaxHighlighting.enable = true;
+  programs.zsh.shellInit = ''
+    #bindkey "^[[A" history-substring-search-up
+    #bindkey "^[[B" history-substring-search-down
+    eval "$(starship init zsh)"
+    eval "$(direnv hook zsh)"
+    eval "$(zoxide init zsh)"
+    source ${pkgs.fzf}/share/fzf/completion.zsh
+    source ${pkgs.fzf}/share/fzf/key-bindings.zsh
   '';
 
   services.openssh.enable = true;
