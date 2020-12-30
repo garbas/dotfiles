@@ -64,6 +64,15 @@ rec {
                    lib;
   };
 
+  weechat = super.weechat.override {
+    configure = { ... }: {
+      scripts = with self.weechatScripts; [
+        weechat-matrix-bridge
+        wee-slack
+      ];
+    };
+  };
+
   # dunst
   # zathura
   # fzf

@@ -51,21 +51,11 @@ let
   };
 in {
   imports =
-    #[ "<nixpkgs/nixos/modules/installer/scan/not-detected.nix>"
-    #  ./../../nixos-hardware/dell/xps/13-7390/default.nix
-    #  ./modules.nix
     [ "${nixpkgs}/nixos/modules/installer/scan/not-detected.nix"
       "${nixos-hardware}/dell/xps/13-7390/default.nix"
       ./modules.nix
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelModules = [
-    "kvm-intel"
-    "v4l2loopback"
-  ];
   boot.extraModulePackages = [
     (pkgs.linuxPackages.v4l2loopback.override { inherit (pkgs.linuxPackages_latest) kernel; })
   ];
@@ -75,6 +65,15 @@ in {
     options kvm ignore_msrs=1
     options v4l2loopback exclusive_caps=1 video_nr=9 card_label="obs"
   '';
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelModules = [
+    "kvm-intel"
+    "v4l2loopback"
+  ];
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   fileSystems."/" =
     { device = "rpool/ROOT";
@@ -102,14 +101,14 @@ in {
   nix.distributedBuilds = true;
   nix.buildMachines = [
       # tweag remote builder
-      #{
-      #  hostName = "build01.tweag.io";
-      #  maxJobs = 24;
-      #  sshUser = "nix";
-      #  sshKey = "/root/.ssh/id-tweag-builder";
-      #  system = "x86_64-linux";
-      #  supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
-      #}
+      {
+        hostName = "build01.tweag.io";
+        maxJobs = 24;
+        sshUser = "nix";
+        sshKey = "/root/.ssh/id-tweag-builder";
+        system = "x86_64-linux";
+        supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
+      }
     ];
   nix.extraOptions = ''
     experimental-features = nix-command flakes
@@ -131,9 +130,6 @@ in {
 
   console.keyMap = "us";
   console.font = lib.mkDefault "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
-
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "khal";
   networking.hostId = "b0f5a1e0";
@@ -162,13 +158,12 @@ in {
     ps = "procs";
     cat = "bat";
   };
-  environment.variables.GDK_SCALE = "2";
-  environment.variables.GDK_DPI_SCALE = "0.5";
-  environment.variables.QT_AUTO_SCREEN_SCALE_FACTOR = "1";
-  environment.variables.NIX_PATH = lib.mkForce "nixpkgs=/etc/nixos/nixpkgs-channels:nixos-config=/etc/nixos/configuration.nix";
-  environment.variables.GIT_EDITOR = lib.mkForce "nvim";
   environment.variables.EDITOR = lib.mkForce "nvim";
   environment.variables.FZF_DEFAULT_COMMAND = "rg --files";
+  environment.variables.GDK_DPI_SCALE = "0.5";
+  environment.variables.GDK_SCALE = "2";
+  environment.variables.GIT_EDITOR = lib.mkForce "nvim";
+  environment.variables.QT_AUTO_SCREEN_SCALE_FACTOR = "1";
 
   environment.systemPackages = with pkgs; [
 
@@ -193,7 +188,7 @@ in {
 
     # editors
     neovim
-    (vscode-with-extensions.override {
+    (vscode-with-extensions.override {  # TODO: create a configurable package
       vscodeExtensions = with vscode-extensions;
         [ bbenoist.Nix
           ms-python.python
@@ -299,7 +294,6 @@ in {
     # 
     starship
   ];
-
 
   documentation.info.enable = true;
 
@@ -411,7 +405,7 @@ in {
     home = "/home/rok";
   };
 
-  system.stateVersion = "20.09"; # Did you read the comment?
+  system.stateVersion = "20.09";
 
   fonts.fontDir.enable = true;
   fonts.enableGhostscriptFonts = true;

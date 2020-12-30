@@ -1,10 +1,19 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-20.09";
+  inputs.nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-  outputs = { self, nixpkgs, nixos-hardware }:
+  outputs =
+    { self
+    , nixpkgs-stable
+    , nixpkgs-unstable
+    , nixos-hardware
+    }:
     let
-      mkConfiguration = name:
+      mkConfiguration =
+        { name
+        , nixpkgs
+        }:
         { "${name}" = nixpkgs.lib.nixosSystem
             { system = "x86_64-linux";
               modules =
@@ -17,6 +26,15 @@
             };
         };
     in
-      { nixosConfigurations = mkConfiguration "khal" // mkConfiguration "floki";
+      { nixosConfigurations =
+          (mkConfiguration
+            { name = "khal";
+              nixpkgs = nixpkgs-unstable;
+            }) //
+          (mkConfiguration
+            { name = "floki";
+              nixpkgs = nixpkgs-stable;
+            }) //
+          {};
       };
 }
