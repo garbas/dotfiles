@@ -20,13 +20,15 @@ in {
 
   swapDevices = [ ];
 
-  nix.package = pkgs.nixUnstable;
   nix.maxJobs = lib.mkDefault 2;
+  nix.package = pkgs.nixFlakes;
   nix.useSandbox = true;
-  nix.trustedBinaryCaches = [ "https://hydra.nixos.org" ];
-  nix.binaryCachePublicKeys = [
-    "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
-  ];
+  nix.trustedUsers = ["@wheel" "rok"];
+  nix.distributedBuilds = true;
+  nix.extraOptions = ''
+    experimental-features = nix-command flakes
+    builders-use-substitutes = true
+  '';
 
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
