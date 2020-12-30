@@ -66,9 +66,10 @@ in {
     neovim
 
     # nix tools
-    nixpkgs-fmt
-    niv
     direnv
+    niv
+    nixpkgs-fmt
+    nixpkgs-review
 
     # version control
     gitAndTools.gitflow
@@ -209,6 +210,7 @@ in {
   security.sudo.enable = true;
 
   users.mutableUsers = false;
+  users.defaultUserShell = pkgs.zsh;
   users.users.root.hashedPassword = "$6$PS.1SD6/$kUv8wdXYH00dEvpqlC9SyX/E3Zm3HLPNmsxLwteJSQgpXDOfFZhWXkHby6hvZ.kFN2JbgXqJvwZfjOunBpcHX0";
   users.users."nginx".extraGroups = [ "weechat" "rok" ];
   users.users."weechat".extraGroups = [ "nginx" ];
