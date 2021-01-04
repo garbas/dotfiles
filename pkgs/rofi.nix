@@ -28,6 +28,7 @@ let
     cycle = true;
     hide-scrollbar = true;
     disable-history = false;
+    sort = true;
     #modi = "drun,file-browser,combi,calc,emoji";
     modi = "drun,combi,calc,emoji";
     display-drun = "🧭";
@@ -47,7 +48,16 @@ let
     lib.concatStringsSep " "
       (builtins.attrValues
         (builtins.mapAttrs
-          (name: value: ''--add-flags "-${name} \"${builtins.toString value}\""'')
+          (name: value:
+            if builtins.isBool value
+            then
+              (if value == true
+               then ''--add-flags "-${name}"''
+               else ''--add-flags "-no-${name}"''
+              )
+            else
+              ''--add-flags "-${name} \"${builtins.toString value}\""''
+          )
           config
         )
       );

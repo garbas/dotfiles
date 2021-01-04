@@ -82,7 +82,17 @@ rec {
         ];
     };
 
-  # dunst
-  # zathura
+  # TODO:
+  # nix
+  # starship
   # fzf
+  # zathura
+  # neofetch
+  # exa
+  # bat
+  # dunst
+  # cachix
+  # gh
+  # rofi-1pass
+  # nvim -> coc-settings.json
 }
