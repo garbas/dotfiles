@@ -83,11 +83,13 @@ rec {
     };
 
   # TODO:
+  # neofetch (also submit upstream)
+  # git (already a config in ../configurations/gitconfig)
+  # uhk-agent
   # nix
   # starship
   # fzf
   # zathura
-  # neofetch
   # exa
   # bat
   # dunst

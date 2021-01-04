@@ -296,18 +296,28 @@ in {
   programs.mosh.enable = true;
   programs.mtr.enable = true;
   programs.ssh.forwardX11 = false;
-  programs.zsh.autosuggestions.enable = true;
   programs.zsh.enable = true;
+  programs.zsh.enableBashCompletion = true;
   programs.zsh.enableCompletion = true;
+  programs.zsh.autosuggestions.enable = true;
   programs.zsh.syntaxHighlighting.enable = true;
+  programs.zsh.vteIntegration = true;
   programs.zsh.shellInit = ''
-    #bindkey "^[[A" history-substring-search-up
-    #bindkey "^[[B" history-substring-search-down
     eval "$(starship init zsh)"
     eval "$(direnv hook zsh)"
     eval "$(zoxide init zsh)"
     source ${pkgs.fzf}/share/fzf/completion.zsh
     source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+
+    source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+    bindkey "^[[A" history-substring-search-up
+    bindkey "^[[B" history-substring-search-down
+    bindkey "$terminfo[kcuu1]" history-substring-search-up
+    bindkey "$terminfo[kcud1]" history-substring-search-down
+    bindkey -M emacs '^P' history-substring-search-up
+    bindkey -M emacs '^N' history-substring-search-down
+    bindkey -M vicmd 'k' history-substring-search-up
+    bindkey -M vicmd 'j' history-substring-search-down
   '';
 
   services.avahi.enable = true;
