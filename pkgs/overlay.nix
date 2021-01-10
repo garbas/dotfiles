@@ -5,8 +5,8 @@ rec {
   default = {
     theme = "onedark";
     #theme = "one-light";
-    font = "Fira Code Light";
-    fontSize = "12";
+    font = "Fira Code Light";  # use fc-list
+    fontSize = "10";
     terminal = "${termite}/bin/termite";
     statusBar = "${i3status-rust}/bin/i3status-rs";
   };

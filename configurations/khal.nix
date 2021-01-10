@@ -239,6 +239,7 @@ in {
     obs-studio 
     obs-wlrobs
     obs-v4l2sink
+    peek
 
     # improved console utilities
     bat            # cat
@@ -282,9 +283,6 @@ in {
     lastpass-cli
     _1password
     _1password-gui
-
-    # 
-    starship
   ];
 
   documentation.info.enable = true;
@@ -303,9 +301,9 @@ in {
   programs.zsh.syntaxHighlighting.enable = true;
   programs.zsh.vteIntegration = true;
   programs.zsh.shellInit = ''
-    eval "$(starship init zsh)"
     eval "$(direnv hook zsh)"
     eval "$(zoxide init zsh)"
+
     source ${pkgs.fzf}/share/fzf/completion.zsh
     source ${pkgs.fzf}/share/fzf/key-bindings.zsh
 
@@ -318,6 +316,8 @@ in {
     bindkey -M emacs '^N' history-substring-search-down
     bindkey -M vicmd 'k' history-substring-search-up
     bindkey -M vicmd 'j' history-substring-search-down
+
+    source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
   '';
 
   services.avahi.enable = true;
@@ -351,17 +351,13 @@ in {
   services.xserver.libinput.naturalScrolling = false;
 
   services.xserver.desktopManager.xterm.enable = false;
-  services.xserver.desktopManager.xfce.enable = true;
-  services.xserver.desktopManager.xfce.noDesktop = true;
-  services.xserver.desktopManager.xfce.enableXfwm = false;
 
-  services.xserver.displayManager.defaultSession = "xfce+i3";
+  services.xserver.displayManager.defaultSession = "none+i3";
   services.xserver.displayManager.sessionCommands = ''
     ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
       Xcursor.theme: Adwaita
       Xcursor.size: 32
     EOF
-    
   '';
   services.xserver.displayManager.autoLogin.user = "rok";
   services.xserver.displayManager.autoLogin.enable = true;
@@ -380,6 +376,7 @@ in {
   hardware.pulseaudio.package = pkgs.pkgs.pulseaudioFull;
   hardware.pulseaudio.support32Bit = true;
 
+  hardware.opengl.enable = true;
   hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true;
 
@@ -412,18 +409,19 @@ in {
   fonts.fonts = with pkgs; [
     anonymousPro
     dejavu_fonts
+    fira-code
+    fira-code-symbols
+    font-awesome_5
     freefont_ttf
     liberation_ttf
-    source-code-pro
-    terminus_font
-    font-awesome_5
-    nerdfonts
-    powerline-fonts
     material-icons
+    meslo-lgs-nf
+    nerdfonts
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
-    fira-code
-    fira-code-symbols
+    powerline-fonts
+    source-code-pro
+    terminus_font
   ];
 }
