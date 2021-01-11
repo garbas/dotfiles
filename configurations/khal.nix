@@ -200,6 +200,7 @@ in {
     termite
 
     # nix tools
+    nix-index
     nixpkgs-fmt
     nixpkgs-review
     niv
