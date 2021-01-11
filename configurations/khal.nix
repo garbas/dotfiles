@@ -154,7 +154,7 @@ in {
   { grep = "rg";
     ls = "exa";
     find = "fd";
-    du = "dust";
+    # XXX: du = "dust";
     ps = "procs";
     cat = "bat";
   };
@@ -248,7 +248,7 @@ in {
     fd             # find
     procs          # ps
     sd             # sed
-    dust           # du
+    # XXX: dust           # du
 
     # commonly used console utilities
     jq
@@ -287,6 +287,7 @@ in {
 
   documentation.info.enable = true;
 
+  programs.command-not-found.enable = false;
   programs.dconf.enable = true;
   programs.gnupg.agent.enable = true;
   programs.gnupg.agent.enableBrowserSocket = true;
@@ -301,11 +302,14 @@ in {
   programs.zsh.syntaxHighlighting.enable = true;
   programs.zsh.vteIntegration = true;
   programs.zsh.shellInit = ''
+    source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
+
     eval "$(direnv hook zsh)"
     eval "$(zoxide init zsh)"
 
     source ${pkgs.fzf}/share/fzf/completion.zsh
     source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+
 
     source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
     bindkey "^[[A" history-substring-search-up
