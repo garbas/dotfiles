@@ -3,8 +3,6 @@ nixpkgs: nixos-hardware: { config, pkgs, lib, ... }:
 let
   nixpkgs-mozilla-overlay = self: super: {};
 
-  custom-overlay = import ./../pkgs/overlay.nix;
-
   custom-overlay-old = self: super: {
 
     dunst = super.dunst.override { dunstify = true; };
@@ -54,6 +52,7 @@ in {
     [ "${nixpkgs}/nixos/modules/installer/scan/not-detected.nix"
       "${nixos-hardware}/dell/xps/13-7390/default.nix"
       ./modules.nix
+      ./profiles/console.nix
     ];
 
   boot.extraModulePackages = [
@@ -95,10 +94,6 @@ in {
     ];
 
   nix.maxJobs = lib.mkDefault 8;
-  nix.package = pkgs.nixFlakes;
-  nix.useSandbox = true;
-  nix.trustedUsers = ["@wheel" "rok"];
-  nix.distributedBuilds = true;
   nix.buildMachines = [
       # tweag remote builder
       {
@@ -110,20 +105,12 @@ in {
         supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
       }
     ];
-  nix.extraOptions = ''
-    experimental-features = nix-command flakes
-    builders-use-substitutes = true
-  '';
 
-  nixpkgs.config.allowBroken = false;
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.allowUnfreeRedistributable = true;
   nixpkgs.config.firefox.enableFoofleTalkPlugin = true;
   nixpkgs.config.pulseaudio = true;
   nixpkgs.overlays =
     [ nixpkgs-mozilla-overlay
       custom-overlay-old
-      custom-overlay
     ];
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
@@ -136,35 +123,14 @@ in {
   networking.nat.enable = true;
   networking.nat.internalInterfaces = ["ve-+"];
   networking.nat.externalInterface = "wlp2s0";
-  networking.extraHosts = ''
-    116.203.16.150 floki floki.garbas.si
-    127.0.0.1 ${config.networking.hostName}
-    ::1 ${config.networking.hostName}
-  '';
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
   networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
   networking.networkmanager.enable = true;
 
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  time.timeZone = "Europe/Ljubljana";
-
-  environment.shellAliases =
-  { grep = "rg";
-    ls = "exa";
-    find = "fd";
-    # XXX: du = "dust";
-    ps = "procs";
-    cat = "bat";
-  };
-  environment.variables.EDITOR = lib.mkForce "nvim";
-  environment.variables.FZF_DEFAULT_COMMAND = "rg --files";
   environment.variables.GDK_DPI_SCALE = "0.5";
   environment.variables.GDK_SCALE = "2";
-  environment.variables.GIT_EDITOR = lib.mkForce "nvim";
   environment.variables.QT_AUTO_SCREEN_SCALE_FACTOR = "1";
-
   environment.systemPackages = with pkgs; [
 
     # email
@@ -181,13 +147,7 @@ in {
     #vdirsyncer
     #noti
 
-    # devops / cloud
-    minikube
-    kubectl
-    terraform
-
-    # editors
-    neovim
+    # gui editors
     vscode-with-extensions
 
     # chat
@@ -197,29 +157,13 @@ in {
 
     # terminals
     #alacritty
+    #kitty
     termite
-
-    # nix tools
-    nix-index
-    nixpkgs-fmt
-    nixpkgs-review
-    niv
-    direnv
 
     # browsers
     firefox
     chromium
     opera
-
-    # version control
-    gitAndTools.gitflow
-    gitAndTools.hub
-    gitAndTools.gh
-    gitFull
-    git-town
-    git-lfs
-    mercurialFull
-    tig
 
     # i3 related
     rofi
@@ -242,15 +186,6 @@ in {
     obs-v4l2sink
     peek
 
-    # improved console utilities
-    bat            # cat
-    ripgrep        # grep
-    exa            # ls
-    fd             # find
-    procs          # ps
-    sd             # sed
-    # XXX: dust           # du
-
     # commonly used console utilities
     jq
     entr
@@ -267,63 +202,14 @@ in {
     which
 
     # other console tools
-    asciinema
-    tokei        # show statistics about your code
-    hyperfine    # benchmarking tool
-    awscli2
-    docker_compose
-    feh
-    htop
-    mpv
-    scrot
-    sshuttle
-    youtube-dl
+    feh          # image viewer
+    mpv          # video player
 
     # password managers
-    gopass
-    lastpass-cli
-    _1password
     _1password-gui
   ];
 
-  documentation.info.enable = true;
-
-  programs.command-not-found.enable = false;
   programs.dconf.enable = true;
-  programs.gnupg.agent.enable = true;
-  programs.gnupg.agent.enableBrowserSocket = true;
-  programs.gnupg.agent.enableSSHSupport = true;
-  programs.mosh.enable = true;
-  programs.mtr.enable = true;
-  programs.ssh.forwardX11 = false;
-  programs.zsh.enable = true;
-  programs.zsh.enableBashCompletion = true;
-  programs.zsh.enableCompletion = true;
-  programs.zsh.autosuggestions.enable = true;
-  programs.zsh.syntaxHighlighting.enable = true;
-  programs.zsh.vteIntegration = true;
-  programs.zsh.shellInit = ''
-    source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
-
-    eval "$(direnv hook zsh)"
-    eval "$(zoxide init zsh)"
-
-    source ${pkgs.fzf}/share/fzf/completion.zsh
-    source ${pkgs.fzf}/share/fzf/key-bindings.zsh
-
-
-    source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-    bindkey "^[[A" history-substring-search-up
-    bindkey "^[[B" history-substring-search-down
-    bindkey "$terminfo[kcuu1]" history-substring-search-up
-    bindkey "$terminfo[kcud1]" history-substring-search-down
-    bindkey -M emacs '^P' history-substring-search-up
-    bindkey -M emacs '^N' history-substring-search-down
-    bindkey -M vicmd 'k' history-substring-search-up
-    bindkey -M vicmd 'j' history-substring-search-down
-
-    source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-  '';
 
   services.avahi.enable = true;
   services.avahi.nssmdns = true;
@@ -334,8 +220,6 @@ in {
   services.fprintd.enable = true;
   services.fstrim.enable = true;
   services.fwupd.enable = true;
-  services.locate.enable = true;
-  services.openssh.enable = true;
   services.printing.drivers = with pkgs; [ hplip ];
   services.printing.enable = true;
   services.timesyncd.enable = true;
@@ -372,7 +256,6 @@ in {
   services.xserver.windowManager.i3.enable = true;
 
   virtualisation.libvirtd.enable = true;
-  virtualisation.docker.enable = true;
   # FIXME: virtualisation.virtualbox.host.enable = true;
 
   sound.enable = true;
@@ -388,11 +271,6 @@ in {
   hardware.bluetooth.enable = true;
   hardware.bluetooth.package = pkgs.bluezFull;
 
-  security.sudo.enable = true;
-  security.sudo.wheelNeedsPassword = false;
-  security.hideProcessInformation = true;
-
-  users.defaultUserShell = pkgs.zsh;
   users.mutableUsers = false;
   users.users."root" = {
     hashedPassword = "$6$sBFfflUBZtZMD$h.EWNsmmX8iwTM7jShIvYwvS2/h7dncGTNhG.yPN1dOte1Et0TTz7HSFmzkuWjQpnBAfANYdptF3EQoUNSYwx/";

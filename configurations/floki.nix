@@ -18,6 +18,7 @@ let
 in {
   imports =
     [ "${nixpkgs}/nixos/modules/profiles/qemu-guest.nix"
+      ./profiles/console.nix
     ];
 
   boot.extraModulePackages = [ ];
@@ -35,121 +36,12 @@ in {
   swapDevices = [ ];
 
   nix.maxJobs = lib.mkDefault 2;
-  nix.package = pkgs.nixFlakes;
-  nix.useSandbox = true;
-  nix.trustedUsers = ["@wheel" "rok"];
-  nix.distributedBuilds = true;
-  nix.extraOptions = ''
-    experimental-features = nix-command flakes
-    builders-use-substitutes = true
-  '';
-
-  nixpkgs.config.allowBroken = false;
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.allowUnfreeRedistributable = true;
-  nixpkgs.overlays = [
-    (import ./../pkgs/overlay.nix)
-  ];
 
   networking.hostName = "floki";
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 80 443 8888 25565 ];
   networking.firewall.allowedUDPPorts = [ 25565 ];
   networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
-
-  i18n = {
-    defaultLocale = "en_US.UTF-8";
-  };
-
-  time.timeZone = "Europe/Berlin";
-
-  environment.shellAliases =
-    { grep = "rg";
-      ls = "exa";
-      find = "fd";
-      du = "dust";
-      ps = "procs";
-      cat = "bat";
-    };
-  environment.etc."gitconfig".source = ./gitconfig;  # TODO: create configurable package
-  environment.variables.EDITOR = lib.mkForce "nvim";
-  environment.variables.FZF_DEFAULT_COMMAND = "rg --files";
-  environment.variables.GIT_EDITOR = lib.mkForce "nvim";
-
-  environment.systemPackages = with pkgs; [
-
-    # editors
-    neovim
-
-    # nix tools
-    direnv
-    niv
-    nixpkgs-fmt
-    nixpkgs-review
-
-    # version control
-    gitAndTools.gitflow
-    gitAndTools.hub
-    gitAndTools.gh
-    gitFull
-    git-lfs
-    tig
-
-    # improved console utilities
-    bat            # cat
-    ripgrep        # grep
-    exa            # ls
-    fd             # find
-    procs          # ps
-    sd             # sed
-    dust           # du
-
-    # commonly used console utilities
-    jq
-    entr
-    neofetch
-    fzf
-    zoxide
-
-    # common console tools
-    file
-    tree
-    unzip
-    wget
-    which
-
-    # 
-    starship
-    termite.terminfo
-
-    # other console tools
-    htop
-    sshuttle
-  ];
-
-  documentation.info.enable = true;
-
-  programs.mosh.enable = true;
-  programs.screen.screenrc = ''
-    multiuser on
-    acladd rok
-  '';
-  programs.zsh.autosuggestions.enable = true;
-  programs.zsh.enable = true;
-  programs.zsh.enableCompletion = true;
-  programs.zsh.syntaxHighlighting.enable = true;
-  programs.zsh.shellInit = ''
-    #bindkey "^[[A" history-substring-search-up
-    #bindkey "^[[B" history-substring-search-down
-    eval "$(starship init zsh)"
-    eval "$(direnv hook zsh)"
-    eval "$(zoxide init zsh)"
-    source ${pkgs.fzf}/share/fzf/completion.zsh
-    source ${pkgs.fzf}/share/fzf/key-bindings.zsh
-  '';
-
-  services.openssh.enable = true;
-  services.weechat.enable = true;
 
   # https://www.digitalocean.com/community/tutorials/how-to-optimize-nginx-configuration
   services.nginx.enable = true;
@@ -173,16 +65,7 @@ in {
             ssl_session_tickets  off;
           '';
           locations =
-            { "/weechat" =
-                { proxyPass = "https://localhost:8888/weechat";
-                  proxyWebsockets = true;
-                  extraConfig = ''
-                    proxy_read_timeout 604800;                # Prevent idle disconnects
-                    proxy_set_header X-Real-IP $remote_addr;  # Let Weechat see client's IP
-                    limit_req zone=weechat burst=1 nodelay;   # Brute force prevention
-                  '';
-                };
-              "/" =
+            { "/" =
                 { root = "/var/www/garbas.si";
                   extraConfig = ''
                     add_header           X-Frame-Options SAMEORIGIN;
@@ -221,8 +104,8 @@ in {
     };
 
   systemd.timers."healthcheck-garbas.si".enable = true;
-  systemd.timers."healthcheck-garbas.si".description = "Run hourly healthcheck for garbas.si";
-  systemd.timers."healthcheck-garbas.si".timerConfig.OnCalendar = "hourly";
+  systemd.timers."healthcheck-garbas.si".description = "Run 10min healthcheck for garbas.si";
+  systemd.timers."healthcheck-garbas.si".timerConfig.OnCalendar = "*:0/10:0";
   systemd.timers."healthcheck-garbas.si".timerConfig.Persistent = "yes";
   systemd.services."healthcheck-garbas.si".enable = true;
   systemd.services."healthcheck-garbas.si".description = "Run healthcheck for garbas.si";
@@ -241,8 +124,7 @@ in {
   users.mutableUsers = false;
   users.defaultUserShell = pkgs.zsh;
   users.users.root.hashedPassword = "$6$PS.1SD6/$kUv8wdXYH00dEvpqlC9SyX/E3Zm3HLPNmsxLwteJSQgpXDOfFZhWXkHby6hvZ.kFN2JbgXqJvwZfjOunBpcHX0";
-  users.users."nginx".extraGroups = [ "weechat" "rok" ];
-  users.users."weechat".extraGroups = [ "nginx" ];
+  users.users."nginx".extraGroups = [ "rok" ];
   users.users."rok" =
     { hashedPassword = "$6$PS.1SD6/$kUv8wdXYH00dEvpqlC9SyX/E3Zm3HLPNmsxLwteJSQgpXDOfFZhWXkHby6hvZ.kFN2JbgXqJvwZfjOunBpcHX0";
       isNormalUser = true;
