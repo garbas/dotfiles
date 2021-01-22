@@ -47,16 +47,18 @@ let
         EOF
       '';
   };
+
+  linuxPackages = pkgs.linuxPackages_latest;
+
 in {
   imports =
-    [ "${nixpkgs}/nixos/modules/installer/scan/not-detected.nix"
-      "${nixos-hardware}/dell/xps/13-7390/default.nix"
+    [ "${nixos-hardware}/dell/xps/13-7390/default.nix"
       ./modules.nix
       ./profiles/console.nix
     ];
 
   boot.extraModulePackages = [
-    (pkgs.linuxPackages.v4l2loopback.override { inherit (pkgs.linuxPackages_latest) kernel; })
+    (linuxPackages.v4l2loopback.override { inherit (linuxPackages) kernel; })
   ];
   boot.extraModprobeConfig = ''
     options kvm_intel nested=1
@@ -66,7 +68,7 @@ in {
   '';
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = lib.mkForce linuxPackages;
   boot.kernelModules = [
     "kvm-intel"
     "v4l2loopback"
@@ -259,6 +261,9 @@ in {
   # FIXME: virtualisation.virtualbox.host.enable = true;
 
   sound.enable = true;
+
+  hardware.enableAllFirmware = true;
+  hardware.enableRedistributableFirmware = true;
 
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.package = pkgs.pkgs.pulseaudioFull;
