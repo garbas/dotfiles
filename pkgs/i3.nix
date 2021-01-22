@@ -206,10 +206,12 @@ let
     for_window [class="pavucontrol"] floating enable
     for_window [class="VidyoDesktop"] floating enable
     for_window [class="zoom" instance="zoom"] floating enable
+    for_window [class="1Password"] floating enable
 
     exec --no-startup-id nm-applet
     exec --no-startup-id pasystray
-    exec --no-startup-id pcloud
+    exec --no-startup-id element-desktop --no-update --hidden
+    exec --no-startup-id 1password
 
     # brightness controll
     bindsym 224 mode exec brightness-
