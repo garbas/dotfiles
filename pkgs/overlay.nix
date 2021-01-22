@@ -14,13 +14,13 @@ rec {
   theme = import ./theme.nix {
     inherit (default) theme;
     inherit (self) fetchurl
-                    writeScriptBin
-                    runCommand
-                    nix
-                    curl
-                    coreutils
-                    jq
-                    lib;
+                   writeScriptBin
+                   runCommand
+                   nix
+                   curl
+                   coreutils
+                   jq
+                   lib;
   };
 
   termite = import ./termite.nix {
@@ -87,7 +87,7 @@ rec {
   # git (already a config in ../configurations/gitconfig)
   # uhk-agent
   # nix
-  # starship
+  # powerlevel10k
   # fzf
   # zathura
   # exa
