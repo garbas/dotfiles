@@ -31,7 +31,7 @@ let
       config = "";
     }
 
-    # THEME / COLORS
+    # THEME / COLORS / ICONS
     { plugins = with vimPlugins; [
         vim-airline
         vim-airline-themes
@@ -41,7 +41,7 @@ let
         set termguicolors
         set background=dark
         let g:one_allow_italics = 1
-        let g:airline_theme='onedark'
+        let g:airline_theme='${default.theme}'
 
         ${builtins.readFile theme.vim}
       '';
@@ -305,7 +305,7 @@ let
         nmap <leader>rn <Plug>(coc-rename)
         nmap <silent> gd <Plug>(coc-definition)
         nmap <silent> gy <Plug>(coc-type-definition)
-        
+
         nmap <leader>r <Plug>(coc-rename)
         nmap <silent> <leader>s <Plug>(coc-fix-current)
         nmap <silent> <leader>S <Plug>(coc-codeaction)
@@ -377,16 +377,8 @@ let
       '';
     }
 
-    # PROGRAMMING (HASKELL)
+    # TODO: PROGRAMMING (C++)
     { plugins = with vimPlugins; [
-      ];
-      config = ''
-      '';
-    }
-
-    # PROGRAMMING (GO)
-    { plugins = with vimPlugins; [
-        # TODO: coc-go
       ];
       config = ''
       '';
