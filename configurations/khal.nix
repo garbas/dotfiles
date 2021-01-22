@@ -155,6 +155,7 @@ in {
     # chat
     zoom-us
     element-desktop
+    signal-desktop
     discord
 
     # terminals
