@@ -159,8 +159,8 @@ in {
     discord
 
     # terminals
-    #alacritty
-    #kitty
+    alacritty
+    kitty
     termite
 
     # browsers
@@ -239,8 +239,8 @@ in {
   services.xserver.autoRepeatInterval = 25;
 
   services.xserver.libinput.enable = true;
-  services.xserver.libinput.disableWhileTyping = true;
-  services.xserver.libinput.naturalScrolling = false;
+  services.xserver.libinput.touchpad.disableWhileTyping = true;
+  services.xserver.libinput.touchpad.naturalScrolling = false;
 
   services.xserver.desktopManager.xterm.enable = false;
 
