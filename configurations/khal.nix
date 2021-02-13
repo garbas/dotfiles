@@ -1,4 +1,9 @@
-nixpkgs: nixos-hardware: { config, pkgs, lib, ... }:
+{ nixpkgs 
+, nixos-hardware
+, onlyoffice
+}:
+
+{ config, pkgs, lib, ... }:
 
 let
   nixpkgs-mozilla-overlay = self: super: {};
@@ -188,6 +193,7 @@ in {
     obs-wlrobs
     obs-v4l2sink
     peek
+    onlyoffice
 
     # commonly used console utilities
     jq

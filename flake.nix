@@ -2,25 +2,28 @@
   inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-20.09";
   inputs.nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+  inputs.onlyoffice.url = "github:GTrunSec/onlyoffice-desktopeditors-flake/main";
 
   outputs =
     { self
     , nixpkgs-stable
     , nixpkgs-unstable
     , nixos-hardware
+    , onlyoffice
     }:
     let
+      system = "x86_64-linux";
       mkConfiguration =
         { name
-        , nixpkgs
+        , inputs
         }:
-        { "${name}" = nixpkgs.lib.nixosSystem
-            { system = "x86_64-linux";
+        { "${name}" = inputs.nixpkgs.lib.nixosSystem
+            { inherit system;
               modules =
-                [ ((import (./. + "/configurations/${name}.nix")) nixpkgs nixos-hardware)
+                [ ((import (./. + "/configurations/${name}.nix")) inputs)
                   ({ ... }: {
-                    system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
-                    nix.registry.nixpkgs.flake = nixpkgs;
+                    system.configurationRevision = inputs.nixpkgs.lib.mkIf (self ? rev) self.rev;
+                    nix.registry.nixpkgs.flake = inputs.nixpkgs;
                   })
                 ];
             };
@@ -29,11 +32,17 @@
       { nixosConfigurations =
           (mkConfiguration
             { name = "khal";
-              nixpkgs = nixpkgs-unstable;
+              inputs = {
+                inherit nixos-hardware;
+                nixpkgs = nixpkgs-unstable;
+                onlyoffice = onlyoffice.defaultPackage."${system}";
+              };
             }) //
           (mkConfiguration
             { name = "floki";
-              nixpkgs = nixpkgs-stable;
+              inputs = {
+                nixpkgs = nixpkgs-stable;
+              };
             }) //
           {};
       };

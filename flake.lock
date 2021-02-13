@@ -16,6 +16,21 @@
         "type": "github"
       }
     },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1607560137,
+        "narHash": "sha256-qI5U28r9Ie11OlkwzNFkhW0Z4jLanntJdb3JeFq/85A=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "7ff5e241a2b96fff7912b7d793a06b4374bd846c",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "rev": "7ff5e241a2b96fff7912b7d793a06b4374bd846c",
+        "type": "indirect"
+      }
+    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1611910458,
@@ -34,11 +49,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1611575689,
-        "narHash": "sha256-z2rNP3zdVnGxp9iV2Rbn0/LLKhk47DZQKxDkpYFLI7M=",
+        "lastModified": 1612545171,
+        "narHash": "sha256-AZkSuO7H055eDD4KWBEDCX/R5fvw0vUMCErvQvYSEhA=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "891f607d5301d6730cb1f9dcf3618bcb1ab7f10e",
+        "rev": "536fe36e23ab0fc8b7f35c24603422eee9fc17a2",
         "type": "github"
       },
       "original": {
@@ -48,11 +63,31 @@
         "type": "github"
       }
     },
+    "onlyoffice": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1609449972,
+        "narHash": "sha256-xLZ11F/VmwuRJfh1jZnCVPJOi8cLLHGIgDfZ6tArgl4=",
+        "owner": "GTrunSec",
+        "repo": "onlyoffice-desktopeditors-flake",
+        "rev": "6a404e6916a39e8b51211d64c438a3b25d139013",
+        "type": "github"
+      },
+      "original": {
+        "owner": "GTrunSec",
+        "ref": "main",
+        "repo": "onlyoffice-desktopeditors-flake",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "nixos-hardware": "nixos-hardware",
         "nixpkgs-stable": "nixpkgs-stable",
-        "nixpkgs-unstable": "nixpkgs-unstable"
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "onlyoffice": "onlyoffice"
       }
     }
   },
