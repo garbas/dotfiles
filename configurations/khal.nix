@@ -10,8 +10,6 @@ let
 
   custom-overlay-old = self: super: {
 
-    dunst = super.dunst.override { dunstify = true; };
-
     neofetch = super.neofetch.overrideAttrs (old: {
       patches = (self.lib.optionals (builtins.hasAttr "patches" old) old.patches) ++ [
         (self.fetchurl { 
@@ -171,7 +169,7 @@ in {
     # browsers
     firefox
     chromium
-    opera
+    #XXXopera
 
     # i3 related
     rofi

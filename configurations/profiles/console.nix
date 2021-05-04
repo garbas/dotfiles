@@ -23,6 +23,7 @@
     nix-index
     nixpkgs-fmt
     nixpkgs-review
+    morph
 
     # devops / cloud tools
     minikube
@@ -143,7 +144,6 @@
 
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
-  security.hideProcessInformation = true;
 
   services.locate.enable = true;
   services.openssh.enable = true;

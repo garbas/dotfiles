@@ -100,6 +100,9 @@ let
         nnoremap <silent> <localleader> :<c-u>WhichKey  ','<CR>
         set timeoutlen=500
 
+        let g:which_key_use_floating_win = 1
+        "TODO
+        "let g:which_key_floating_opts = { 'row': '-1' }
         let g:which_key_map =  {}
         let g:which_key_localmap =  {}
 
@@ -151,7 +154,28 @@ let
           \ }
 
         let g:which_key_map.f = {
-          \ 'f' : ['Files'      , 'fzf-files']            ,
+          \ 'name' : '+fzf' ,
+          \ 'f' : ['Files'      , 'fzf-files']             ,
+          \ 'g' : ['GFiles'     , 'fzf-gfiles']            ,
+          \ 'b' : ['Buffers'    , 'fzf-buffers']           ,
+          \ 'Co': ['Color'      , 'fzf-color']             ,
+          \ 'r' : ['Rg'         , 'fzf-ripgrep']           ,
+          \ 'L' : ['Lines'      , 'fzf-lines']             ,
+          \ 'l' : ['BLines'     , 'fzf-buffer-lines']      ,
+          \ 'T' : ['Tags'       , 'fzf-tags']              ,
+          \ 't' : ['BTags'      , 'fzf-buffer-tags']       ,
+          \ 'm' : ['Marks'      , 'fzf-marks']             ,
+          \ 'w' : ['Windows'    , 'fzf-windows']           ,
+          \ 'HH': ['History'    , 'fzf-history']           ,
+          \ 'H' : ['History:'   , 'fzf-commands-history']  ,
+          \ 'h' : ['History/'   , 'fzf-search-history']    ,
+          \ 's' : ['Snippets'   , 'fzf-snippets']          ,
+          \ 'C' : ['Commits'    , 'fzf-buffer-commits']    ,
+          \ 'c' : ['BCommits'   , 'fzf-buffer-commits']    ,
+          \ 'CC': ['Commands'   , 'fzf-commands']          ,
+          \ 'M' : ['Maps'       , 'fzf-maps']              ,
+          \ 'Ht': ['Helptags'   , 'fzf-help-tags']         ,
+          \ 'F' : ['Filetypes'  , 'fzf-filetypes']         ,
           \ }
 
         autocmd! FileType which_key
@@ -212,6 +236,7 @@ let
         # TODO:
         fzfWrapper
         fzf-vim
+        vim-rooter
         coc-fzf
       ];
       config = ''
@@ -267,6 +292,8 @@ let
         # TODO: coc-emoji
         coc-pairs
         # TODO: coc-sh
+        coc-spell-checker
+        coc-lua
         # TODO: coc-syntax
         # TODO: coc-xml # needs java
         # TODO: coc-tabnine
@@ -330,7 +357,7 @@ let
 
     # PROGRAMMING (PYTHON)
     { plugins = with vimPlugins; [
-        #coc-python
+        coc-python
       ];
       config = ''
       '';
@@ -352,7 +379,6 @@ let
 
     # PROGRAMMING (ELM)
     { plugins = with vimPlugins; [
-        # TODO:
         vim-elm-syntax
       ];
       config = ''
