@@ -1,5 +1,5 @@
 {
-  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-20.09";
+  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-21.05";
   inputs.nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   inputs.onlyoffice.url = "github:GTrunSec/onlyoffice-desktopeditors-flake/main";
@@ -34,7 +34,7 @@
             { name = "khal";
               inputs = {
                 inherit nixos-hardware;
-                nixpkgs = nixpkgs-unstable;
+                nixpkgs = nixpkgs-stable;
                 onlyoffice = onlyoffice.defaultPackage."${system}";
               };
             }) //

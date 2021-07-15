@@ -14,7 +14,8 @@ let
       patches = (self.lib.optionals (builtins.hasAttr "patches" old) old.patches) ++ [
         (self.fetchurl { 
           url = "https://github.com/dylanaraps/neofetch/pull/1134.patch";
-          sha256 = "sha256-flryIeD1P1tUPgfxgzaGLxveJUyzogCVuQHxII+DjYw=";
+          #sha256 = "sha256-flryIeD1P1tUPgfxgzaGLxveJUyzogCVuQHxII+DjYw=";
+          sha256 = "sha256-XzYhKdwLO5ANf/ndLBomrQbi8p4fu1zlqimiZYhuItA=";
         })
       ];
     });
@@ -78,6 +79,7 @@ in {
   ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.zfs.enableUnstable = true;
 
   fileSystems."/" =
     { device = "rpool/ROOT";
@@ -101,14 +103,14 @@ in {
   nix.maxJobs = lib.mkDefault 8;
   nix.buildMachines = [
       # tweag remote builder
-      {
-        hostName = "build01.tweag.io";
-        maxJobs = 24;
-        sshUser = "nix";
-        sshKey = "/root/.ssh/id-tweag-builder";
-        system = "x86_64-linux";
-        supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
-      }
+      #{
+      #  hostName = "build01.tweag.io";
+      #  maxJobs = 24;
+      #  sshUser = "nix";
+      #  sshKey = "/root/.ssh/id-tweag-builder";
+      #  system = "x86_64-linux";
+      #  supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
+      #}
     ];
 
   nixpkgs.config.firefox.enableFoofleTalkPlugin = true;

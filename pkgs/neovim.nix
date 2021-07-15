@@ -32,18 +32,27 @@ let
     }
 
     # THEME / COLORS / ICONS
+    # https://github.com/chriskempson/base16-vim/issues/94#issuecomment-395396034
     { plugins = with vimPlugins; [
         vim-airline
         vim-airline-themes
         vim-devicons
+        nvim-base16
       ];
       config = ''
-        set termguicolors
-        set background=dark
+        "set background=dark
+        "set base16colorspace=256
+        "set termguicolors
+
+        set colorscheme=base16-${default.theme}
+
         let g:one_allow_italics = 1
         let g:airline_theme='${default.theme}'
+        let g:airline#extensions#branch#enabled = 1
+        let g:airline#extensions#tabline#enabled = 1
+        let g:airline#extensions#tagbar#enabled = 1
+        let g:airline_skip_empty_sections = 1
 
-        ${builtins.readFile theme.vim}
       '';
     }
 
