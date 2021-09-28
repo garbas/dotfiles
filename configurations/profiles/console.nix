@@ -19,6 +19,7 @@
 
     # nix tools
     direnv
+    nix-direnv
     niv
     nix-index
     nixpkgs-fmt

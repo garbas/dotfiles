@@ -3,7 +3,6 @@
   inputs.nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   inputs.onlyoffice.url = "github:GTrunSec/onlyoffice-desktopeditors-flake/main";
-  inputs.macunha1.url = "github:macunha1/configuration.nix/master";
 
   outputs =
     { self
