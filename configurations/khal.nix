@@ -1,6 +1,5 @@
 { nixpkgs 
 , nixos-hardware
-, onlyoffice
 }:
 
 { config, pkgs, lib, ... }:
@@ -161,7 +160,6 @@ in {
     obs-wlrobs
     obs-v4l2sink
     peek
-    onlyoffice
 
     # commonly used console utilities
     jq
