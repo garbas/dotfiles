@@ -1,25 +1,16 @@
-{ nixpkgs 
+{ nixpkgs
 , nixos-hardware
 }:
 
 { config, pkgs, lib, ... }:
 
 let
-  nixpkgs-mozilla-overlay = self: super: {};
+  linuxPackages = pkgs.linuxPackages;
+  #linuxPackages = pkgs.linuxPackages_5_14;
 
-  custom-overlay-old = self: super: {
-    neofetch = super.neofetch.overrideAttrs (old: {
-      patches = (self.lib.optionals (builtins.hasAttr "patches" old) old.patches) ++ [
-        (self.fetchurl { 
-          url = "https://github.com/dylanaraps/neofetch/pull/1134.patch";
-          #sha256 = "sha256-flryIeD1P1tUPgfxgzaGLxveJUyzogCVuQHxII+DjYw=";
-          sha256 = "sha256-XzYhKdwLO5ANf/ndLBomrQbi8p4fu1zlqimiZYhuItA=";
-        })
-      ];
-    });
+  overlay = final: prev: {
+    vaapiIntel = prev.vaapiIntel.override { enableHybridCodec = true; };
   };
-
-  linuxPackages = pkgs.linuxPackages_latest;
 
 in {
   imports =
@@ -46,7 +37,8 @@ in {
   ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.zfs.enableUnstable = true;
+  boot.loader.grub.copyKernels = true;
+  #boot.zfs.enableUnstable = true;
 
   fileSystems."/" =
     { device = "rpool/ROOT";
@@ -70,22 +62,19 @@ in {
   nix.maxJobs = lib.mkDefault 8;
   nix.buildMachines = [
       # tweag remote builder
-      #{
-      #  hostName = "build01.tweag.io";
-      #  maxJobs = 24;
-      #  sshUser = "nix";
-      #  sshKey = "/root/.ssh/id-tweag-builder";
-      #  system = "x86_64-linux";
-      #  supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
-      #}
+      {
+        hostName = "build01.tweag.io";
+        maxJobs = 24;
+        sshUser = "nix";
+        sshKey = "/root/.ssh/id_rsa";
+        system = "x86_64-linux";
+        supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
+      }
     ];
 
   nixpkgs.config.firefox.enableFoofleTalkPlugin = true;
   nixpkgs.config.pulseaudio = true;
-  nixpkgs.overlays =
-    [ nixpkgs-mozilla-overlay
-      custom-overlay-old
-    ];
+  nixpkgs.overlays = [ overlay ];
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 
@@ -122,7 +111,7 @@ in {
     #noti
 
     # gui editors
-    vscode-with-extensions
+    #vscode-with-extensions
 
     # chat
     zoom-us
@@ -156,9 +145,8 @@ in {
     transmission-gtk
     uhk-agent
     zathura
-    obs-studio 
-    obs-wlrobs
-    obs-v4l2sink
+    # obs-studio with plugins
+    (wrapOBS { plugins = with obs-studio-plugins; [ wlrobs ]; })
     peek
 
     # commonly used console utilities
@@ -245,6 +233,12 @@ in {
   hardware.opengl.enable = true;
   hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true;
+  hardware.opengl.extraPackages = with pkgs; [
+      intel-media-driver # LIBVA_DRIVER_NAME=iHD
+      vaapiIntel         # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+      vaapiVdpau
+      libvdpau-va-gl
+    ];
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.package = pkgs.bluezFull;
@@ -268,21 +262,14 @@ in {
   fonts.fontDir.enable = true;
   fonts.enableGhostscriptFonts = true;
   fonts.fonts = with pkgs; [
-    anonymousPro
-    dejavu_fonts
+    # used for terminal
     fira-code
     fira-code-symbols
-    font-awesome_5
-    freefont_ttf
-    liberation_ttf
-    material-icons
-    meslo-lgs-nf
+
+    # Fonts use for icons in i3 and powerlevel10k
     nerdfonts
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    powerline-fonts
-    source-code-pro
-    terminus_font
+
+    # Fonts use for icons in i3status-rs
+    font-awesome_5
   ];
 }

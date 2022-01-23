@@ -1,8 +1,4 @@
-{ default
-, theme
-
-, i3status-rust
-
+{ i3status-rust
 , makeWrapper
 , symlinkJoin
 , writeTextFile
@@ -10,10 +6,11 @@
 
 let
   config = ''
-    ${builtins.readFile theme.i3status-rust}
+    [theme]
+    name = "nord-dark"
 
     [icons]
-    name = "awesome"
+    name = "awesome5"
 
     [[block]]
     block = "disk_space"
@@ -53,7 +50,7 @@ let
   '';
 
   configFile = writeTextFile {
-    name = "i3status-rust-config-with-${theme.name}-theme";
+    name = "i3status-rust-config";
     text = config;
   };
 

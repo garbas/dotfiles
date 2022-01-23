@@ -13,6 +13,7 @@
   environment.variables.EDITOR = lib.mkForce "nvim";
   environment.variables.FZF_DEFAULT_COMMAND = "rg --files";
   environment.variables.GIT_EDITOR = lib.mkForce "nvim";
+  environment.pathsToLink = [ "/share/nix-direnv" ];
   environment.systemPackages = with pkgs; [
     # editors
     neovim
@@ -68,7 +69,7 @@
     which
 
     # terminal
-    termite.terminfo
+    kitty
 
     # other console tools
     asciinema    # terminal recorder
@@ -92,20 +93,24 @@
     ::1 ${config.networking.hostName}
   '';
 
-  nix.package = pkgs.nixFlakes;
+  nix.package = pkgs.nixUnstable;
   nix.useSandbox = true;
   nix.trustedUsers = ["@wheel" "rok"];
   nix.distributedBuilds = true;
   nix.extraOptions = ''
     experimental-features = nix-command flakes
     builders-use-substitutes = true
+    # for nix-direnv
+    keep-outputs = true
+    keep-derivations = true
   '';
 
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
   nixpkgs.overlays = [
-    (import ./../../pkgs/overlay.nix)
+    # for nix-direnv
+    (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; } )
   ];
 
   programs.command-not-found.enable = false;

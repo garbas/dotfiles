@@ -1,29 +1,11 @@
-{ default
-, theme
-
+{ myConfig
 , i3
-
 , makeWrapper
 , symlinkJoin
 , writeTextFile
 }:
 
 let
-  theme_i3 = 
-  builtins.replaceStrings
-    ["status_command i3status"]
-    [
-      ''
-        status_command i3status-rs
-        tray_output $laptop_screen
-        #tray_output $left_screen
-        tray_padding 0
-        separator_symbol "‖"
-      ''
-    ]
-    (builtins.readFile theme.i3);
-
-
   config = ''
     # i3 config file (v4)
     #
@@ -31,13 +13,13 @@ let
 
     set $mod Mod4
 
-    font pango: ${default.font} ${default.fontSize}
+    font pango:${myConfig.fontFamily} ${builtins.toString (myConfig.fontSize / 3)}
 
     # Use Mouse+$mod to drag floating windows to their wanted position
     floating_modifier $mod
 
     # start a terminal
-    bindsym $mod+Return exec ${default.terminal}
+    bindsym $mod+Return exec ${myConfig.terminal}
 
     # kill focused window
     bindsym $mod+Shift+q kill
@@ -198,9 +180,57 @@ let
 
     bindsym $mod+r mode "resize"
 
+    # Nord theme
+    # -> https://github.com/sarveshspatil111/i3wm-nord/blob/main/.config/i3/config#L414
+    set $base00 #101218
+    set $base01 #1f222d
+    set $base02 #252936
+    set $base03 #5e81ac
+    set $base04 #C0C5CE
+    set $base05 #d1d4e0
+    set $base06 #C9CCDB
+    set $base07 #ffffff
+    set $base08 #ee829f
+    set $base09 #f99170
+    set $base0A #ffefcc
+    set $base0B #a5ffe1
+    set $base0C #97e0ff
+    set $base0D #97bbf7
+    set $base0E #c0b7f9
+    set $base0F #fcc09e
+
     # Start i3bar to display a workspace bar (plus the system information
     # i3status finds out, if available)
-    ${theme_i3}
+    bar {
+      position bottom
+      status_command i3status-rs
+      tray_output $laptop_screen
+      tray_padding 0
+      separator_symbol "‖"
+
+      colors {
+        separator  $base01
+        background $base01
+        statusline #81a1c1
+
+        #                   border  background text
+        focused_workspace  $base01 $base01    #81a1c1 
+        active_workspace   $base01 $base02    $base03
+        inactive_workspace $base01 $base01    #4c566a
+        urgent_workspace   $base01 $base01    $base08
+        binding_mode       $base01 #81a1c1    #2e3440
+      }
+    }
+
+    # Window color settings
+    # class                 border  backgr. text    indicator
+    client.focused          #81a1c1 #81a1c1 #ffffff #81a1c1
+    client.unfocused        #2e3440 #2e3440 #888888 #2e3440
+    client.focused_inactive #2e3440 #2e3440 #888888 #2e3440
+    client.placeholder      #2e3440 #2e3440 #888888 #2e3440
+    client.urgent           #900000 #900000 #ffffff #900000
+
+    client.background       #242424
 
     for_window [class="Firefox" window_role="About"] floating enable
     for_window [class="pavucontrol"] floating enable
@@ -211,53 +241,12 @@ let
     exec --no-startup-id nm-applet
     exec --no-startup-id pasystray
     exec --no-startup-id element-desktop --no-update --hidden
-    exec --no-startup-id 1password
-
-    # brightness controll
-    bindsym 224 mode exec brightness-
-    bindsym 225 mode exec brightness+
 
     for_window [class="^.*"] border pixel 1
-    set $mode_gaps Gaps: (o) outer, (i) inner
-    set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
-    set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
-    bindsym $mod+Shift+g mode "$mode_gaps"
-
-    mode "$mode_gaps" {
-            bindsym o      mode "$mode_gaps_outer"
-            bindsym i      mode "$mode_gaps_inner"
-            bindsym Return mode "default"
-            bindsym Escape mode "default"
-    }
-
-    mode "$mode_gaps_inner" {
-            bindsym plus  gaps inner current plus 5
-            bindsym minus gaps inner current minus 5
-            bindsym 0     gaps inner current set 0
-
-            bindsym Shift+plus  gaps inner all plus 5
-            bindsym Shift+minus gaps inner all minus 5
-            bindsym Shift+0     gaps inner all set 0
-
-            bindsym Return mode "default"
-            bindsym Escape mode "default"
-    }
-    mode "$mode_gaps_outer" {
-            bindsym plus  gaps outer current plus 5
-            bindsym minus gaps outer current minus 5
-            bindsym 0     gaps outer current set 0
-
-            bindsym Shift+plus  gaps outer all plus 5
-            bindsym Shift+minus gaps outer all minus 5
-            bindsym Shift+0     gaps outer all set 0
-
-            bindsym Return mode "default"
-            bindsym Escape mode "default"
-    }
   '';
 
   configFile = writeTextFile {
-    name = "i3-config-with-${theme.name}-theme";
+    name = "i3-config-with-${myConfig.theme}-theme";
     text = config;
   };
 

@@ -1,90 +1,57 @@
-self: super:
+{ neovim-flake, nightfox-src }:
 
-rec {
+final: prev:
 
-  default = {
-    theme = "onedark";
-    #theme = "one-light";
-    font = "Fira Code Light";  # use fc-list
-    fontSize = "10";
-    terminal = "${termite}/bin/termite";
-    statusBar = "${i3status-rust}/bin/i3status-rs";
+let
+  myConfig = {
+    # https://github.com/EdenEast/nightfox.nvim
+    theme = "nordfox"; # One of nightfox, nordfox, dayfox, dawnfox and duskfox.
+    fontFamily = "Fira Code Light";  # use fc-list
+    fontSize = 24;
+    terminal = "${final.kitty}/bin/kitty";
+    browser = "${final.chromium}/bin/chromium";
+  };
+in rec {
+
+  neovim = final.callPackage ./neovim { inherit myConfig nightfox-src; };
+
+  neovim-nightly = final.callPackage ./neovim {
+    inherit myConfig nightfox-src;
+    neovim-unwrapped = neovim-flake.packages.${prev.system}.neovim;
   };
 
-  theme = import ./theme.nix {
-    inherit (default) theme;
-    inherit (self) fetchurl
-                   writeScriptBin
-                   runCommand
-                   nix
-                   curl
-                   coreutils
-                   jq
-                   lib;
+  neofetch = prev.neofetch.overrideAttrs (old: {
+    patches = (final.lib.optionals (builtins.hasAttr "patches" old) old.patches) ++ [
+      (final.fetchurl { 
+        url = "https://github.com/dylanaraps/neofetch/pull/1134.patch";
+        sha256 = "sha256-XzYhKdwLO5ANf/ndLBomrQbi8p4fu1zlqimiZYhuItA=";
+      })
+    ];
+  });
+
+  kitty = final.callPackage ./kitty.nix {
+    inherit myConfig;
+    inherit (prev) kitty;
   };
 
-  termite = import ./termite.nix {
-    inherit default theme;
-    inherit (super) termite;
-    inherit (self) writeTextFile;
+  i3 = final.callPackage ./i3.nix {
+    inherit myConfig;
+    inherit (prev) i3;
   };
 
-  rofi = import ./rofi.nix {
-    inherit default theme;
-    inherit (super) rofi-unwrapped;
-    inherit (self) makeWrapper
-                   symlinkJoin
-                   lib
-                   rofi-calc
-                   rofi-emoji
-                   hicolor-icon-theme;
+  i3status-rust = final.callPackage ./i3status-rust.nix {
+    inherit (prev) i3status-rust;
   };
 
-  i3 = import ./i3.nix {
-    inherit default theme;
-    inherit (super) i3;
-    inherit (self) makeWrapper
-                   symlinkJoin
-                   writeTextFile;
+  uhk-agent = final.callPackage ./uhk-agent.nix { };
+
+  rofi = final.callPackage ./rofi.nix {
+    inherit myConfig;
+    inherit (prev) rofi-unwrapped;
   };
-
-  i3status-rust = import ./i3status-rust.nix {
-    inherit default theme;
-    inherit (super) i3status-rust;
-    inherit (self) makeWrapper
-                   symlinkJoin
-                   writeTextFile;
-  };
-
-  neovim = import ./neovim.nix {
-    inherit default theme;
-    inherit (super) neovim;
-    inherit (self) vimPlugins
-                   nodejs
-                   lib;
-  };
-
-  weechat = super.weechat.override
-    { configure = { ... }:
-      { scripts = with self.weechatScripts;
-          [ weechat-matrix-bridge
-            wee-slack
-          ];
-      };
-    };
-
-  vscode-with-extensions = super.vscode-with-extensions.override
-    { vscodeExtensions = with self.vscode-extensions;
-        [ bbenoist.Nix
-          ms-python.python
-          ms-azuretools.vscode-docker
-          ms-vscode.cpptools
-        ];
-    };
-
-  uhk-agent = self.callPackage ./uhk-agent.nix { };
 
   # TODO:
+  # home-manager
   # neofetch (also submit upstream)
   # git (already a config in ../configurations/gitconfig)
   # uhk-agent
