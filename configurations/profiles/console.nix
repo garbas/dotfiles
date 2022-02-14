@@ -1,3 +1,4 @@
+{ nixpkgs }:
 { config, pkgs, lib, ... }:
 {
 
@@ -94,12 +95,18 @@
   '';
 
   nix.package = pkgs.nixUnstable;
-  nix.useSandbox = true;
-  nix.trustedUsers = ["@wheel" "rok"];
+  nix.registry.nixpkgs.flake = nixpkgs;
+  nix.nixPath = [
+    "nixpkgs=${nixpkgs}"
+    "nixos-config=/etc/nixos/configuration.nix"
+  ];
+  nix.settings.sandbox = true;
+  nix.settings.trusted-users = ["@wheel" "rok"];
   nix.distributedBuilds = true;
   nix.extraOptions = ''
     experimental-features = nix-command flakes
     builders-use-substitutes = true
+
     # for nix-direnv
     keep-outputs = true
     keep-derivations = true

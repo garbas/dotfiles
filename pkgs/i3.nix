@@ -241,6 +241,7 @@ let
     exec --no-startup-id nm-applet
     exec --no-startup-id pasystray
     exec --no-startup-id element-desktop --no-update --hidden
+    exec --no-startup-id blueman-applet
 
     for_window [class="^.*"] border pixel 1
   '';

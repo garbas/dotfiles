@@ -14,9 +14,9 @@ let
 
 in {
   imports =
-    [ "${nixos-hardware}/dell/xps/13-7390/default.nix"
-      ./modules.nix
-      ./profiles/console.nix
+    [ (import "${nixos-hardware}/dell/xps/13-7390/default.nix")
+      (import ./modules.nix)
+      (import ./profiles/console.nix { inherit nixpkgs; })
     ];
 
   boot.extraModulePackages = [
@@ -59,7 +59,7 @@ in {
     [ { device = "/dev/disk/by-uuid/f38786d1-369a-42e5-8962-13ce86877d98"; }
     ];
 
-  nix.maxJobs = lib.mkDefault 8;
+  nix.settings.max-jobs = lib.mkDefault 8;
   nix.buildMachines = [
       # tweag remote builder
       {
@@ -239,6 +239,7 @@ in {
       vaapiVdpau
       libvdpau-va-gl
     ];
+  hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [ vaapiIntel ];
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.package = pkgs.bluezFull;
