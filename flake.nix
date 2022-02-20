@@ -5,6 +5,7 @@
     { flake-utils.url = "github:numtide/flake-utils";
       nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-21.11";
       nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+      nixpkgs-master.url = "github:NixOS/nixpkgs/master";
       nixos-hardware.url = "github:NixOS/nixos-hardware/master";
       neovim-flake.url = "github:neovim/neovim?dir=contrib";
       neovim-flake.inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -17,6 +18,7 @@
     , flake-utils
     , nixpkgs-stable
     , nixpkgs-unstable
+    , nixpkgs-master
     , nixos-hardware
     , neovim-flake
     , nightfox-src
@@ -44,11 +46,16 @@
 
       packages = flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
         let
-          pkgs = import nixpkgs-unstable {
+          pkgs = import nixpkgs-master {
             inherit system;
             overlays = [ overlay ];
           };
         in rec {
+          devShell = pkgs.mkShell {
+            packages = [
+              pkgs.rnix-lsp
+            ];
+          };
           packages = flake-utils.lib.flattenTree {
             inherit (pkgs)
               kitty
@@ -64,7 +71,7 @@
             { name = "khal";
               inputs = {
                 inherit nixos-hardware;
-                nixpkgs = nixpkgs-unstable;
+                nixpkgs = nixpkgs-master;
               };
             }) //
           (mkConfiguration

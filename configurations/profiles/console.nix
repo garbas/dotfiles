@@ -23,6 +23,7 @@
     direnv
     nix-direnv
     niv
+    rnix-lsp
     nix-index
     nixpkgs-fmt
     nixpkgs-review
