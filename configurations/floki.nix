@@ -1,3 +1,4 @@
+packages:
 { nixpkgs }:
 { config, pkgs, lib, ... }:
 

@@ -13,6 +13,13 @@ let
   };
 in rec {
 
+  obs-studio-with-plugins = final.wrapOBS {
+    plugins = with final.obs-studio-plugins; [
+      wlrobs
+      obs-source-record
+    ];
+  };
+
   neovim = final.callPackage ./neovim { inherit myConfig nightfox-src; };
 
   neovim-nightly = final.callPackage ./neovim {

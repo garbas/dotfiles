@@ -231,6 +231,7 @@ let
           p."tree-sitter-comment"
           p."tree-sitter-dart"
           p."tree-sitter-nix"
+          p."tree-sitter-cue"
           p."tree-sitter-lua"
           p."tree-sitter-make"
           p."tree-sitter-markdown"

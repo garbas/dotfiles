@@ -1,7 +1,7 @@
+packages:
 { nixpkgs
 , nixos-hardware
 }:
-
 { config, pkgs, lib, ... }:
 
 let
@@ -145,8 +145,6 @@ in {
     transmission-gtk
     uhk-agent
     zathura
-    # obs-studio with plugins
-    (wrapOBS { plugins = with obs-studio-plugins; [ wlrobs ]; })
     peek
 
     # commonly used console utilities
@@ -170,7 +168,7 @@ in {
 
     # password managers
     _1password-gui
-  ];
+  ] ++ packages ;
 
   programs.dconf.enable = true;
 

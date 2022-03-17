@@ -32,13 +32,13 @@ let
   desktopItem = makeDesktopItem {
     name = pname;
     desktopName = "UHK Agent";
+    icon = "uhk-agent";
+    categories = [ "Utility;" ];
+    exec = pname;
     genericName = "Keyboard configuration";
     comment =
       "Agent is the configuration application of the Ultimate Hacking Keyboard";
-    icon = "uhk-agent";
     terminal = "false";
-    exec = pname;
-    categories = "Utility;";
   };
 
   xdgDirs = builtins.concatStringsSep ":" [
@@ -102,7 +102,6 @@ in pkgs.appimageTools.wrapType2 rec {
     EOF
 
     mkdir -p $out/share/applications
-    cp ${desktopItem}/share/applications/* $_
 
     mkdir -p $out/share/icons/hicolor
     # Iterate over icons and copy them to out, dynamically

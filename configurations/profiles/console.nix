@@ -16,9 +16,6 @@
   environment.variables.GIT_EDITOR = lib.mkForce "nvim";
   environment.pathsToLink = [ "/share/nix-direnv" ];
   environment.systemPackages = with pkgs; [
-    # editors
-    neovim
-
     # nix tools
     direnv
     nix-direnv
@@ -33,7 +30,7 @@
     minikube
     kubectl
     terraform
-    docker_compose
+    docker-compose
     awscli2
 
     # version control
