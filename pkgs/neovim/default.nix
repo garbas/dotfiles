@@ -11,6 +11,12 @@
 }:
 
 # TODO:
+# https://github.com/jose-elias-alvarez/null-ls.nvim
+# https://github.com/kabinspace/AstroVim/wiki/Default-Plugins
+# https://github.com/kabinspace/AstroVim
+# https://github.com/LunarVim
+# https://github.com/CosmicNvim/CosmicNvim
+# https://github.com/NvChad/NvChad
 # https://github.com/hrsh7th/nvim-cmp
 # lsp-config
 # https://github.com/L3MON4D3/LuaSnip

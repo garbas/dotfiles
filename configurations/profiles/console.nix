@@ -92,7 +92,7 @@
     ::1 ${config.networking.hostName}
   '';
 
-  nix.package = pkgs.nixUnstable;
+  nix.package = pkgs.nixVersions.stable;
   nix.registry.nixpkgs.flake = nixpkgs;
   nix.nixPath = [
     "nixpkgs=${nixpkgs}"
@@ -162,7 +162,5 @@
   time.timeZone = "Europe/Ljubljana";
 
   users.defaultUserShell = pkgs.zsh;
-
-  virtualisation.docker.enable = true;
 }
 

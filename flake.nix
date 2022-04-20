@@ -4,10 +4,13 @@
   inputs =
     { flake-utils.url = "github:numtide/flake-utils";
       nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-21.11";
-      nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-      #nixpkgs-master.url = "github:NixOS/nixpkgs/master";
-      nixpkgs-master.url = "github:garbas/nixpkgs/dev";
+      #nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+      nixpkgs-unstable.url = "github:garbas/nixpkgs/dev";
+      nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
+      nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs-unstable";
       nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+      home-manager.url = "github:nix-community/home-manager";
+      home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
       neovim-flake.url = "github:neovim/neovim?dir=contrib";
       neovim-flake.inputs.nixpkgs.follows = "nixpkgs-unstable";
       nightfox-src.url = "github:EdenEast/nightfox.nvim";
@@ -19,13 +22,23 @@
     , flake-utils
     , nixpkgs-stable
     , nixpkgs-unstable
-    , nixpkgs-master
+    , nixpkgs-wayland
     , nixos-hardware
+    , home-manager
     , neovim-flake
     , nightfox-src
     }:
     let
-      overlay = import ./pkgs/overlay.nix { inherit neovim-flake nightfox-src; };
+      #overlay = import ./pkgs/overlay.nix { inherit neovim-flake nightfox-src; };
+
+      overlays = [
+        nixpkgs-wayland.overlay
+        (final: prev: {
+          firefox = prev.firefox-bin.override { forceWayland = true; };
+          vaapiIntel = prev.vaapiIntel.override { enableHybridCodec = true; };
+        })
+        (import ./pkgs/overlay.nix { inherit neovim-flake nightfox-src; })
+      ];
 
       mkConfiguration =
         { name
@@ -40,7 +53,13 @@
                   ({ ... }: {
                     system.configurationRevision = inputs.nixpkgs.lib.mkIf (self ? rev) self.rev;
                     nix.registry.nixpkgs.flake = inputs.nixpkgs;
-                    nixpkgs.overlays = [ overlay ];
+                    nix.settings.trusted-public-keys = [
+                      "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
+                    ];
+                    nix.settings.substituters = [
+                      "https://nixpkgs-wayland.cachix.org/"
+                    ];
+                    nixpkgs = { inherit overlays; };
                   })
                 ];
             };
@@ -48,10 +67,7 @@
 
       flake = flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
         let
-          pkgs = import nixpkgs-master {
-            inherit system;
-            overlays = [ overlay ];
-          };
+          pkgs = import nixpkgs-unstable { inherit system overlays; };
         in rec {
           devShell = pkgs.mkShell {
             packages = [
@@ -68,14 +84,13 @@
         });
     in
       flake // {
-        inherit overlay;
         nixosConfigurations =
           (mkConfiguration
             rec { name = "khal";
                   system = "x86_64-linux";
                   packages = with flake.packages.${system}; [ neovim obs-studio-with-plugins ];
                   inputs = {
-                    inherit nixos-hardware;
+                    inherit nixos-hardware home-manager;
                     nixpkgs = nixpkgs-unstable;
                   };
                 }) //

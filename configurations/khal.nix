@@ -1,6 +1,7 @@
 packages:
 { nixpkgs
 , nixos-hardware
+, home-manager
 }:
 { config, pkgs, lib, ... }:
 
@@ -8,16 +9,24 @@ let
   linuxPackages = pkgs.linuxPackages;
   #linuxPackages = pkgs.linuxPackages_5_14;
 
-  overlay = final: prev: {
-    vaapiIntel = prev.vaapiIntel.override { enableHybridCodec = true; };
-  };
+  swayRun = pkgs.writeShellScript "sway-run" ''
+    export XDG_SESSION_TYPE=wayland
+    export XDG_SESSION_DESKTOP=sway
+    export XDG_CURRENT_DESKTOP=sway
 
+    systemd-run --user --scope --collect --quiet --unit=sway systemd-cat --identifier=sway ${pkgs.sway}/bin/sway $@
+  '';
 in {
   imports =
     [ (import "${nixos-hardware}/dell/xps/13-7390/default.nix")
-      (import ./modules.nix)
+      home-manager.nixosModules.home-manager
       (import ./profiles/console.nix { inherit nixpkgs; })
     ];
+
+
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
+  home-manager.users.rok = import ./home.nix;
 
   boot.extraModulePackages = [
     (linuxPackages.v4l2loopback.override { inherit (linuxPackages) kernel; })
@@ -73,13 +82,13 @@ in {
     ];
 
   nixpkgs.config.firefox.enableFoofleTalkPlugin = true;
-  nixpkgs.config.pulseaudio = true;
-  nixpkgs.overlays = [ overlay ];
+  #nixpkgs.config.pulseaudio = true;
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+  powerManagement.powertop.enable = true;
 
   console.keyMap = "us";
-  console.font = lib.mkDefault "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
+  # FIXME: console.font = lib.mkDefault "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
 
   networking.hostName = "khal";
   networking.hostId = "b0f5a1e0";
@@ -91,29 +100,14 @@ in {
   networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
   networking.networkmanager.enable = true;
 
-  environment.variables.GDK_DPI_SCALE = "0.5";
-  environment.variables.GDK_SCALE = "2";
-  environment.variables.QT_AUTO_SCREEN_SCALE_FACTOR = "1";
+  #environment.variables.GDK_DPI_SCALE = "0.5";
+  #environment.variables.GDK_SCALE = "2";
+  #environment.variables.QT_AUTO_SCREEN_SCALE_FACTOR = "1";
   environment.systemPackages = with pkgs; [
-
-    # email
-    #notmuch
-    #isync
-    #afew
-    #alot
-    #mailcap
-    #w3m
-    #imapnotify
-    #msmtp
-    #khal
-    #khard
-    #vdirsyncer
-    #noti
-
-    # gui editors
-    #vscode-with-extensions
+    xorg.setxkbmap  # needed by i3status-rust
 
     # chat
+    slack
     zoom-us
     element-desktop
     signal-desktop
@@ -129,25 +123,25 @@ in {
     chromium
     #XXXopera
 
-    # i3 related
-    rofi
-    volumeicon
-    xclip
+    ## i3 related
+    #rofi
+    #volumeicon
+    #xclip
 
-    # trays / applets
+    ## trays / applets
     networkmanagerapplet
     pa_applet
     pasystray
-    i3status-rust
+    #i3status-rust
 
-    # gui tools
+    ## gui tools
     pavucontrol
     transmission-gtk
     uhk-agent
     zathura
     peek
 
-    # commonly used console utilities
+    ## commonly used console utilities
     jq
     entr
     neofetch
@@ -155,14 +149,14 @@ in {
     ngrok
     zoxide
 
-    # common console tools
+    ## common console tools
     file
     tree
     unzip
     wget
     which
 
-    # other console tools
+    ## other console tools
     feh          # image viewer
     mpv          # video player
 
@@ -170,77 +164,117 @@ in {
     _1password-gui
   ] ++ packages ;
 
-  programs.dconf.enable = true;
-
   services.avahi.enable = true;
   services.avahi.nssmdns = true;
   services.blueman.enable = true;
   services.dbus.enable = true;
-  services.dunst.enable = true;
-  services.dunst.config = import ./dunstrc.nix { inherit (pkgs) rofi; };
   services.fprintd.enable = true;
   services.fstrim.enable = true;
   services.fwupd.enable = true;
+  services.gnome.gnome-keyring.enable = true;
   services.printing.drivers = with pkgs; [ hplip ];
   services.printing.enable = true;
+  services.thermald.enable = true;
   services.timesyncd.enable = true;
+  services.tlp.enable = true;
   services.udev.packages = with pkgs; [ uhk-agent ];
+  services.upower.enable = true;
   services.zfs.autoScrub.enable = true;
   services.zfs.autoSnapshot.enable = true;
 
-  services.xserver.autorun = true;
-  services.xserver.dpi = 227;
-  services.xserver.enable = true;
-  services.xserver.layout = "us";
-  services.xserver.xkbOptions = "eurosign:e, ctrl:nocaps";
-  services.xserver.autoRepeatDelay = 200;
-  services.xserver.autoRepeatInterval = 25;
+  services.greetd = {
+    enable = true;
+    restart = false;
+    settings = {
+      default_session = {
+        command = "${lib.makeBinPath [pkgs.greetd.tuigreet] }/tuigreet --time --cmd ${swayRun}";
+        user = "greeter";
+      };
+      initial_session = {
+        command = "${swayRun}";
+        user = "rok";
+      };
+    };
+  };
 
-  services.xserver.libinput.enable = true;
-  services.xserver.libinput.touchpad.disableWhileTyping = true;
-  services.xserver.libinput.touchpad.naturalScrolling = false;
+  #???sound.enable = true;
+  services.pipewire = {
+    enable = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
+    media-session.enable = false;
+  };
 
-  services.xserver.desktopManager.xterm.enable = false;
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = with pkgs; [
+    xdg-desktop-portal-wlr
+    xdg-desktop-portal-gtk
+  ];
+  xdg.portal.gtkUsePortal = true;
 
-  services.xserver.displayManager.defaultSession = "none+i3";
-  services.xserver.displayManager.sessionCommands = ''
-    ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
-      Xcursor.theme: Adwaita
-      Xcursor.size: 32
-    EOF
-  '';
-  services.xserver.displayManager.autoLogin.user = "rok";
-  services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.lightdm.enable = true;
-  services.xserver.displayManager.lightdm.greeter.enable = false;
-
-  services.xserver.windowManager.i3.enable = true;
+  programs.dconf.enable = true;
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true; # so that gtk works properly
+    extraPackages = with pkgs; [
+      capitaine-cursors #sway/gtk dep
+      dmenu-wayland #sway dep
+      gsimplecal #i3status-rust dep
+      light #sway dep
+      obs-studio
+      obs-studio-plugins.wlrobs
+      pavucontrol #i3status-rust dep
+      playerctl #sway dep
+      pulseaudio #i3status-rust dep
+      sway-contrib.grimshot #sway dep
+      swayidle #sway dep
+      swaylock #sway dep
+      wf-recorder #sway
+      wl-clipboard #sway dep
+    ];
+  };
 
   virtualisation.libvirtd.enable = true;
-  # FIXME: virtualisation.virtualbox.host.enable = true;
+  # TODO: virtualisation.virtualbox.host.enable = true;
 
-  sound.enable = true;
+  virtualisation.docker.enable = true;
+  # TODO:
+  #virtualisation.docker = {
+  #  enable = true;
+  #  enableOnBoot = true;
+  #  extraOptions = ''--config-file=${
+  #    pkgs.writeText "daemon.json" (builtins.toJSON {
+  #      features = { buildkit = true; };
+  #    })
+  #  }'';
+  #};
 
   hardware.enableAllFirmware = true;
   hardware.enableRedistributableFirmware = true;
 
-  hardware.pulseaudio.enable = true;
-  hardware.pulseaudio.package = pkgs.pkgs.pulseaudioFull;
-  hardware.pulseaudio.support32Bit = true;
+  #hardware.pulseaudio.enable = true;
+  #hardware.pulseaudio.package = pkgs.pkgs.pulseaudioFull;
+  #hardware.pulseaudio.support32Bit = true;
 
   hardware.opengl.enable = true;
   hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true;
   hardware.opengl.extraPackages = with pkgs; [
-      intel-media-driver # LIBVA_DRIVER_NAME=iHD
-      vaapiIntel         # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-      vaapiVdpau
-      libvdpau-va-gl
-    ];
-  hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [ vaapiIntel ];
+    intel-media-driver # LIBVA_DRIVER_NAME=iHD
+    (vaapiIntel.override { enableHybridCodec = true; }) # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+    vaapiVdpau
+    libvdpau-va-gl
+  ];
+  hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [
+    (vaapiIntel.override { enableHybridCodec = true; }) # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+  ];
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.package = pkgs.bluezFull;
+  hardware.bluetooth.settings.General.Experimental = true;
+
+  hardware.cpu.intel.updateMicrocode = true;
+  hardware.video.hidpi.enable = true;
 
   users.mutableUsers = false;
   users.users."root" = {
@@ -256,14 +290,21 @@ in {
     home = "/home/rok";
   };
 
-  system.stateVersion = "20.09";
-
-  fonts.fontDir.enable = true;
   fonts.enableGhostscriptFonts = true;
+  fonts.fontDir.enable = true;
+  fonts.fontconfig.antialias = true;
+  fonts.fontconfig.defaultFonts.monospace = [ "Fire Code Light" ];
+  fonts.fontconfig.defaultFonts.sansSerif = [ "Source Sans Pro" ];
+  fonts.fontconfig.defaultFonts.serif = [ "Source Serif Pro" ];
+  fonts.fontconfig.enable = true;
   fonts.fonts = with pkgs; [
     # used for terminal
     fira-code
     fira-code-symbols
+
+    # GTK / other UI
+    source-sans-pro
+    source-serif-pro
 
     # Fonts use for icons in i3 and powerlevel10k
     nerdfonts

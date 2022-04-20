@@ -7,7 +7,7 @@ let
     # https://github.com/EdenEast/nightfox.nvim
     theme = "nordfox"; # One of nightfox, nordfox, dayfox, dawnfox and duskfox.
     fontFamily = "Fira Code Light";  # use fc-list
-    fontSize = 24;
+    fontSize = 10;
     terminal = "${final.kitty}/bin/kitty";
     browser = "${final.chromium}/bin/chromium";
   };
