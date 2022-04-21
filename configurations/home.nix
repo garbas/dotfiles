@@ -35,8 +35,8 @@ let
 
   # outputs
   output = {
-    left = "DP-2-1";
-    right = "DP-2-2";
+    # TODO: left = "DP-5";
+    right = "DP-5";
     laptop = "eDP-1";
   };
 
@@ -108,17 +108,16 @@ in
   #};
 
   #./home/gammastep.nix
-  services.gammastep = {
-    enable = true;
-    latitude = "46.056946";
-    longitude = "14.505751";
-    temperature = {
-      day = 5500;
-      night = 3700;
-    };
-  };
+  services.gammastep.enable = true;
+  services.gammastep.latitude = "46.056946";
+  services.gammastep.longitude = "14.505751";
+  services.gammastep.temperature.day = 5500;
+  services.gammastep.temperature.night = 3700;
+  services.gammastep.tray = true;
 
   #./home/gtk.nix
+  qt.enable = true;
+  qt.platformTheme = "gtk";
   gtk = {
     enable = true;
     theme = {
@@ -139,61 +138,8 @@ in
     };
   };
 
-  #./home/i3status-rust.nix
-  programs.i3status-rust = {
-    enable = true;
-    bars = {
-      bottom = {
-        blocks = [
-          { block = "disk_space";
-            path = "/";
-            alias = "/";
-            info_type = "available";
-            unit = "GB";
-            interval = 20;
-          }
-          { block = "battery";
-            interval = 10;
-            format = "{percentage}% {time}";
-          }
-          {
-            block = "keyboard_layout";
-            driver = "setxkbmap";
-            interval = 15;
-          }
-          {
-            block = "sound";
-            step_width = 5;
-          }
-          {
-            block = "time";
-            format = "%a %d/%m/%Y %R";
-            timezone = "Europe/Ljubljana";
-            interval = 60;
-          }
-          #{ block = "custom"; command = checkNixosUpdates; json = true; interval = 300; }
-          #{
-          #  block = "toggle";
-          #  text = "A2DP/HSP";
-          #  command_state = "${a2dpIsActive}";
-          #  command_on = "${setProfile} a2dp-sink-aptx_hd";
-          #  command_off = "${setProfile} headset-head-unit";
-          #  interval = 5;
-          #}
-          #{ block = "cpu"; format = "{utilization} {frequency}"; }
-          #{ block = "net"; format = "{signal_strength}: {speed_up;K} {speed_down;K}"; }
-          #{ block = "backlight"; }
-          #{ block = "temperature"; driver = "sysfs"; collapsed = false; format = "{average}"; }
-          #{ block = "sound"; driver = "pulseaudio"; on_click = "pavucontrol"; }
-          #{ block = "battery"; driver = "upower"; device = "DisplayDevice"; }
-          #{ block = "time"; on_click = "gsimplecal"; }
-        ];
-        icons = "awesome5";
-        theme = "nord-dark";
-      };
-    };
-  };
   #./home/mako.nix
+# TODO: services.fnott.enable
   programs.mako = {
     backgroundColor = "#3c3836";
     borderColor = "#b16286";
@@ -231,7 +177,8 @@ in
 
     # start dmenu (a program launcher)
     # TODO: bindsym $mod+space exec --no-startup-id rofi -show drun
-    "${mod}+space" = "${pkgs.wofi}/bin/wofi --show run";
+    "${mod}+Space" = "exec dmenu-wl_run -i";
+    "${mod}+d" = "exec dmenu-wl_run -i";
 
     # TODO: exit
     #bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
@@ -272,10 +219,10 @@ in
     "${mod}+Tab" = "workspace back_and_forth";
 
     # focus the parent container
-    "${mod}+a" = "focus parent";
+    "${mod}+Shift+a" = "focus parent";
 
     # focus the child container
-    "${mod}+d" = "focus child";
+    "${mod}+Shift+d" = "focus child";
 
     # toggle tiling / floating
     "${mod}+Shift+space" = "floating toggle";
@@ -322,6 +269,8 @@ in
     "XF86MonBrightnessUp" = "exec light -A 5%";
     "--release Print" = "exec grimshot --notify save area ~/scr/scr_`date +%Y%m%d.%H.%M.%S`.png";
     "--release ${mod}+Print" = "exec grimshot --notify save output ~/scr/scr_`date +%Y%m%d.%H.%M.%S`.png";
+    # TODO: services.flameshot.enable
+
     # bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume $out_sink +5% && killall -s USR1 py3status
     # bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume $out_sink -5% && killall -s USR1 py3status
     # bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute $out_sink toggle && killall -s USR1 py3status
@@ -334,11 +283,11 @@ in
   # assign workspace to screen
   wayland.windowManager.sway.config.workspaceOutputAssign = [
     { workspace = workspace."01"; output = output.laptop; }
-    { workspace = workspace."02"; output = output.left;   }
-    { workspace = workspace."03"; output = output.left;   }
-    { workspace = workspace."04"; output = output.left;   }
-    { workspace = workspace."05"; output = output.left;   }
-    { workspace = workspace."06"; output = output.left;   }
+    { workspace = workspace."02"; output = output.laptop; }
+    { workspace = workspace."03"; output = output.laptop; }
+    { workspace = workspace."04"; output = output.right;  }
+    { workspace = workspace."05"; output = output.right;  }
+    { workspace = workspace."06"; output = output.right;  }
     { workspace = workspace."07"; output = output.right;  }
     { workspace = workspace."08"; output = output.right;  }
     { workspace = workspace."09"; output = output.right;  }
@@ -464,11 +413,11 @@ in
     { command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY DBUS_SESSION_BUS_ADDRESS SWAYSOCK XDG_SESSION_TYPE XDG_SESSION_DESKTOP XDG_CURRENT_DESKTOP"; } #workaround
     { command = "${idleCmd}"; }
     { command = "${importGsettings}"; always = true; }
-    { command = "systemctl --user restart waybar"; always = true; }
+    #{ command = "systemctl --user restart waybar"; always = true; }
     { command = "kitty"; }
     { command = "nm-applet --indicator"; }
-    { command = "pasystray"; }
-    { command = "element-desktop --no-update --hidden"; }
+    #{ command = "pasystray"; }
+    #{ command = "element-desktop --no-update --hidden"; }
     { command = "blueman-applet"; }
   ];
 
@@ -503,7 +452,6 @@ in
   ];
   programs.waybar.settings.main."sway/workspaces".disable-scroll = true;
   programs.waybar.settings.main."sway/workspaces".disable-markup = false;
-  programs.waybar.settings.main."sway/workspaces".all-outputs = true;
   programs.waybar.settings.main."sway/mode".format = "<span style=\"italic\">{}</span>";
   programs.waybar.settings.main."network".format-wifi = "{essid} ({signalStrength}%) ";
   programs.waybar.settings.main."network".format-ethernet = "{ifname}: {ipaddr}/{cidr} ";
@@ -539,6 +487,59 @@ in
   programs.waybar.systemd.target = "sway-session.target";
   systemd.user.services.waybar.Service.ExecStart = lib.mkForce "${pkgs.waybar}/bin/waybar -b 0";
 
+
+  # TODO: KANSHI - Dynamic display configuration
+  #services.kanshi.enable = true;
+  #services.kanshi.profiles.undocked.outputs = [{ criteria = output.laptop; }];
+  #services.kanshi.profiles.docked.outputs = [
+  #  { criteria = output.laptop; }
+  #  #{ criteria = output.left; }
+  #  { criteria = output.right; }
+  #];
+  #services.kanshi.systemdTarget = "sway-session.target";
+
+
+  # NETWORK MANAGER APPLET
+  services.network-manager-applet.enable = true;
+
+  services.blueman-applet.enable = true;
+
+  # PASYSTRAY - PULSEAUDIO SYSTEM TRAY
+  services.pasystray.enable = true;
+
+  # PARCELLITE - THE LIGHTWEIGHT GTK+ CLIPBOARD MANAGER.
+  #TODO: services.parcellite.enable = true;
+
+  # PLAYERCTL - MEDIA PLAYER COMMAND-LINE CONTROLLER FOR VLC, MPV, WEB BROWSERS, SPOTIFY AND OTHERS.
+  # TODO: services.playerctld.enable = true;
+  # TODO: configure playerctl with shortcuts and waybar
+
+  # TODO: services.poweralertd.enable = true;
+  # TODO: services.pulseeffects.enable = true;
+  # TODO: services.swayidle.enable = true;
+
+  # TODO: fancier lock
+  # https://github.com/mortie/swaylock-effects
+  # https://www.reddit.com/r/swaywm/comments/mtc11k/swaylock_trying_to_have_a_somewhat_nice_locker/
+
+  services.udiskie.enable = true;
+
+  # TODO: services.gromit-mpx.enable
+  # To use with remarkable
+
+
+
+  # TODO: services.espanso.enable
+  # TODO: services.git-sync.enable
+  # TODO: services.gnome-keyring.enable
+  # TODO: services.gpg-agent.enable
+  # TODO: services.dropbox.enable
+
+  xdg.enable = true;
+  # TODO: xdg.desktopEntries
+  xdg.mime.enable = true;
+  # TODO: xdg.mimeApps.enable = true;
   xdg.userDirs.enable = true;
+  xdg.userDirs.createDirectories = true;
 
 }

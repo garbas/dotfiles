@@ -197,6 +197,14 @@ in {
     };
   };
 
+  systemd.user.services.ulauncher = {
+    enable = true;
+    description = "Start Ulauncher";
+    script = "${pkgs.ulauncher}/bin/ulauncher --hide-window";
+    wantedBy = [ "graphical.target" "multi-user.target" ];
+    after = [ "greetd.service" ];
+  };
+
   #???sound.enable = true;
   services.pipewire = {
     enable = true;
@@ -217,9 +225,10 @@ in {
     enable = true;
     wrapperFeatures.gtk = true; # so that gtk works properly
     extraPackages = with pkgs; [
-      capitaine-cursors #sway/gtk dep
+      wofi
+      ulauncher
+
       dmenu-wayland #sway dep
-      gsimplecal #i3status-rust dep
       light #sway dep
       obs-studio
       obs-studio-plugins.wlrobs
