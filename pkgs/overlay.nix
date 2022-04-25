@@ -36,32 +36,11 @@ in rec {
     ];
   });
 
-  kitty = final.callPackage ./kitty.nix {
-    inherit myConfig;
-    inherit (prev) kitty;
-  };
-
-  i3 = final.callPackage ./i3.nix {
-    inherit myConfig;
-    inherit (prev) i3;
-  };
-
-  i3status-rust = final.callPackage ./i3status-rust.nix {
-    inherit (prev) i3status-rust;
-  };
-
   uhk-agent = final.callPackage ./uhk-agent.nix { };
 
-  rofi = final.callPackage ./rofi.nix {
-    inherit myConfig;
-    inherit (prev) rofi-unwrapped;
-  };
-
   # TODO:
-  # home-manager
   # neofetch (also submit upstream)
   # git (already a config in ../configurations/gitconfig)
-  # uhk-agent
   # nix
   # powerlevel10k
   # fzf
@@ -69,8 +48,5 @@ in rec {
   # exa
   # bat
   # dunst
-  # cachix
   # gh
-  # rofi-1pass
-  # nvim -> coc-settings.json
 }

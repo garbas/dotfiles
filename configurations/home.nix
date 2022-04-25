@@ -78,7 +78,15 @@ let
 in
 
 {
-  #./home/alacritty
+
+  programs.kitty.enable = true;
+  programs.kitty.font.name = "Fira Code Light";
+  programs.kitty.font.size = 10;
+  programs.kitty.settings.open_url_with = "chromium";
+  programs.kitty.settings.copy_on_select = "clipboard";
+  programs.kitty.settings.tab_bar_edge = "top";
+  programs.kitty.settings.enable_audio_bell = "no";
+  programs.kitty.theme = "Nord";
 
   #./home/firefox.nix
   #programs.firefox = {
@@ -139,7 +147,7 @@ in
   };
 
   #./home/mako.nix
-# TODO: services.fnott.enable
+  # TODO: services.fnott.enable
   programs.mako = {
     backgroundColor = "#3c3836";
     borderColor = "#b16286";
