@@ -413,12 +413,10 @@ in
     { command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY DBUS_SESSION_BUS_ADDRESS SWAYSOCK XDG_SESSION_TYPE XDG_SESSION_DESKTOP XDG_CURRENT_DESKTOP"; } #workaround
     { command = "${idleCmd}"; }
     { command = "${importGsettings}"; always = true; }
-    #{ command = "systemctl --user restart waybar"; always = true; }
     { command = "kitty"; }
+    { command = "element-desktop --no-update --hidden"; }
     { command = "nm-applet --indicator"; }
-    #{ command = "pasystray"; }
-    #{ command = "element-desktop --no-update --hidden"; }
-    { command = "blueman-applet"; }
+    #{ command = "blueman-applet"; }
   ];
 
   wayland.windowManager.sway.extraConfig = ''
@@ -435,10 +433,9 @@ in
   programs.waybar.settings.main.modules-left = [
     "sway/workspaces"
     "sway/mode"
-  ];
-  programs.waybar.settings.main.modules-center = [
     "sway/window"
   ];
+  programs.waybar.settings.main.modules-center = [];
   programs.waybar.settings.main.modules-right = [
     "network"
     "cpu"
@@ -500,12 +497,11 @@ in
 
 
   # NETWORK MANAGER APPLET
-  services.network-manager-applet.enable = true;
-
+  #services.network-manager-applet.enable = true;
   services.blueman-applet.enable = true;
+  services.pasystray.enable = true;
 
   # PASYSTRAY - PULSEAUDIO SYSTEM TRAY
-  services.pasystray.enable = true;
 
   # PARCELLITE - THE LIGHTWEIGHT GTK+ CLIPBOARD MANAGER.
   #TODO: services.parcellite.enable = true;

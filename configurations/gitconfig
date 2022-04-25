@@ -35,3 +35,6 @@
 
 [gpg]
   program = gpg
+
+[safe]
+  directory = *
