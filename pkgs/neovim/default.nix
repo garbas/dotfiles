@@ -215,57 +215,57 @@ let
     { plugins = with vimPlugins; [
         vim-nickel
         (nvim-treesitter.withPlugins (p: [
-          p."tree-sitter-javascript"
-          p."tree-sitter-c"
-          p."tree-sitter-json"
-          p."tree-sitter-cpp"
-          p."tree-sitter-go"
-          p."tree-sitter-python"
-          p."tree-sitter-typescript"
+          #p."tree-sitter-javascript"
+          #p."tree-sitter-c"
+          #p."tree-sitter-json"
+          #p."tree-sitter-cpp"
+          #p."tree-sitter-go"
+          #p."tree-sitter-python"
+          #p."tree-sitter-typescript"
           p."tree-sitter-rust"
-          p."tree-sitter-bash"
-          p."tree-sitter-scala"
-          p."tree-sitter-ocaml"
-          p."tree-sitter-julia"
-          p."tree-sitter-html"
-          p."tree-sitter-haskell"
-          p."tree-sitter-regex"
-          p."tree-sitter-css"
-          p."tree-sitter-jsdoc"
-          p."tree-sitter-tsq"
-          p."tree-sitter-beancount"
-          p."tree-sitter-comment"
-          p."tree-sitter-dart"
+          #p."tree-sitter-bash"
+          #p."tree-sitter-scala"
+          #p."tree-sitter-ocaml"
+          #p."tree-sitter-julia"
+          #p."tree-sitter-html"
+          #p."tree-sitter-haskell"
+          #p."tree-sitter-regex"
+          #p."tree-sitter-css"
+          #p."tree-sitter-jsdoc"
+          #p."tree-sitter-tsq"
+          #p."tree-sitter-beancount"
+          #p."tree-sitter-comment"
+          #p."tree-sitter-dart"
           p."tree-sitter-nix"
-          p."tree-sitter-cue"
-          p."tree-sitter-lua"
-          p."tree-sitter-make"
-          p."tree-sitter-markdown"
-          p."tree-sitter-rst"
-          p."tree-sitter-vim"
-          p."tree-sitter-yaml"
-          p."tree-sitter-toml"
-          p."tree-sitter-zig"
-          p."tree-sitter-fish"
-          p."tree-sitter-norg"
-          p."tree-sitter-dockerfile"
-          p."tree-sitter-scss"
-          p."tree-sitter-tlaplus"
-          p."tree-sitter-elm"
-          p."tree-sitter-cmake"
-          p."tree-sitter-json5"
-          p."tree-sitter-org-nvim"
+          #p."tree-sitter-lua"
+          #p."tree-sitter-make"
+          #p."tree-sitter-markdown"
+          #p."tree-sitter-rst"
+          #p."tree-sitter-vim"
+          #p."tree-sitter-yaml"
+          #p."tree-sitter-toml"
+          #p."tree-sitter-zig"
+          #p."tree-sitter-fish"
+          #p."tree-sitter-norg"
+          #p."tree-sitter-dockerfile"
+          #p."tree-sitter-scss"
+          #p."tree-sitter-tlaplus"
+          #p."tree-sitter-elm"
+          #p."tree-sitter-cmake"
+          #p."tree-sitter-json5"
+          #p."tree-sitter-org-nvim"
         ]))
       ];
       config = asLua ''
         require'nvim-treesitter.configs'.setup {
+          ensure_installed = { "nix", "rust" },
           sync_install = false,
           highlight = {
             enable = true,
             additional_vim_regex_highlighting = false,
           },
           incremental_selection = {
-            enable = true,
+            enable = false,
             keymaps = {
               init_selection = "gnn",
               node_incremental = "grn",

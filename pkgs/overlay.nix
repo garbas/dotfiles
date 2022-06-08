@@ -16,7 +16,6 @@ in rec {
   obs-studio-with-plugins = final.wrapOBS {
     plugins = with final.obs-studio-plugins; [
       wlrobs
-      obs-source-record
     ];
   };
 

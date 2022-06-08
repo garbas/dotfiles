@@ -3,11 +3,14 @@
 
   inputs =
     { flake-utils.url = "github:numtide/flake-utils";
-      nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-21.11";
-      #nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-      nixpkgs-unstable.url = "github:garbas/nixpkgs/dev";
+      nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-22.05";
+      nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+      nixpkgs-master.url = "github:NixOS/nixpkgs/master";
       nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
       nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs-unstable";
+      # TODO:
+      #nixpkgs-wayland.inputs.lib-aggregate.inputs.flake-utils.follows = "flake-utils";
+      #nixpkgs-wayland.inputs.lib-aggregate.inputs.nixpkgs.follows = "nixpkgs-unstable";
       nixos-hardware.url = "github:NixOS/nixos-hardware/master";
       home-manager.url = "github:nix-community/home-manager";
       home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -22,6 +25,7 @@
     , flake-utils
     , nixpkgs-stable
     , nixpkgs-unstable
+    , nixpkgs-master
     , nixpkgs-wayland
     , nixos-hardware
     , home-manager
@@ -29,8 +33,6 @@
     , nightfox-src
     }:
     let
-      #overlay = import ./pkgs/overlay.nix { inherit neovim-flake nightfox-src; };
-
       overlays = [
         nixpkgs-wayland.overlay
         (final: prev: {
@@ -67,7 +69,7 @@
 
       flake = flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
         let
-          pkgs = import nixpkgs-unstable { inherit system overlays; };
+          pkgs = import nixpkgs-master { inherit system overlays; };
         in rec {
           devShell = pkgs.mkShell {
             packages = [
@@ -91,7 +93,7 @@
                   packages = with flake.packages.${system}; [ neovim obs-studio-with-plugins ];
                   inputs = {
                     inherit nixos-hardware home-manager;
-                    nixpkgs = nixpkgs-unstable;
+                    nixpkgs = nixpkgs-master;
                   };
                 }) //
           (mkConfiguration

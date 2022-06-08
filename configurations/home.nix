@@ -35,7 +35,7 @@ let
 
   # outputs
   output = {
-    # TODO: left = "DP-5";
+    #left = "DP-4";
     right = "DP-5";
     laptop = "eDP-1";
   };
@@ -126,39 +126,29 @@ in
   #./home/gtk.nix
   qt.enable = true;
   qt.platformTheme = "gtk";
-  gtk = {
-    enable = true;
-    theme = {
-      package = pkgs.nordic;
-      name = gtkTheme;
-    };
-    iconTheme = {
-      package = pkgs.nordzy-icon-theme;
-      name = gtkIconTheme;
-    };
-    gtk2.extraConfig = ''
-      gtk-cursor-theme-size = 16
-      gtk-cursor-theme-name = "${gtkCursorTheme}"
-    '';
-    gtk3.extraConfig = {
-      gtk-cursor-theme-size = 16;
-      gtk-cursor-theme-name = gtkCursorTheme;
-    };
-  };
+  gtk.enable = true;
+  gtk.theme.package = pkgs.nordic;
+  gtk.theme.name = gtkTheme;
+  gtk.iconTheme.package = pkgs.nordzy-icon-theme;
+  gtk.iconTheme.name = gtkIconTheme;
+  gtk.gtk2.extraConfig = ''
+    gtk-cursor-theme-size = 16
+    gtk-cursor-theme-name = "${gtkCursorTheme}"
+  '';
+  gtk.gtk3.extraConfig.gtk-cursor-theme-size = 16;
+  gtk.gtk3.extraConfig.gtk-cursor-theme-name = gtkCursorTheme;
 
   #./home/mako.nix
   # TODO: services.fnott.enable
-  programs.mako = {
-    backgroundColor = "#3c3836";
-    borderColor = "#b16286";
-    borderRadius = 6;
-    borderSize = 2;
-    defaultTimeout = 5000;
-    enable = true;
-    font = "Iosevka 12";
-    layer = "overlay";
-    textColor = "#ebdbb2";
-  };
+  programs.mako.backgroundColor = "#3c3836";
+  programs.mako.borderColor = "#b16286";
+  programs.mako.borderRadius = 6;
+  programs.mako.borderSize = 2;
+  programs.mako.defaultTimeout = 5000;
+  programs.mako.enable = true;
+  programs.mako.font = "Iosevka 12";
+  programs.mako.layer = "overlay";
+  programs.mako.textColor = "#ebdbb2";
 
   #./home/sway.nix
   wayland.windowManager.sway.enable = true;
@@ -494,14 +484,14 @@ in
 
 
   # TODO: KANSHI - Dynamic display configuration
-  #services.kanshi.enable = true;
-  #services.kanshi.profiles.undocked.outputs = [{ criteria = output.laptop; }];
-  #services.kanshi.profiles.docked.outputs = [
-  #  { criteria = output.laptop; }
-  #  #{ criteria = output.left; }
-  #  { criteria = output.right; }
-  #];
-  #services.kanshi.systemdTarget = "sway-session.target";
+  services.kanshi.enable = true;
+  services.kanshi.profiles.undocked.outputs = [{ criteria = output.laptop; }];
+  services.kanshi.profiles.docked.outputs = [
+    { criteria = output.laptop; }
+    #{ criteria = output.left; }
+    { criteria = output.right; }
+  ];
+  services.kanshi.systemdTarget = "sway-session.target";
 
 
   # NETWORK MANAGER APPLET
@@ -530,8 +520,6 @@ in
 
   # TODO: services.gromit-mpx.enable
   # To use with remarkable
-
-
 
   # TODO: services.espanso.enable
   # TODO: services.git-sync.enable

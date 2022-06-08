@@ -3,7 +3,8 @@
 
 let
 
-  inherit (vimUtils.override {inherit vim;}) buildVimPluginFrom2Nix vimGenDocHook;
+  inherit (vimUtils.override {inherit vim;})
+    buildVimPluginFrom2Nix vimGenDocHook vimCommandCheckHook;
 
   inherit (lib) extends;
 
@@ -12,7 +13,10 @@ let
     toVimPlugin = drv:
       drv.overrideAttrs(oldAttrs: {
 
-        nativeBuildInputs = oldAttrs.nativeBuildInputs or [] ++ [ vimGenDocHook ];
+        nativeBuildInputs = oldAttrs.nativeBuildInputs or [] ++ [
+          vimGenDocHook
+          vimCommandCheckHook
+        ];
         passthru = (oldAttrs.passthru or {}) // {
           vimPlugin = true;
         };
@@ -21,6 +25,7 @@ let
 
   plugins = callPackage ./generated.nix {
     inherit buildVimPluginFrom2Nix;
+    inherit (vimUtils) buildNeovimPluginFrom2Nix;
   };
 
   # TL;DR
@@ -36,7 +41,7 @@ let
     inherit nightfox-src;
   };
 
-  aliases = if (config.allowAliases or true) then (import ./aliases.nix lib) else final: prev: {};
+  aliases = if config.allowAliases then (import ./aliases.nix lib) else final: prev: {};
 
   extensible-self = lib.makeExtensible
     (extends aliases

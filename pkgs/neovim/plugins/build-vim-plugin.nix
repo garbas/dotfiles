@@ -1,15 +1,12 @@
 { lib, stdenv
 , rtpPath
 , vim
+, vimCommandCheckHook
 , vimGenDocHook
+, neovimRequireCheckHook
 }:
 
 rec {
-  addRtp = path: attrs: derivation:
-    derivation // { rtp = "${derivation}"; } // {
-      overrideAttrs = f: buildVimPlugin (attrs // f attrs);
-    };
-
   buildVimPlugin = attrs@{
     name ? "${attrs.pname}-${attrs.version}",
     namePrefix ? "vimplugin-",
@@ -23,14 +20,14 @@ rec {
     addonInfo ? null,
     ...
   }:
-    addRtp "${rtpPath}/${path}" attrs (stdenv.mkDerivation (attrs // {
+    let drv = stdenv.mkDerivation (attrs // {
       name = namePrefix + name;
 
       # dont move the doc folder since vim expects it
       forceShare= [ "man" "info" ];
 
       nativeBuildInputs = attrs.nativeBuildInputs or []
-      ++ lib.optional (stdenv.hostPlatform == stdenv.buildPlatform) vimGenDocHook;
+      ++ lib.optionals (stdenv.hostPlatform == stdenv.buildPlatform) [ vimCommandCheckHook vimGenDocHook ];
       inherit unpackPhase configurePhase buildPhase addonInfo preInstall postInstall;
 
       installPhase = ''
@@ -42,7 +39,10 @@ rec {
 
         runHook postInstall
       '';
-    }));
+    });
+    in  drv.overrideAttrs(oa: {
+      rtp = "${drv}";
+    });
 
   buildVimPluginFrom2Nix = attrs: buildVimPlugin ({
     # vim plugins may override this
