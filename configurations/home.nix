@@ -87,6 +87,7 @@ in
   programs.kitty.settings.tab_bar_edge = "top";
   programs.kitty.settings.enable_audio_bell = "no";
   programs.kitty.theme = "Nord";
+  #programs.kitty.theme = "One Half Light";
 
   #./home/firefox.nix
   #programs.firefox = {
@@ -161,6 +162,11 @@ in
   wayland.windowManager.sway.config.menu = "dmenu-wl_run -i";
   wayland.windowManager.sway.config.terminal = "kitty";
   wayland.windowManager.sway.config.floating.modifier = "Mod4";
+  wayland.windowManager.sway.config.output = {
+    "${output.laptop}" = {
+      scale = "2";
+    };
+  };
   wayland.windowManager.sway.config.keybindings = {
     "${mod}+Return" = "exec ${config.wayland.windowManager.sway.config.terminal}";
 
@@ -417,10 +423,12 @@ in
     #{ command = "blueman-applet"; }
   ];
 
-  wayland.windowManager.sway.extraConfig = ''
-    seat seat0 xcursor_theme "${gtkCursorTheme}"
-    seat seat0 hide_cursor 60000
-  '';
+  wayland.windowManager.sway.config.seat = {
+    seat0 = {
+      xcursor_theme = "${gtkCursorTheme} 100";
+      hide_cursor = "60000";
+    };
+  };
 
   programs.waybar.enable = true;
   programs.waybar.settings.main.layer = "bottom";

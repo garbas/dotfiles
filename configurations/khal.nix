@@ -177,7 +177,7 @@ in {
   services.thermald.enable = true;
   services.timesyncd.enable = true;
   services.tlp.enable = true;
-  services.udev.packages = with pkgs; [ uhk-agent ];
+  services.udev.packages = with pkgs; [ uhk-udev-rules ];
   services.upower.enable = true;
   services.zfs.autoScrub.enable = true;
   services.zfs.autoSnapshot.enable = true;
@@ -205,20 +205,16 @@ in {
     after = [ "greetd.service" ];
   };
 
-  #???sound.enable = true;
-  services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-    wireplumber.enable = true;
-    media-session.enable = false;
-  };
+  services.pipewire.enable = true;
+  services.pipewire.pulse.enable = true;
+  services.pipewire.wireplumber.enable = true;
+  services.pipewire.media-session.enable = false;
 
   xdg.portal.enable = true;
   xdg.portal.extraPortals = with pkgs; [
     xdg-desktop-portal-wlr
     xdg-desktop-portal-gtk
   ];
-  xdg.portal.gtkUsePortal = true;
 
   programs.dconf.enable = true;
   programs.sway = {
@@ -244,7 +240,7 @@ in {
   };
 
   virtualisation.libvirtd.enable = true;
-  # TODO: virtualisation.virtualbox.host.enable = true;
+  virtualisation.virtualbox.host.enable = true;
 
   virtualisation.docker.enable = true;
   # TODO:

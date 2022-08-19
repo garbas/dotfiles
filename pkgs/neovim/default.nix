@@ -114,7 +114,8 @@ let
         nvim-web-devicons
       ];
       config = ''
-        colorscheme ${myConfig.theme}
+        colorscheme "nordfox"
+        "colorscheme "dayfox"
       '';
     }
 

@@ -1,5 +1,9 @@
 # TODO check that no license information gets lost
-{ nightfox-src, callPackage, config, lib, vimUtils, vim, darwin, llvmPackages, luaPackages }:
+{ callPackage, config, lib, vimUtils, vim, darwin, llvmPackages
+, neovimUtils
+, luaPackages
+, nightfox-src
+}:
 
 let
 
@@ -8,24 +12,11 @@ let
 
   inherit (lib) extends;
 
-  initialPackages = self: {
-    # Convert derivation to a vim plugin.
-    toVimPlugin = drv:
-      drv.overrideAttrs(oldAttrs: {
-
-        nativeBuildInputs = oldAttrs.nativeBuildInputs or [] ++ [
-          vimGenDocHook
-          vimCommandCheckHook
-        ];
-        passthru = (oldAttrs.passthru or {}) // {
-          vimPlugin = true;
-        };
-      });
-  };
+  initialPackages = self: { };
 
   plugins = callPackage ./generated.nix {
     inherit buildVimPluginFrom2Nix;
-    inherit (vimUtils) buildNeovimPluginFrom2Nix;
+    inherit (neovimUtils) buildNeovimPluginFrom2Nix;
   };
 
   # TL;DR

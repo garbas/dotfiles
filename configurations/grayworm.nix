@@ -235,18 +235,18 @@ in {
 
     # editors
     neovim
-    vscode
-    # (vscode-with-extensions.override {
-    #    vscodeExtensions = with vscode-extensions; [
-    #      bbenoist.Nix
-    #      ms-vscode.cpptools
-    #      ms-python.python
-    #      WakaTime.vscode-wakatime
-    #      vscodevim.vim
-    #      github.vscode-pull-request-github
-    #      akamud.vscode-theme-onelight
-    #    ];
-    # })
+    #vscode
+    (vscode-with-extensions.override {
+       vscodeExtensions = [
+         vscode-extensions.bbenoist.Nix
+         vscode-extensions.ms-vscode.cpptools
+         vscode-extensions.ms-python.python
+         vscode-extensions.WakaTime.vscode-wakatime
+         vscode-extensions.vscodevim.vim
+         vscode-extensions.github.vscode-pull-request-github
+         vscode-extensions.akamud.vscode-theme-onelight
+       ];
+    })
 
 
     # IM clients

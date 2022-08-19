@@ -35,8 +35,6 @@ in rec {
     ];
   });
 
-  uhk-agent = final.callPackage ./uhk-agent.nix { };
-
   # TODO:
   # neofetch (also submit upstream)
   # git (already a config in ../configurations/gitconfig)

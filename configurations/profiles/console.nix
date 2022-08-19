@@ -39,7 +39,7 @@
     gitAndTools.gh
     gitFull
     git-lfs
-    git-town  # TODO: configure and integrate with git and zsh
+    # TODO: doesnt build -> git-town  # TODO: configure and integrate with git and zsh
     mercurialFull
     tig
 
