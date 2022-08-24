@@ -18,9 +18,9 @@
   #nixpkgs-wayland.inputs.lib-aggregate.inputs.flake-utils.follows = "flake-utils";
   #nixpkgs-wayland.inputs.lib-aggregate.inputs.nixpkgs.follows = "nixpkgs-unstable";
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-  inputs.home-manager.url = "github:andresilva/home-manager/fix-nixos-fontconfig-default";
-  #inputs.home-manager.url = "github:nix-community/home-manager";
+  inputs.home-manager.url = "github:nix-community/home-manager";
   inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
+  inputs.home-manager.inputs.utils.follows = "flake-utils";
   inputs.neovim-flake.url = "github:neovim/neovim?dir=contrib";
   inputs.neovim-flake.inputs.nixpkgs.follows = "nixpkgs-unstable";
   inputs.nightfox-src.url = "github:EdenEast/nightfox.nvim";
@@ -74,6 +74,7 @@
           devShell = pkgs.mkShell {
             packages = [
               pkgs.rnix-lsp
+              home-manager.packages.${system}.default
             ];
           };
           packages = flake-utils.lib.flattenTree {
@@ -86,6 +87,17 @@
         });
     in
       flake // {
+        homeConfigurations = {
+          iog-gov-dev = home-manager.lib.homeManagerConfiguration rec {
+            pkgs = import nixpkgs-unstable {
+              system = "x86_64-linux";
+              overlays = [
+                (import ./pkgs/overlay.nix { inherit neovim-flake nightfox-src; })
+              ];
+            };
+            modules = [./homeConfigurations/iog-gov-dev.nix];
+          };
+        };
         nixosConfigurations =
           (mkConfiguration
             rec { name = "khal";
