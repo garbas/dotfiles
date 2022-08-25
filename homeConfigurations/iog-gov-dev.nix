@@ -52,6 +52,14 @@
   programs.git.delta.enable = true;
   programs.git.userEmail = "rok@garbas.si";
   programs.git.userName = "Rok Garbas";
+  programs.git.extraConfig = {
+    gpg.format = "ssh";
+    user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGCCNUtXFFDYJelHhh9h2zSkTeYvvpgqWGpIdBogyCQU rok.garbas@iohk.io";
+    commit.gpgsign = true;
+    tag.gpgsign = true;
+    status.submodulesummary = true;
+    push.default = "simple";
+  };
 
   programs.htop.enable = true;
 
