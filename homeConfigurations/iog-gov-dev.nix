@@ -67,6 +67,12 @@
 
   programs.jq.enable = true;
 
+  programs.keychain.enable = true;
+  programs.keychain.enableZshIntegration = true;
+  programs.keychain.agents = ["ssh"];
+  programs.keychain.extraFlags = ["--nogui"];
+  programs.keychain.keys = ["id_ed25519"];
+
   programs.less.enable = true;
 
   programs.man.enable = true;
