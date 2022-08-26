@@ -38,6 +38,7 @@
 
   programs.fzf.enable = true;
   programs.fzf.enableZshIntegration = true;
+  programs.fzf.tmux.enableShellIntegration = true;
 
   programs.gh.enable = true;
 
@@ -93,6 +94,45 @@
   programs.tmux.enable = true;
   programs.tmux.clock24 = true;
   programs.tmux.keyMode = "vi";
+  programs.tmux.historyLimit = 10000;
+  programs.tmux.prefix = "C-Space";
+  programs.tmux.shortcut = "Space";
+  programs.tmux.baseIndex = 1;
+  programs.tmux.plugins = with pkgs.tmuxPlugins; [
+    nord
+    tmux-fzf
+  ];
+  programs.tmux.extraConfig = ''
+
+    # allow terminal scrolling
+    set-option -g terminal-overrides 'xterm*:smcup@:rmcup@'
+
+    # easier to remember split pane command
+    bind | split-window -h
+    bind - split-window -v
+    unbind '"'
+    unbind %
+
+    # allow to use mouse
+    set -g mouse on
+
+    # panes
+    set -g pane-border-style fg=black
+    set -g pane-active-border-style fg=brightred
+
+    # moving between panes vim style
+    bind h select-pane -L
+    bind j select-pane -D
+    bind k select-pane -U
+    bind l select-pane -R
+
+    # resize the pane
+    bind-key -r H resize-pane -L 3
+    bind-key -r J resize-pane -D 3
+    bind-key -r K resize-pane -U 3
+    bind-key -r L resize-pane -R 3
+
+  '';
 
   programs.zoxide.enable = true;
   programs.zoxide.enableZshIntegration = true;
