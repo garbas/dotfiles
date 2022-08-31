@@ -54,6 +54,7 @@
   programs.git.userEmail = "rok@garbas.si";
   programs.git.userName = "Rok Garbas";
   programs.git.extraConfig = {
+    gpg.format = "ssh";
     user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGCCNUtXFFDYJelHhh9h2zSkTeYvvpgqWGpIdBogyCQU rok.garbas@iohk.io";
     commit.gpgsign = true;
     tag.gpgsign = true;
