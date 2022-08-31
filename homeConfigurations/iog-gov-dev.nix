@@ -15,8 +15,6 @@
   home.shellAliases.cat = "bat";
 
   home.packages = with pkgs; [
-    # shellAliases
-    bat
     procs
     ripgrep
 
@@ -25,6 +23,7 @@
     tig
 
     kitty.terminfo
+    gitAndTools.git
   ];
 
   programs.bat.enable = true;
@@ -65,6 +64,16 @@
   programs.htop.enable = true;
 
   programs.hyfetch.enable = true;
+  programs.hyfetch.settings = {
+    preset = "boyflux2";
+    mode = "rgb";
+    light_dark = "dark";
+    lightness = null;
+    color_align.mode = "custom";
+    color_align.custom_colors."1" = 5;
+    color_align.custom_colors."2" = 6;
+    color_align.fore_back = [];
+  };
 
   programs.jq.enable = true;
 
@@ -164,5 +173,7 @@
       src = "${./.}";
     }
   ];
-
+  programs.zsh.loginExtra = ''
+    hyfetch
+  '';
 }
