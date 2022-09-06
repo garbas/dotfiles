@@ -1,8 +1,13 @@
+{ sshKey
+, username
+, email
+, fullname
+}:
 { pkgs, lib, config, ... }:
 {
 
-  home.username = "rok";
-  home.homeDirectory = "/home/rok";
+  home.username = username;
+  home.homeDirectory = "/home/${username}";
   home.stateVersion = "22.11";
 
   home.sessionVariables.EDITOR = "nvim";
@@ -50,11 +55,11 @@
   programs.git.aliases.l = "log --graph --oneline --decorate --all";
   programs.git.aliases.b = "branch";
   programs.git.delta.enable = true;
-  programs.git.userEmail = "rok@garbas.si";
-  programs.git.userName = "Rok Garbas";
+  programs.git.userEmail = email;
+  programs.git.userName = fullname;
   programs.git.extraConfig = {
     gpg.format = "ssh";
-    user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGCCNUtXFFDYJelHhh9h2zSkTeYvvpgqWGpIdBogyCQU rok.garbas@iohk.io";
+    user.signingKey = sshKey;
     commit.gpgsign = true;
     tag.gpgsign = true;
     status.submodulesummary = true;

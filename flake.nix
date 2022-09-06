@@ -40,28 +40,50 @@
     }:
     let
       overlays = [
-        nixpkgs-wayland.overlay
-        (final: prev: {
-          firefox = prev.firefox-bin.override { forceWayland = true; };
-          vaapiIntel = prev.vaapiIntel.override { enableHybridCodec = true; };
-        })
         (import ./pkgs/overlay.nix { inherit neovim-flake nightfox-src; })
       ];
 
-      mkConfiguration =
+      mkHomeConfiguration =
+       { name
+       , nixpkgs ? nixpkgs-unstable
+       , system ? "x86_64-linux"
+       , sshKey
+       , username ? "rok"
+       , email ? "rok@garbas.si"
+       , fullname ? "Rok Garbas"
+       }:
+       {
+         "${name}" = home-manager.lib.homeManagerConfiguration rec {
+            pkgs = import nixpkgs { inherit system overlays; };
+            modules = [
+              (import ./homeConfigurations/dev.nix { inherit sshKey username email fullname; })
+            ];
+          };
+      };
+
+      mkNixOSConfiguration =
         { name
         , inputs
         , system ? "x86_64-linux"
         , packages ? []
         }:
-        { "${name}" = inputs.nixpkgs.lib.nixosSystem
+        {
+          "${name}" = inputs.nixpkgs.lib.nixosSystem
             { inherit system;
               modules =
                 [ ((import (./. + "/configurations/${name}.nix")) packages inputs)
                   ({ ... }: {
                     system.configurationRevision = inputs.nixpkgs.lib.mkIf (self ? rev) self.rev;
                     nix.registry.nixpkgs.flake = inputs.nixpkgs;
-                    nixpkgs = { inherit overlays; };
+                    nixpkgs = {
+                      overlays = [
+                        nixpkgs-wayland.overlay
+                        (final: prev: {
+                          firefox = prev.firefox-bin.override { forceWayland = true; };
+                          vaapiIntel = prev.vaapiIntel.override { enableHybridCodec = true; };
+                        })
+                      ] ++ overlays;
+                    };
                   })
                 ];
             };
@@ -87,33 +109,15 @@
         });
     in
       flake // {
-        homeConfigurations = {
-          iog-gov-dev = home-manager.lib.homeManagerConfiguration rec {
-            pkgs = import nixpkgs-unstable {
-              system = "x86_64-linux";
-              overlays = [
-                (import ./pkgs/overlay.nix { inherit neovim-flake nightfox-src; })
-              ];
-            };
-            modules = [./homeConfigurations/iog-gov-dev.nix];
-          };
-        };
+        homeConfigurations =
+          {}
+          // mkHomeConfiguration { name = "build01-tweag-io"; sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGb0GeyZewaSbXpUgcew7HX1x6xOX1xJDTOvYX/j1TKr rok@build01.tweag.io"; }
+          // mkHomeConfiguration { name = "iog-gov-dev";      sshKey = "TODO"; }
+          ;
         nixosConfigurations =
-          (mkConfiguration
-            rec { name = "khal";
-                  system = "x86_64-linux";
-                  packages = with flake.packages.${system}; [ neovim obs-studio-with-plugins ];
-                  inputs = {
-                    inherit nixos-hardware home-manager;
-                    nixpkgs = nixpkgs-unstable;
-                  };
-                }) //
-          (mkConfiguration
-            rec { name = "floki";
-                  inputs = {
-                    nixpkgs = nixpkgs-stable;
-                  };
-                }) //
-          {};
+          {}
+          // mkNixOSConfiguration { name = "khal"; inputs = { inherit nixos-hardware home-manager; }; }
+          // mkNixOSConfiguration { name = "floki"; nixpkgs = nixpkgs-stable; }
+          ;
       };
 }
