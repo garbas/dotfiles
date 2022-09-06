@@ -112,6 +112,7 @@
     tmux-fzf
   ];
   programs.tmux.extraConfig = ''
+    set-option -g set-clipboard on
 
     # allow terminal scrolling
     set-option -g terminal-overrides 'xterm*:smcup@:rmcup@'
