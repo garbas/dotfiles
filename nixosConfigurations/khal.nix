@@ -1,8 +1,4 @@
-packages:
-{ nixpkgs
-, nixos-hardware
-, home-manager
-}:
+inputs:
 { config, pkgs, lib, ... }:
 
 let
@@ -18,15 +14,15 @@ let
   '';
 in {
   imports =
-    [ (import "${nixos-hardware}/dell/xps/13-7390/default.nix")
-      home-manager.nixosModules.home-manager
-      (import ./profiles/console.nix { inherit nixpkgs; })
+    [ (import "${inputs.nixos-hardware}/dell/xps/13-7390/default.nix")
+      inputs.home-manager.nixosModules.home-manager
+      (import ./profiles/console.nix inputs)
     ];
 
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.rok = import ./home.nix;
+  home-manager.users.rok = import ./home.nix {};
 
   boot.extraModulePackages = [
     (linuxPackages.v4l2loopback.override { inherit (linuxPackages) kernel; })
@@ -162,7 +158,7 @@ in {
 
     # password managers
     _1password-gui
-  ] ++ packages ;
+  ];
 
   services.avahi.enable = true;
   services.avahi.nssmdns = true;

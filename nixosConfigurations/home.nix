@@ -1,3 +1,5 @@
+{ username  ? "rok"
+}:
 { pkgs, lib, config, ... }:
 
 let
@@ -78,6 +80,10 @@ let
 in
 
 {
+
+  home.username = username;
+  home.homeDirectory = "/home/${username}";
+  home.stateVersion = "22.11";
 
   programs.kitty.enable = true;
   programs.kitty.font.name = "Fira Code Light";

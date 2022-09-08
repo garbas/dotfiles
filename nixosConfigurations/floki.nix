@@ -1,5 +1,4 @@
-packages:
-{ nixpkgs }:
+inputs:
 { config, pkgs, lib, ... }:
 
 let
@@ -19,7 +18,7 @@ let
     '';
 in {
   imports =
-    [ "${nixpkgs}/nixos/modules/profiles/qemu-guest.nix"
+    [ "${pkgs.path}/nixos/modules/profiles/qemu-guest.nix"
       ./profiles/console.nix
     ];
 

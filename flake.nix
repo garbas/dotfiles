@@ -37,7 +37,7 @@
     , home-manager
     , neovim-flake
     , nightfox-src
-    }:
+    } @ inputs:
     let
       overlays = [
         (import ./pkgs/overlay.nix { inherit neovim-flake nightfox-src; })
@@ -63,18 +63,17 @@
 
       mkNixOSConfiguration =
         { name
-        , inputs
+        , nixpkgs ? nixpkgs-unstable
         , system ? "x86_64-linux"
-        , packages ? []
         }:
         {
-          "${name}" = inputs.nixpkgs.lib.nixosSystem
+          "${name}" = nixpkgs.lib.nixosSystem
             { inherit system;
               modules =
-                [ ((import (./. + "/configurations/${name}.nix")) packages inputs)
+                [ ((import (self + "/nixosConfigurations/${name}.nix")) (inputs // { inherit nixpkgs; }))
                   ({ ... }: {
-                    system.configurationRevision = inputs.nixpkgs.lib.mkIf (self ? rev) self.rev;
-                    nix.registry.nixpkgs.flake = inputs.nixpkgs;
+                    system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
+                    nix.registry.nixpkgs.flake = nixpkgs;
                     nixpkgs = {
                       overlays = [
                         nixpkgs-wayland.overlay
@@ -96,15 +95,7 @@
           devShell = pkgs.mkShell {
             packages = [
               pkgs.rnix-lsp
-              home-manager.packages.${system}.default
             ];
-          };
-          packages = flake-utils.lib.flattenTree {
-            inherit (pkgs)
-              kitty
-              obs-studio-with-plugins
-              neovim
-              neovim-nightly;
           };
         });
     in
@@ -116,7 +107,7 @@
           ;
         nixosConfigurations =
           {}
-          // mkNixOSConfiguration { name = "khal"; inputs = { inherit nixos-hardware home-manager; }; }
+          // mkNixOSConfiguration { name = "khal"; }
           // mkNixOSConfiguration { name = "floki"; nixpkgs = nixpkgs-stable; }
           ;
       };

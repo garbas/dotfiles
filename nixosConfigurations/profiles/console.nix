@@ -1,4 +1,4 @@
-{ nixpkgs }:
+inputs:
 { config, pkgs, lib, ... }:
 {
 
@@ -93,9 +93,9 @@
   '';
 
   nix.package = pkgs.nixVersions.stable;
-  nix.registry.nixpkgs.flake = nixpkgs;
+  nix.registry.nixpkgs.flake = inputs.nixpkgs;
   nix.nixPath = [
-    "nixpkgs=${nixpkgs}"
+    "nixpkgs=${inputs.nixpkgs}"
     "nixos-config=/etc/nixos/configuration.nix"
   ];
   nix.settings.sandbox = true;
