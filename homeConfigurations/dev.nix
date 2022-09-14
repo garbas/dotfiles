@@ -64,6 +64,7 @@
     tag.gpgsign = true;
     status.submodulesummary = true;
     push.default = "simple";
+    push.autoSetupRemote = true;
   };
 
   programs.htop.enable = true;
