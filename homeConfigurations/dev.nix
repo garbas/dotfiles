@@ -45,6 +45,21 @@
   programs.fzf.tmux.enableShellIntegration = true;
 
   programs.gh.enable = true;
+  programs.gh.settings.git_protocol = "ssh";
+  programs.gh.settings.editor = "nvim";
+  programs.gh.settings.prompt = "enabled";
+  programs.gh.settings.aliases.co = "pr checkout";
+  programs.gh.settings.aliases.v = "pr view";
+  programs.gh.settings.extensions = with pkgs; [
+    #gh-poi               # Safely cleanup local branches
+    #gh-markdown-preview  # README preview
+    gh-dash              # Dashboard of PRs and Issues
+    #gh-label             # Label management
+    #gh-milestone         # Milestone management
+    #gh-notify            # Display notifications
+    #gh-changelog         # Create changelogs (https://keepachangelog.com)
+    #gh-s                 # Search Github repositories
+  ];
 
   programs.git.enable = true;
   programs.git.aliases.s = "status";
