@@ -22,7 +22,12 @@ in {
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.rok = import ./home.nix {};
+  home-manager.users.rok = import ./../homeConfigurations/wayland.nix {
+    username = "rok";
+    email = "rok@garbas.si";
+    fullname = "Rok Garbas";
+    sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPaORav4jLaJ3FfkvlbVPcOT3cZSD4Tk1nywc/hoXBOR rok@khal";
+  };
 
   boot.extraModulePackages = [
     (linuxPackages.v4l2loopback.override { inherit (linuxPackages) kernel; })
@@ -289,6 +294,7 @@ in {
     extraGroups = [ "audio" "wheel" "vboxusers" "networkmanager" "docker" "libvirtd" ] ;
     group = "users";
     home = "/home/rok";
+    shell = pkgs.zsh;
   };
 
   fonts.enableGhostscriptFonts = true;

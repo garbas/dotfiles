@@ -3,8 +3,13 @@
 , email
 , fullname
 }:
-{ pkgs, lib, config, ... }:
-{
+{ pkgs, lib, config, ... }: let
+  asLua = t: ''
+    lua << EOF
+    ${t}
+    EOF
+  '';
+in {
 
   home.username = username;
   home.homeDirectory = "/home/${username}";
@@ -20,14 +25,22 @@
   home.shellAliases.cat = "bat";
 
   home.packages = with pkgs; [
+    _1password
+    asciinema
+    file
+    gopass
+    htop
+    jq
     procs
     ripgrep
-
-    tmate
     tig
+    tmate
+    tree
+    unzip
+    wget
+    which
 
     kitty.terminfo
-    gitAndTools.git
   ];
 
   programs.bat.enable = true;
@@ -61,6 +74,7 @@
   ];
 
   programs.git.enable = true;
+  programs.git.package = pkgs.gitAndTools.gitFull;
   programs.git.aliases.s = "status";
   programs.git.aliases.d = "diff";
   programs.git.aliases.ci = "commit -v";

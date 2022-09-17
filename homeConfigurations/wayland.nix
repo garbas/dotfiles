@@ -1,4 +1,7 @@
-{ username  ? "rok"
+{ username
+, email
+, fullname
+, sshKey
 }:
 { pkgs, lib, config, ... }:
 
@@ -78,12 +81,16 @@ let
     base0F = "#fcc09e";
   };
 in
-
 {
 
+  imports = [
+    (import ./../homeConfigurations/dev.nix { inherit username email fullname sshKey; })
+  ];
   home.username = username;
   home.homeDirectory = "/home/${username}";
   home.stateVersion = "22.11";
+
+  programs.neovim.enable = true;
 
   programs.kitty.enable = true;
   programs.kitty.font.name = "Fira Code Light";
