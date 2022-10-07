@@ -102,7 +102,8 @@
       flake // {
         homeConfigurations =
           {}
-          // mkHomeConfiguration { name = "build01-tweag-io"; sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGb0GeyZewaSbXpUgcew7HX1x6xOX1xJDTOvYX/j1TKr rok@build01.tweag.io"; }
+          // mkHomeConfiguration { name = "build01-tweag-io"; sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE1ZiYVVZKxL+5YufHT1oQwCVT5rgWrX/KggWvknJRpu rok@build02.tweag.io"; }
+          // mkHomeConfiguration { name = "build02-tweag-io"; sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGb0GeyZewaSbXpUgcew7HX1x6xOX1xJDTOvYX/j1TKr rok@build01.tweag.io"; system = "aarch64-darwin"; }
           // mkHomeConfiguration { name = "dev-gov-iog-io";   sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGCCNUtXFFDYJelHhh9h2zSkTeYvvpgqWGpIdBogyCQU rok@dev.gov.iog.io"; }
           ;
         nixosConfigurations =

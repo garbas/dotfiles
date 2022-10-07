@@ -43,6 +43,8 @@ in {
     kitty.terminfo
   ];
 
+  nixpkgs.config.allowUnfree = true;
+
   programs.bat.enable = true;
 
   programs.direnv.enable = true;
