@@ -276,7 +276,7 @@ in {
   ];
 
   hardware.bluetooth.enable = true;
-  hardware.bluetooth.package = pkgs.bluezFull;
+  hardware.bluetooth.package = pkgs.bluez;
   hardware.bluetooth.settings.General.Experimental = true;
 
   hardware.cpu.intel.updateMicrocode = true;
