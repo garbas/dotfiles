@@ -1,4 +1,4 @@
-{ pkgs ? import ../../../../nixpkgs { } }:
+{ pkgs ? import ../../../../nixos/nixpkgs { } }:
 
 # Ideally, pkgs points to default.nix file of Nixpkgs official tree
 with pkgs;

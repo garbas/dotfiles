@@ -92,6 +92,13 @@ in
 
   programs.neovim.enable = true;
 
+  programs.foot.enable = true;
+  programs.foot.server.enable = true;
+  programs.foot.settings.main.term = "xterm-256color";
+  programs.foot.settings.main.font = "Fira Code Light:size=10";
+  programs.foot.settings.main.include = "${pkgs.foot.themes}/share/foot/themes/nord";
+  #programs.foot.settings.main.dpi-aware = "yes";
+
   programs.kitty.enable = true;
   programs.kitty.font.name = "Fira Code Light";
   programs.kitty.font.size = 10;
@@ -173,7 +180,7 @@ in
   wayland.windowManager.sway.config.fonts.size = 8.0;
   wayland.windowManager.sway.config.modifier = "Mod4";
   wayland.windowManager.sway.config.menu = "dmenu-wl_run -i";
-  wayland.windowManager.sway.config.terminal = "kitty";
+  wayland.windowManager.sway.config.terminal = "foot";
   wayland.windowManager.sway.config.floating.modifier = "Mod4";
   wayland.windowManager.sway.config.output = {
     "${output.laptop}" = {
@@ -430,7 +437,7 @@ in
     { command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY DBUS_SESSION_BUS_ADDRESS SWAYSOCK XDG_SESSION_TYPE XDG_SESSION_DESKTOP XDG_CURRENT_DESKTOP"; } #workaround
     { command = "${idleCmd}"; }
     { command = "${importGsettings}"; always = true; }
-    { command = "kitty"; }
+    { command = "foot"; }
     { command = "element-desktop --no-update --hidden"; }
     { command = "nm-applet --indicator"; }
     #{ command = "blueman-applet"; }

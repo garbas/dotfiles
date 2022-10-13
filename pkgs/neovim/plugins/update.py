@@ -36,7 +36,7 @@ log.addHandler(sh)
 ROOT = Path(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))))
 # Ideally, ROOT.(parent^5) points to root of Nixpkgs official tree
 #sys.path.insert(0, os.path.join(ROOT.parent.parent.parent.parent.parent, "maintainers", "scripts"))
-sys.path.insert(0, os.path.join(ROOT.parent.parent.parent.parent, "nixpkgs", "maintainers", "scripts"))
+sys.path.insert(0, os.path.join(ROOT.parent.parent.parent.parent, "nixos", "nixpkgs", "maintainers", "scripts"))
 import pluginupdate
 from pluginupdate import run_nix_expr, PluginDesc
 

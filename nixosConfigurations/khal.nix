@@ -2,6 +2,8 @@ inputs:
 { config, pkgs, lib, ... }:
 
 let
+  sshKey = "/home/rok/.ssh/id_ed25519";
+
   linuxPackages = pkgs.linuxPackages;
   #linuxPackages = pkgs.linuxPackages_5_14;
 
@@ -71,15 +73,23 @@ in {
 
   nix.settings.max-jobs = lib.mkDefault 8;
   nix.buildMachines = [
-      # tweag remote builder
-      {
-        hostName = "build01.tweag.io";
-        maxJobs = 24;
-        sshUser = "nix";
-        sshKey = "/root/.ssh/id_rsa";
-        system = "x86_64-linux";
-        supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
-      }
+    # tweag remote builders
+    {
+      hostName = "build01.tweag.io";
+      maxJobs = 24;
+      sshUser = "nix";
+      inherit sshKey;
+      system = "x86_64-linux";
+      supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
+    }
+    {
+      hostName = "build02.tweag.io";
+      maxJobs = 24;
+      sshUser = "nix";
+      inherit sshKey;
+      systems = [ "aarch64-darwin" "x86_64-darwin" ];
+      supportedFeatures = [ "benchmark" "big-parallel" ];
+    }
     ];
 
   nixpkgs.config.firefox.enableFoofleTalkPlugin = true;
@@ -115,14 +125,13 @@ in {
     discord
 
     # terminals
-    alacritty
     kitty
     termite
+    foot
 
     # browsers
     firefox
     chromium
-    #XXXopera
 
     ## i3 related
     #rofi
@@ -133,7 +142,6 @@ in {
     networkmanagerapplet
     pa_applet
     pasystray
-    #i3status-rust
 
     ## gui tools
     pavucontrol

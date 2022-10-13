@@ -217,6 +217,7 @@ in {
     }
     # A lua powered greeter (like vim-startify / dashboard-nvim)
     # https://github.com/goolord/alpha-nvim
+    nvim-web-devicons
     { plugin = alpha-nvim;
       config = asLua ''
         require("alpha").setup(require"alpha.themes.startify".config)
@@ -312,8 +313,9 @@ in {
       ]);
       config = asLua ''
         require'nvim-treesitter.configs'.setup {
-          ensure_installed = { "rust", "nix", "json", "javascript", "typescript", "bash", "html", "css" },
+          ensure_installed = {},
           sync_install = false,
+	  auto_install = false,
           highlight = {
             enable = true,
             additional_vim_regex_highlighting = false,
