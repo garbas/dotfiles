@@ -108,7 +108,7 @@
           ;
         nixosConfigurations =
           {}
-          // mkNixOSConfiguration { name = "khal"; }
+          // mkNixOSConfiguration { name = "pono"; }
           // mkNixOSConfiguration { name = "floki"; nixpkgs = nixpkgs-stable; }
           ;
       };
