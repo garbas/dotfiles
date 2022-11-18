@@ -141,23 +141,23 @@ in {
   nix.settings.max-jobs = lib.mkDefault 8;
   nix.buildMachines = [
     # tweag remote builders
-    {
-      hostName = "build01.tweag.io";
-      maxJobs = 24;
-      sshUser = "nix";
-      inherit sshKey;
-      system = "x86_64-linux";
-      supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
-    }
-    {
-      hostName = "build02.tweag.io";
-      maxJobs = 24;
-      sshUser = "nix";
-      inherit sshKey;
-      systems = [ "aarch64-darwin" "x86_64-darwin" ];
-      supportedFeatures = [ "benchmark" "big-parallel" ];
-    }
-    ];
+    #{
+    #  hostName = "build01.tweag.io";
+    #  maxJobs = 24;
+    #  sshUser = "nix";
+    #  inherit sshKey;
+    #  system = "x86_64-linux";
+    #  supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
+    #}
+    #{
+    #  hostName = "build02.tweag.io";
+    #  maxJobs = 24;
+    #  sshUser = "nix";
+    #  inherit sshKey;
+    #  systems = [ "aarch64-darwin" "x86_64-darwin" ];
+    #  supportedFeatures = [ "benchmark" "big-parallel" ];
+    #}
+  ];
 
   nixpkgs.config.firefox.enableFoofleTalkPlugin = true;
   #nixpkgs.config.pulseaudio = true;

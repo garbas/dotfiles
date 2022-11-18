@@ -78,7 +78,6 @@
                       overlays = [
                         nixpkgs-wayland.overlay
                         (final: prev: {
-                          firefox = prev.firefox-bin.override { forceWayland = true; };
                           vaapiIntel = prev.vaapiIntel.override { enableHybridCodec = true; };
                         })
                       ] ++ overlays;

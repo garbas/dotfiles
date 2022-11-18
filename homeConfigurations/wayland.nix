@@ -41,7 +41,7 @@ let
   # outputs
   output = {
     #left = "DP-4";
-    right = "DP-5";
+    right = "DP-6";
     laptop = "eDP-1";
   };
 
