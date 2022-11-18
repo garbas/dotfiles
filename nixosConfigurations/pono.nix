@@ -184,62 +184,9 @@ in {
   #environment.variables.GDK_SCALE = "2";
   #environment.variables.QT_AUTO_SCREEN_SCALE_FACTOR = "1";
   environment.systemPackages = with pkgs; [
-    xorg.setxkbmap  # needed by i3status-rust
-
-    # chat
-    slack
-    zoom-us
-    element-desktop
-    signal-desktop
-    discord
-
-    # terminals
     kitty
     termite
     foot
-
-    # browsers
-    firefox
-    chromium
-
-    ## i3 related
-    #rofi
-    #volumeicon
-    #xclip
-
-    ## trays / applets
-    networkmanagerapplet
-    pa_applet
-    pasystray
-
-    ## gui tools
-    pavucontrol
-    transmission-gtk
-    uhk-agent
-    zathura
-    peek
-
-    ## commonly used console utilities
-    jq
-    entr
-    neofetch
-    fzf
-    ngrok
-    zoxide
-
-    ## common console tools
-    file
-    tree
-    unzip
-    wget
-    which
-
-    ## other console tools
-    feh          # image viewer
-    mpv          # video player
-
-    # password managers
-    _1password-gui
   ];
 
   services.avahi.enable = true;

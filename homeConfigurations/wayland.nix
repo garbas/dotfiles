@@ -89,6 +89,26 @@ in
   home.username = username;
   home.homeDirectory = "/home/${username}";
   home.stateVersion = "22.11";
+  home.packages = with pkgs; [
+    _1password-gui
+    chromium
+    discord
+    element-desktop
+    feh
+    firefox
+    mpv
+    networkmanagerapplet
+    pa_applet
+    pasystray
+    pavucontrol
+    peek
+    signal-desktop
+    slack
+    transmission-gtk
+    uhk-agent
+    zathura
+    zoom-us
+  ];
 
   programs.neovim.enable = true;
 

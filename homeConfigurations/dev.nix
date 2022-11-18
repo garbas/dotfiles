@@ -27,10 +27,13 @@ in {
   home.packages = with pkgs; [
     _1password
     asciinema
+    entr
     file
     gopass
     htop
     jq
+    kitty.terminfo
+    nixpkgs-review
     procs
     ripgrep
     tig
@@ -39,8 +42,6 @@ in {
     unzip
     wget
     which
-
-    kitty.terminfo
   ];
 
   nixpkgs.config.allowUnfree = true;
