@@ -33,6 +33,9 @@ inputs:
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-15.5.2"
+  ];
 
   programs.command-not-found.enable = false;
   programs.gnupg.agent.enable = true;

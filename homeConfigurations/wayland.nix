@@ -40,9 +40,9 @@ let
 
   # outputs
   output = {
-    #left = "DP-4";
-    right = "DP-6";
-    laptop = "eDP-1";
+    left = "eDP-1";
+    center = "DP-6";
+    right = "DP-5";
   };
 
   # Define names for default workspaces for which we configure key bindings later on.
@@ -96,6 +96,8 @@ in
     element-desktop
     feh
     firefox
+    kdenlive
+    morgen
     mpv
     networkmanagerapplet
     pa_applet
@@ -106,6 +108,7 @@ in
     slack
     transmission-gtk
     uhk-agent
+    xmind
     zathura
     zoom-us
   ];
@@ -202,11 +205,11 @@ in
   wayland.windowManager.sway.config.menu = "dmenu-wl_run -i";
   wayland.windowManager.sway.config.terminal = "foot";
   wayland.windowManager.sway.config.floating.modifier = "Mod4";
-  wayland.windowManager.sway.config.output = {
-    "${output.laptop}" = {
-      scale = "2";
-    };
-  };
+
+  wayland.windowManager.sway.config.output."${output.left}" =   { pos = "0 0";       scale = "2"; res = "3840x2400"; };
+  wayland.windowManager.sway.config.output."${output.center}" = { pos = "1920 0";    scale = "1"; res = "2560x1440"; };
+  wayland.windowManager.sway.config.output."${output.right}" =  { pos = "4480 -440"; scale = "1"; res = "2560x1440"; transform = "270"; };
+
   wayland.windowManager.sway.config.keybindings = {
     "${mod}+Return" = "exec ${config.wayland.windowManager.sway.config.terminal}";
 
@@ -326,14 +329,14 @@ in
 
   # assign workspace to screen
   wayland.windowManager.sway.config.workspaceOutputAssign = [
-    { workspace = workspace."01"; output = output.laptop; }
-    { workspace = workspace."02"; output = output.laptop; }
-    { workspace = workspace."03"; output = output.laptop; }
-    { workspace = workspace."04"; output = output.right;  }
-    { workspace = workspace."05"; output = output.right;  }
-    { workspace = workspace."06"; output = output.right;  }
-    { workspace = workspace."07"; output = output.right;  }
-    { workspace = workspace."08"; output = output.right;  }
+    { workspace = workspace."01"; output = output.left; }
+    { workspace = workspace."02"; output = output.center; }
+    { workspace = workspace."03"; output = output.center; }
+    { workspace = workspace."04"; output = output.center;  }
+    { workspace = workspace."05"; output = output.center;  }
+    { workspace = workspace."06"; output = output.center;  }
+    { workspace = workspace."07"; output = output.center;  }
+    { workspace = workspace."08"; output = output.center;  }
     { workspace = workspace."09"; output = output.right;  }
     { workspace = workspace."10"; output = output.right;  }
   ];
@@ -404,10 +407,6 @@ in
   wayland.windowManager.sway.config.input."type:touchpad".dwt = "enabled";
   wayland.windowManager.sway.config.input."type:touchpad".middle_emulation = "enabled";
   wayland.windowManager.sway.config.input."type:touchpad".tap = "enabled";
-
-  # TODO:
-  #wayland.windowManager.sway.config.output.eDP-1 = { pos = "0 0"; scale = "2"; };
-  #wayland.windowManager.sway.config.output.DP-1 = { pos = "0 0"; scale = "2"; };
 
   # WINDOWS
   wayland.windowManager.sway.config.window.titlebar = false;
@@ -533,10 +532,10 @@ in
 
   # TODO: KANSHI - Dynamic display configuration
   services.kanshi.enable = true;
-  services.kanshi.profiles.undocked.outputs = [{ criteria = output.laptop; }];
+  services.kanshi.profiles.undocked.outputs = [{ criteria = output.left; }];
   services.kanshi.profiles.docked.outputs = [
-    { criteria = output.laptop; }
-    #{ criteria = output.left; }
+    { criteria = output.left; }
+    { criteria = output.center; }
     { criteria = output.right; }
   ];
   services.kanshi.systemdTarget = "sway-session.target";
