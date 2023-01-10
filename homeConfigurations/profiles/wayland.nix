@@ -53,6 +53,15 @@ let
 
   mod = config.wayland.windowManager.sway.config.modifier;
 
+  # outputs
+  output = {
+    #left = "eDP-1";
+    left = "LCDS-1";
+    #center = "DP-6";
+    center = "DP-2";
+    #right = "DP-5";
+  };
+
   # Define names for default workspaces for which we configure key bindings later on.
   # We use variables to avoid repeating the names in multiple places.
   workspace = {
@@ -211,9 +220,16 @@ in
   wayland.windowManager.sway.config.floating.modifier = "Mod4";
   wayland.windowManager.sway.config.defaultWorkspace = workspace."1";
 
-  wayland.windowManager.sway.config.output = lib.concatMapAttrs (n: v: {
-    ${v.monitor} = lib.filterAttrs (x: _: x != "monitor" && x != "workspaces") v;
-  }) outputs;
+  # TODO
+  #wayland.windowManager.sway.config.output = lib.concatMapAttrs (n: v: {
+  #  ${v.monitor} = lib.filterAttrs (x: _: x != "monitor" && x != "workspaces") v;
+  #}) outputs;
+  #wayland.windowManager.sway.config.output."${output.left}" =   { pos = "0 0";       scale = "2"; res = "3840x2400"; };
+  wayland.windowManager.sway.config.output."${output.left}" =   { pos = "0 0";       scale = "1"; res = "1366x768"; };
+  #wayland.windowManager.sway.config.output."${output.center}" = { pos = "1920 0";    scale = "1"; res = "2560x1440"; };
+  wayland.windowManager.sway.config.output."${output.center}" = { pos = "1366 0";    scale = "1"; res = "2560x1440"; };
+  #wayland.windowManager.sway.config.output."${output.right}" =  { pos = "4480 -440"; scale = "1"; res = "2560x1440"; transform = "270"; };
+  #wayland.windowManager.sway.config.output."${output.right}" =  { pos = "4480 -440"; scale = "1"; res = "2560x1440"; transform = "270"; };
 
   wayland.windowManager.sway.config.keybindings = {
     "${mod}+Return" = "exec ${config.wayland.windowManager.sway.config.terminal}";
@@ -334,15 +350,30 @@ in
   };
 
   # assign workspace to screen
-  wayland.windowManager.sway.config.workspaceOutputAssign = lib.flatten (
-    lib.mapAttrsToList (
-      n: v:
-      builtins.map (w: {
-        workspace = workspace.${w};
-        output = n;
-      }) v.workspaces
-    ) outputs
-  );
+  # TODO
+  #wayland.windowManager.sway.config.workspaceOutputAssign = lib.flatten (
+  #  lib.mapAttrsToList (
+  #    n: v:
+  #    builtins.map (w: {
+  #      workspace = workspace.${w};
+  #      output = n;
+  #    }) v.workspaces
+  #  ) outputs
+  #);
+  wayland.windowManager.sway.config.workspaceOutputAssign = [
+    { workspace = workspace."01"; output = output.left; }
+    { workspace = workspace."02"; output = output.center; }
+    { workspace = workspace."03"; output = output.center; }
+    { workspace = workspace."04"; output = output.center;  }
+    { workspace = workspace."05"; output = output.center;  }
+    { workspace = workspace."06"; output = output.center;  }
+    { workspace = workspace."07"; output = output.center;  }
+    { workspace = workspace."08"; output = output.center;  }
+    { workspace = workspace."09"; output = output.center;  }
+    { workspace = workspace."10"; output = output.center;  }
+    #{ workspace = workspace."09"; output = output.right;  }
+    #{ workspace = workspace."10"; output = output.right;  }
+  ];
 
   # resize window (you can also use the mouse for that)
   wayland.windowManager.sway.config.modes.resize = {
@@ -598,6 +629,7 @@ in
   systemd.user.services.waybar.Service.ExecStart = lib.mkForce "${pkgs.waybar}/bin/waybar -b 0";
 
   # TODO: KANSHI - Dynamic display configuration
+  # TODO
   #services.kanshi.enable = true;
   #services.kanshi.profiles.undocked.outputs = [{ criteria = output.left; }];
   #services.kanshi.profiles.docked.outputs = [
@@ -609,6 +641,19 @@ in
 
   # NETWORK MANAGER APPLET
   #services.network-manager-applet.enable = true;
+  services.kanshi.enable = true;
+  services.kanshi.profiles.undocked.outputs = [{ criteria = output.left; }];
+  services.kanshi.profiles.docked.outputs = [
+    { criteria = output.left; }
+    { criteria = output.center; }
+    #{ criteria = output.right; }
+  ];
+  services.kanshi.systemdTarget = "sway-session.target";
+
+
+  # NETWORK MANAGER APPLET
+  #services.network-manager-applet.enable = true;
+  #services.blueman-applet.enable = true;
   services.pasystray.enable = true;
 
   # PASYSTRAY - PULSEAUDIO SYSTEM TRAY

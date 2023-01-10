@@ -434,6 +434,10 @@
     // {
       homeConfigurations =
         { }
+        // mkNixOSConfiguration {
+          system = "x86_64-linux";
+          name = "tyrion";
+        }
         // mkHomeConfiguration {
           system = "aarch64-darwin";
           name = "jaime";
