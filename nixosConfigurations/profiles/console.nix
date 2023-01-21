@@ -4,10 +4,6 @@ inputs:
 
   documentation.info.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    kitty
-  ];
-
   i18n.defaultLocale = "en_US.UTF-8";
 
   networking.extraHosts = ''
@@ -53,5 +49,20 @@ inputs:
   time.timeZone = "Europe/Ljubljana";
 
   users.defaultUserShell = pkgs.zsh;
+  users.mutableUsers = false;
+  users.users."root" = {
+    hashedPassword = "$6$sBFfflUBZtZMD$h.EWNsmmX8iwTM7jShIvYwvS2/h7dncGTNhG.yPN1dOte1Et0TTz7HSFmzkuWjQpnBAfANYdptF3EQoUNSYwx/";
+  };
+  users.users."rok" = {
+    hashedPassword = "$6$PS.1SD6/$kUv8wdXYH00dEvpqlC9SyX/E3Zm3HLPNmsxLwteJSQgpXDOfFZhWXkHby6hvZ.kFN2JbgXqJvwZfjOunBpcHX0";
+    isNormalUser = true;
+    uid = 1000;
+    description = "Rok Garbas";
+    extraGroups = [ "audio" "wheel" "vboxusers" "networkmanager" "docker" "libvirtd" ] ;
+    group = "users";
+    createHome = true;
+    home = "/home/rok";
+    shell = pkgs.zsh;
+  };
 }
 

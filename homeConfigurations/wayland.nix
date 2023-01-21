@@ -92,25 +92,26 @@ in
   home.packages = with pkgs; [
     _1password-gui
     chromium
-    discord
     element-desktop
     feh
     firefox
     kdenlive
-    morgen
     mpv
     networkmanagerapplet
     pa_applet
     pasystray
     pavucontrol
     peek
-    signal-desktop
-    slack
     transmission-gtk
-    uhk-agent
     xmind
     zathura
-    zoom-us
+
+    # TODO: does not work on aarch64-linux
+    #discord
+    #signal-desktop
+    #slack
+    #uhk-agent
+    #zoom-us
   ];
 
   programs.neovim.enable = true;

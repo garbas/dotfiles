@@ -87,7 +87,7 @@
             };
         };
 
-      flake = flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-darwin" ] (system:
+      flake = flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ] (system:
         let
           pkgs = import nixpkgs-unstable { inherit system overlays; };
         in rec {
@@ -108,6 +108,7 @@
         nixosConfigurations =
           {}
           // mkNixOSConfiguration { name = "pono"; }
+          // mkNixOSConfiguration { name = "cercei"; system = "aarch64-linux"; }
           // mkNixOSConfiguration { name = "floki"; nixpkgs = nixpkgs-stable; }
           ;
       };
