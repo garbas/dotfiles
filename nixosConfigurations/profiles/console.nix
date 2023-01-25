@@ -63,6 +63,11 @@ inputs:
     createHome = true;
     home = "/home/rok";
     shell = pkgs.zsh;
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICZr0HtRTIngjPGi4yliL4vffUYxx1OMCcfHcecAhgO5 rok@cercei"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKex8HTaW5y1IrhxVKU4r9XfLNWl6kvzpBF74VXovfPu rok@jaime"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO/UvlzfVRvsI8bvy/PE2CTGErPUSRzsCLebGb6Ytc78 rok@tyrion"
+    ];
   };
 }
 

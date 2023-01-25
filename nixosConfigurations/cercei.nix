@@ -9,7 +9,10 @@ inputs:
   imports =
     [ (modulesPath + "/profiles/qemu-guest.nix")
       inputs.home-manager.nixosModules.home-manager
-      (import ./profiles/wayland.nix inputs)
+      (import ./profiles/wayland.nix inputs {
+        hostName = "cercei";
+        hostId = "dae19db5";
+      })
     ];
 
   # -- HARDWARE ---------------------------------------------------------------
@@ -50,11 +53,39 @@ inputs:
     email = "rok@garbas.si";
     fullname = "Rok Garbas";
     sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICZr0HtRTIngjPGi4yliL4vffUYxx1OMCcfHcecAhgO5 rok@cercei";
+    outputs = {
+      left = {
+        monitor = "Virtual-1";
+        pos = "0 0";
+        scale = "2";
+        res = "3840x2160";
+        workspaces = [
+          "01"
+          "02"
+          "03"
+          "04"
+          "05"
+          "06"
+          "07"
+          "08"
+          "09"
+          "10"
+        ];
+      };
+      #center = {
+      #  monitor = "DP-6";
+      #};
+      #right = {
+      #  monitor = "DP-5";
+      #};
+    };
   };
 
   # ---------------------------------------------------------------------------
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  services.spice-vdagentd.enable = true;
 }
 

@@ -1,4 +1,7 @@
 inputs:
+{ hostName
+, hostId
+}:
 { config, lib, pkgs, modulesPath, ... }:
 
 let
@@ -22,15 +25,16 @@ in {
     foot
   ];
 
-  networking.hostName = "cercei";
-  networking.hostId = "dae19db5";
+  networking.hostName = hostName;
+  networking.hostId = hostId;
   networking.nat.enable = true;
   networking.nat.internalInterfaces = ["ve-+"];
   networking.nat.externalInterface = "wlp2s0";
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
   networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
-  networking.networkmanager.enable = true;
+  # TODO: factor out 
+  #networking.networkmanager.enable = true;
 
   services.greetd.enable = true;
   services.greetd.restart = false;
