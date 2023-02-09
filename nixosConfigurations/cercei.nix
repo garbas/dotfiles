@@ -12,6 +12,7 @@ inputs:
       (import ./profiles/wayland.nix inputs {
         hostName = "cercei";
         hostId = "dae19db5";
+        audio = false;
       })
     ];
 
@@ -92,4 +93,6 @@ inputs:
   nix.settings.extra-trusted-public-keys = [ "flox-store-public-0:8c/B+kjIaQ+BloCmNkRUKwaVPFWkriSAd0JJvuDu4F0=" ];
 
   networking.firewall.allowedTCPPorts = [ 8000 ];
+
+  virtualisation.docker.enable = true;
 }

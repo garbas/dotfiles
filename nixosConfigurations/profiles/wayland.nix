@@ -1,6 +1,7 @@
 inputs:
 { hostName
 , hostId
+, audio
 }:
 { config, lib, pkgs, modulesPath, ... }:
 
@@ -42,11 +43,6 @@ in {
   services.greetd.settings.default_session.user = "greeter";
   services.greetd.settings.initial_session.command = "${swayRun}";
   services.greetd.settings.initial_session.user = "rok";
-
-  services.pipewire.enable = true;
-  services.pipewire.pulse.enable = true;
-  services.pipewire.wireplumber.enable = true;
-  services.pipewire.media-session.enable = false;
 
   xdg.portal.enable = true;
   xdg.portal.extraPortals = with pkgs; [
@@ -98,4 +94,9 @@ in {
     # Fonts use for icons in i3status-rs
     font-awesome_5
   ];
+} // lib.optionalAttrs audio {
+  services.pipewire.enable = false;
+  services.pipewire.pulse.enable = false;
+  services.pipewire.wireplumber.enable = false;
+  services.pipewire.media-session.enable = false;
 }
