@@ -3,6 +3,7 @@
 , fullname
 , sshKey
 , outputs
+, bluetooth ? true
 }:
 { pkgs, lib, config, ... }:
 
@@ -458,8 +459,7 @@ in
     { command = "foot"; }
     { command = "element-desktop --no-update --hidden"; }
     { command = "nm-applet --indicator"; }
-    #{ command = "blueman-applet"; }
-  ];
+  ] ++ (lib.optional bluetooth { command = "blueman-applet"; });
 
   wayland.windowManager.sway.config.seat = {
     seat0 = {
@@ -542,7 +542,6 @@ in
 
   # NETWORK MANAGER APPLET
   #services.network-manager-applet.enable = true;
-  services.blueman-applet.enable = true;
   services.pasystray.enable = true;
 
   # PASYSTRAY - PULSEAUDIO SYSTEM TRAY
@@ -580,4 +579,6 @@ in
   xdg.userDirs.enable = true;
   xdg.userDirs.createDirectories = true;
 
+} // lib.optionalAttrs bluetooth {
+  services.blueman-applet.enable = true;
 }

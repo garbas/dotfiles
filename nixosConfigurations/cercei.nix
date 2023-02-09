@@ -54,6 +54,7 @@ inputs:
     email = "rok@garbas.si";
     fullname = "Rok Garbas";
     sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICZr0HtRTIngjPGi4yliL4vffUYxx1OMCcfHcecAhgO5 rok@cercei";
+    bluetooth = false;
     outputs = {
       left = {
         monitor = "Virtual-1";

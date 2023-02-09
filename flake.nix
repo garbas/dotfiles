@@ -1,22 +1,10 @@
 {
   description = "Garbas's dotfiles";
 
-  nixConfig.extra-substituters = [
-    "https://nixpkgs-wayland.cachix.org/"
-  ];
-  nixConfig.extra-trusted-public-keys = [
-    "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
-  ];
-
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-22.05";
   inputs.nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.nixpkgs-master.url = "github:NixOS/nixpkgs/master";
-  inputs.nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
-  inputs.nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs-unstable";
-  # TODO:
-  #nixpkgs-wayland.inputs.lib-aggregate.inputs.flake-utils.follows = "flake-utils";
-  #nixpkgs-wayland.inputs.lib-aggregate.inputs.nixpkgs.follows = "nixpkgs-unstable";
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   inputs.home-manager.url = "github:nix-community/home-manager";
   inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -32,7 +20,6 @@
     , nixpkgs-stable
     , nixpkgs-unstable
     , nixpkgs-master
-    , nixpkgs-wayland
     , nixos-hardware
     , home-manager
     , neovim-flake
@@ -76,7 +63,6 @@
                     nix.registry.nixpkgs.flake = nixpkgs;
                     nixpkgs = {
                       overlays = [
-                        nixpkgs-wayland.overlay
                         (final: prev: {
                           vaapiIntel = prev.vaapiIntel.override { enableHybridCodec = true; };
                         })
