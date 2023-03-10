@@ -43,15 +43,15 @@ let
   # Define names for default workspaces for which we configure key bindings later on.
   # We use variables to avoid repeating the names in multiple places.
   workspace = {
-    "01" = "1: ";
-    "02" = "2: ";
-    "03" = "3: ";
-    "04" = "4: ";
-    "05" = "5: ";
-    "06" = "6: ";
-    "07" = "7: ";
-    "08" = "8: ";
-    "09" = "9: ";
+    "1" = "1: ";
+    "2" = "2: ";
+    "3" = "3: ";
+    "4" = "4: ";
+    "5" = "5: ";
+    "6" = "6: ";
+    "7" = "7: ";
+    "8" = "8: ";
+    "9" = "9: ";
     "10" = "10: ";
   };
 
@@ -201,6 +201,7 @@ in
   wayland.windowManager.sway.config.menu = "dmenu-wl_run -i";
   wayland.windowManager.sway.config.terminal = "foot";
   wayland.windowManager.sway.config.floating.modifier = "Mod4";
+  wayland.windowManager.sway.config.defaultWorkspace = workspace."1";
 
   wayland.windowManager.sway.config.output =
     lib.concatMapAttrs
@@ -278,27 +279,27 @@ in
     "${mod}+BackSpace" = "scratchpad show";
 
     # switch to workspace
-    "${mod}+1" = "workspace ${workspace."01"}";
-    "${mod}+2" = "workspace ${workspace."02"}";
-    "${mod}+3" = "workspace ${workspace."03"}";
-    "${mod}+4" = "workspace ${workspace."04"}";
-    "${mod}+5" = "workspace ${workspace."05"}";
-    "${mod}+6" = "workspace ${workspace."06"}";
-    "${mod}+7" = "workspace ${workspace."07"}";
-    "${mod}+8" = "workspace ${workspace."08"}";
-    "${mod}+9" = "workspace ${workspace."09"}";
+    "${mod}+1" = "workspace ${workspace."1"}";
+    "${mod}+2" = "workspace ${workspace."2"}";
+    "${mod}+3" = "workspace ${workspace."3"}";
+    "${mod}+4" = "workspace ${workspace."4"}";
+    "${mod}+5" = "workspace ${workspace."5"}";
+    "${mod}+6" = "workspace ${workspace."6"}";
+    "${mod}+7" = "workspace ${workspace."7"}";
+    "${mod}+8" = "workspace ${workspace."8"}";
+    "${mod}+9" = "workspace ${workspace."9"}";
     "${mod}+0" = "workspace ${workspace."10"}";
 
     # move focused container to workspace
-    "${mod}+Shift+1" = "move container to workspace ${workspace."01"}";
-    "${mod}+Shift+2" = "move container to workspace ${workspace."02"}";
-    "${mod}+Shift+3" = "move container to workspace ${workspace."03"}";
-    "${mod}+Shift+4" = "move container to workspace ${workspace."04"}";
-    "${mod}+Shift+5" = "move container to workspace ${workspace."05"}";
-    "${mod}+Shift+6" = "move container to workspace ${workspace."06"}";
-    "${mod}+Shift+7" = "move container to workspace ${workspace."07"}";
-    "${mod}+Shift+8" = "move container to workspace ${workspace."08"}";
-    "${mod}+Shift+9" = "move container to workspace ${workspace."09"}";
+    "${mod}+Shift+1" = "move container to workspace ${workspace."1"}";
+    "${mod}+Shift+2" = "move container to workspace ${workspace."2"}";
+    "${mod}+Shift+3" = "move container to workspace ${workspace."3"}";
+    "${mod}+Shift+4" = "move container to workspace ${workspace."4"}";
+    "${mod}+Shift+5" = "move container to workspace ${workspace."5"}";
+    "${mod}+Shift+6" = "move container to workspace ${workspace."6"}";
+    "${mod}+Shift+7" = "move container to workspace ${workspace."7"}";
+    "${mod}+Shift+8" = "move container to workspace ${workspace."8"}";
+    "${mod}+Shift+9" = "move container to workspace ${workspace."9"}";
     "${mod}+Shift+0" = "move container to workspace ${workspace."10"}";
 
     "${mod}+r" = "mode \"resize\"";
@@ -456,9 +457,9 @@ in
     { command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY DBUS_SESSION_BUS_ADDRESS SWAYSOCK XDG_SESSION_TYPE XDG_SESSION_DESKTOP XDG_CURRENT_DESKTOP"; } #workaround
     { command = "${idleCmd}"; }
     { command = "${importGsettings}"; always = true; }
-    { command = "foot"; }
-    { command = "element-desktop --no-update --hidden"; }
-    { command = "nm-applet --indicator"; }
+    #{ command = "foot"; }
+    #{ command = "element-desktop --no-update --hidden"; }
+    #{ command = "nm-applet --indicator"; }
   ] ++ (lib.optional bluetooth { command = "blueman-applet"; });
 
   wayland.windowManager.sway.config.seat = {
