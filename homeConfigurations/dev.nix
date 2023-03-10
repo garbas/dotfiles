@@ -81,6 +81,29 @@ in {
     #gh-s                 # Search Github repositories
   ];
 
+
+  xdg.configFile."git/config-me".text = ''
+    [user]
+      name = ${fullname}
+      email = ${email}
+  '';
+  xdg.configFile."git/config-flox".text = ''
+    [user]
+      name = ${fullname}
+      email = rok@floxdev.com
+  '';
+  programs.git.includes = [
+    {
+      path = "~/.config/git/config-me";
+      condition = "hasconfig:remote.*.url:git@github.com\:garbas/**";
+    }
+    {
+      path = "~/.config/git/config-flox";
+      condition = "hasconfig:remote.*.url:git@github.com\:flox/**";
+    }
+
+  ];
+
   programs.git.enable = true;
   programs.git.package = pkgs.gitAndTools.gitFull;
   programs.git.aliases.s = "status";
@@ -91,8 +114,6 @@ in {
   programs.git.aliases.l = "log --graph --oneline --decorate --all";
   programs.git.aliases.b = "branch";
   programs.git.delta.enable = true;
-  programs.git.userEmail = email;
-  programs.git.userName = fullname;
   programs.git.extraConfig = {
     gpg.format = "ssh";
     user.signingKey = sshKey;
