@@ -12,7 +12,6 @@
 in {
 
   home.username = username;
-  home.homeDirectory = "/home/${username}";
   home.stateVersion = "22.11";
 
   home.sessionVariables.EDITOR = "nvim";
@@ -25,17 +24,13 @@ in {
   home.shellAliases.cat = "bat";
 
   home.packages = with pkgs; [
-    _1password
-    asciinema
     entr
     file
-    gopass
     htop
     jq
     kitty.terminfo
-    nixpkgs-review
-    procs
     ripgrep
+    procs
     tig
     tmate
     tree
@@ -47,9 +42,6 @@ in {
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
-  nixpkgs.config.permittedInsecurePackages = [
-    "electron-15.5.2"
-  ];
 
   programs.bat.enable = true;
 
@@ -126,18 +118,6 @@ in {
 
   programs.htop.enable = true;
 
-  programs.hyfetch.enable = true;
-  programs.hyfetch.settings = {
-    preset = "boyflux2";
-    mode = "rgb";
-    light_dark = "dark";
-    lightness = null;
-    color_align.mode = "custom";
-    color_align.custom_colors."1" = 5;
-    color_align.custom_colors."2" = 6;
-    color_align.fore_back = [];
-  };
-
   programs.jq.enable = true;
 
   programs.keychain.enable = true;
@@ -150,8 +130,8 @@ in {
 
   programs.man.enable = true;
 
-  programs.nix-index.enable = true;
-  programs.nix-index.enableZshIntegration = true;
+  #programs.nix-index.enable = true;
+  #programs.nix-index.enableZshIntegration = true;
 
   programs.neovim.enable = true;
   programs.neovim.viAlias = true;
@@ -643,8 +623,8 @@ in {
 
   '';
 
-  programs.zoxide.enable = true;
-  programs.zoxide.enableZshIntegration = true;
+  #programs.zoxide.enable = true;
+  #programs.zoxide.enableZshIntegration = true;
 
   programs.zsh.enable = true;
   programs.zsh.enableAutosuggestions = true;
@@ -653,14 +633,14 @@ in {
   programs.zsh.autocd = true;
   programs.zsh.defaultKeymap = "viins";
   programs.zsh.history.expireDuplicatesFirst = true;
-  programs.zsh.initExtraBeforeCompInit = ''
-    # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-    # Initialization code that may require console input (password prompts, [y/n]
-    # confirmations, etc.) must go above this block; everything else may go below.
-    if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
-      source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
-    fi
-  '';
+  #programs.zsh.initExtraBeforeCompInit = ''
+  #  # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+  #  # Initialization code that may require console input (password prompts, [y/n]
+  #  # confirmations, etc.) must go above this block; everything else may go below.
+  #  if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+  #    source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+  #  fi
+  #'';
   programs.zsh.plugins = [
     {
       file = "powerlevel10k.zsh-theme";
@@ -673,7 +653,4 @@ in {
       src = "${./.}";
     }
   ];
-  programs.zsh.loginExtra = ''
-    hyfetch
-  '';
 }

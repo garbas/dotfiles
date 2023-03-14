@@ -39,11 +39,16 @@
        , email ? "rok@garbas.si"
        , fullname ? "Rok Garbas"
        }:
-       {
+       let
+         homeConfiguration = 
+           if builtins.elem system ["x86_64-darwin" "aarch64-darwin"]
+           then ./homeConfigurations/darwin.nix
+           else ./homeConfigurations/linux.nix;
+       in {
          "${name}" = home-manager.lib.homeManagerConfiguration rec {
             pkgs = import nixpkgs { inherit system overlays; };
             modules = [
-              (import ./homeConfigurations/dev.nix { inherit sshKey username email fullname; })
+              (import homeConfiguration { inherit sshKey username email fullname; })
             ];
           };
       };
@@ -87,9 +92,7 @@
       flake // {
         homeConfigurations =
           {}
-          // mkHomeConfiguration { name = "build01-tweag-io"; sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE1ZiYVVZKxL+5YufHT1oQwCVT5rgWrX/KggWvknJRpu rok@build02.tweag.io"; }
-          // mkHomeConfiguration { name = "build02-tweag-io"; sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGb0GeyZewaSbXpUgcew7HX1x6xOX1xJDTOvYX/j1TKr rok@build01.tweag.io"; system = "aarch64-darwin"; }
-          // mkHomeConfiguration { name = "dev-gov-iog-io";   sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGCCNUtXFFDYJelHhh9h2zSkTeYvvpgqWGpIdBogyCQU rok@dev.gov.iog.io"; }
+          // mkHomeConfiguration { name = "jaime"; system = "aarch64-darwin"; sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKex8HTaW5y1IrhxVKU4r9XfLNWl6kvzpBF74VXovfPu rok@floxdev.com"; }
           ;
         nixosConfigurations =
           {}

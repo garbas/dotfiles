@@ -37,6 +37,7 @@
     vcs                     # git status
     # =========================[ Line #2 ]=========================
     newline                 # \n
+    flox                    # show if inside flox environment
     prompt_char             # prompt symbol
   )
 
@@ -1558,6 +1559,12 @@
   # Type `p10k help segment` for documentation and a more sophisticated example.
   function prompt_example() {
     p10k segment -f 2 -i '⭐' -t 'hello, %n'
+  }
+
+  function prompt_flox() {
+    if (( ${+FLOX_PROMPT_ENVIRONMENTS} )); then
+      p10k segment -i 'λ' -f '#6971f6' -t "($FLOX_PROMPT_ENVIRONMENTS)"
+    fi
   }
 
   # User-defined prompt segments may optionally provide an instant_prompt_* function. Its job
