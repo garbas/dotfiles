@@ -346,6 +346,11 @@ in {
     # https://github.com/nvim-telescope/telescope.nvim/
     telescope-fzf-native-nvim
     telescope-file-browser-nvim
+    #TODO: telescope-dap-nvim
+    #TODO: telescope-github-nvim
+    #TODO: telescope-lsp-handlers-nvim
+    #TODO: telescope-manix-nvim
+    #TODO: telescope-zoxide-nvim
     { plugin = telescope-nvim;
       config = asLua ''
         require('telescope').setup {
@@ -579,6 +584,13 @@ in {
 
           },
         }, { prefix = "<leader>" })
+      '';
+    }
+    # AI
+    { plugin = ChatGPT-nvim;
+      config = asLua ''
+        require("chatgpt").setup({
+        })
       '';
     }
   ];

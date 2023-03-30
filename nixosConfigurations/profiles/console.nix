@@ -39,6 +39,7 @@ inputs:
   programs.gnupg.agent.enableSSHSupport = true;
   programs.mosh.enable = true;
   programs.ssh.forwardX11 = false;
+  programs.zsh.enable = true;
 
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;

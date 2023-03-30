@@ -78,12 +78,6 @@ let
 in
 {
 
-  imports = [
-    (import ./../homeConfigurations/dev.nix { inherit username email fullname sshKey; })
-  ];
-  home.username = username;
-  home.homeDirectory = "/home/${username}";
-  home.stateVersion = "22.11";
   home.packages = with pkgs; [
     _1password-gui
     chromium
@@ -108,8 +102,6 @@ in
     #uhk-agent
     #zoom-us
   ];
-
-  programs.neovim.enable = true;
 
   programs.foot.enable = true;
   programs.foot.server.enable = true;
@@ -180,15 +172,15 @@ in
 
   #./home/mako.nix
   # TODO: services.fnott.enable
-  programs.mako.backgroundColor = "#3c3836";
-  programs.mako.borderColor = "#b16286";
-  programs.mako.borderRadius = 6;
-  programs.mako.borderSize = 2;
-  programs.mako.defaultTimeout = 5000;
-  programs.mako.enable = true;
-  programs.mako.font = "Iosevka 12";
-  programs.mako.layer = "overlay";
-  programs.mako.textColor = "#ebdbb2";
+  services.mako.backgroundColor = "#3c3836";
+  services.mako.borderColor = "#b16286";
+  services.mako.borderRadius = 6;
+  services.mako.borderSize = 2;
+  services.mako.defaultTimeout = 5000;
+  services.mako.enable = true;
+  services.mako.font = "Iosevka 12";
+  services.mako.layer = "overlay";
+  services.mako.textColor = "#ebdbb2";
 
   #./home/sway.nix
   wayland.windowManager.sway.enable = true;
