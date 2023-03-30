@@ -93,7 +93,7 @@ inputs:
   nix.settings.extra-trusted-substituters = [ "https://cache.floxdev.com" ];
   nix.settings.extra-trusted-public-keys = [ "flox-store-public-0:8c/B+kjIaQ+BloCmNkRUKwaVPFWkriSAd0JJvuDu4F0=" ];
 
-  networking.firewall.allowedTCPPorts = [ 8000 ];
+  networking.firewall.allowedTCPPorts = [ 8000 8001 8002 8003 ];
 
   virtualisation.docker.enable = true;
 }
