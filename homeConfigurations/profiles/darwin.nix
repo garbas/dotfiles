@@ -9,17 +9,12 @@
 
   home.homeDirectory = "/Users/${username}";
 
+  # darwin specific packages
   home.packages = with pkgs; [
   ];
  
-  programs.ssh.matchBlocks."cercei" = {
-    hostname = "192.168.64.3";
-    user = "rok";
-    port = 22;
-  };
-
   programs.zsh.initExtra = ''
-    source "$(dirname $(realpath $(which nix)))/../etc/profile.d/nix.sh"
-    . <(flox activate)
+  # to activate default flox environment by default
+  #  . <(flox activate)
   '';
 }

@@ -535,8 +535,11 @@ in {
           "nickel_ls",
           "pyright",
           "rls",
+          "rust_analyzer",
+          "nil_ls",
           "rnix",
           "terraformls",
+          "tailwindcss",
         }
 
         for _, lsp in pairs(servers) do

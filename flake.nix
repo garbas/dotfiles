@@ -6,10 +6,13 @@
   inputs.nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.nixpkgs-master.url = "github:NixOS/nixpkgs/master";
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+  inputs.darwin.url = "github:lnl7/nix-darwin/master";
+  inputs.darwin.inputs.nixpkgs.follows = "nixpkgs-unstable";
   inputs.home-manager.url = "github:nix-community/home-manager";
   inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
   inputs.home-manager.inputs.utils.follows = "flake-utils";
   inputs.neovim-flake.url = "github:neovim/neovim?dir=contrib";
+  inputs.neovim-flake.inputs.flake-utils.follows = "flake-utils";
   inputs.neovim-flake.inputs.nixpkgs.follows = "nixpkgs-unstable";
   inputs.nightfox-src.url = "github:EdenEast/nightfox.nvim";
   inputs.nightfox-src.flake = false;
@@ -21,6 +24,7 @@
     , nixpkgs-unstable
     , nixpkgs-master
     , nixos-hardware
+    , darwin
     , home-manager
     , neovim-flake
     , nightfox-src
@@ -34,10 +38,6 @@
        { name
        , nixpkgs ? nixpkgs-unstable
        , system ? "x86_64-linux"
-       , sshKey
-       , username ? "rok"
-       , email ? "rok@garbas.si"
-       , fullname ? "Rok Garbas"
        }:
        let
          homeConfiguration = 
@@ -48,10 +48,27 @@
          "${name}" = home-manager.lib.homeManagerConfiguration rec {
             pkgs = import nixpkgs { inherit system overlays; };
             modules = [
-              (import homeConfiguration { inherit sshKey username email fullname; })
+              (import (self + "/homeConfiguration/${name}.nix"))
             ];
           };
       };
+
+      mkDarwinConfiguration =
+        { name
+        , nixpkgs ? nixpkgs-unstable
+        , system ? "aarch64-darwin"
+        }:
+        {
+          "${name}" = darwin.lib.darwinSystem
+            { inherit system;
+              specialArgs = { inherit user; };
+              modules =
+                [ (import (self + "/darwinConfigurations/${name}.nix"))
+                  home-manager.darwinModules.home-manager
+                ];
+              inputs = { inherit nixpkgs home-manager; };
+            };
+        };
 
       mkNixOSConfiguration =
         { name
@@ -88,17 +105,31 @@
             ];
           };
         });
+
+      user = {
+        fullname = "Rok Garbas";
+        username = "rok";
+        email = "rok@garbas.si";
+        sshKeys = {
+          jaime = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKex8HTaW5y1IrhxVKU4r9XfLNWl6kvzpBF74VXovfPu";
+          cercei = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICZr0HtRTIngjPGi4yliL4vffUYxx1OMCcfHcecAhgO5";
+        };
+      };
     in
       flake // {
         homeConfigurations =
           {}
-          // mkHomeConfiguration { name = "jaime"; system = "aarch64-darwin"; sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKex8HTaW5y1IrhxVKU4r9XfLNWl6kvzpBF74VXovfPu rok@floxdev.com"; }
+          // mkHomeConfiguration   { system = "aarch64-darwin"; name = "jaime"; }
+          ;
+        darwinConfigurations =
+          {}
+          // mkDarwinConfiguration { system = "aarch64-darwin"; name = "jaime"; }
           ;
         nixosConfigurations =
           {}
-          // mkNixOSConfiguration { name = "pono"; }
-          // mkNixOSConfiguration { name = "cercei"; system = "aarch64-linux"; }
-          // mkNixOSConfiguration { name = "floki"; nixpkgs = nixpkgs-stable; }
+          // mkNixOSConfiguration  { system = "x86_64-linux";   name = "pono"; }
+          // mkNixOSConfiguration  { system = "aarch64-linux";  name = "cercei"; }
+          // mkNixOSConfiguration  { system = "x86_64-linux";   name = "floki"; nixpkgs = nixpkgs-stable; }
           ;
       };
 }
