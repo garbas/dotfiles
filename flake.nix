@@ -10,7 +10,6 @@
   inputs.darwin.inputs.nixpkgs.follows = "nixpkgs-unstable";
   inputs.home-manager.url = "github:nix-community/home-manager";
   inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
-  inputs.home-manager.inputs.utils.follows = "flake-utils";
   inputs.neovim-flake.url = "github:neovim/neovim?dir=contrib";
   inputs.neovim-flake.inputs.flake-utils.follows = "flake-utils";
   inputs.neovim-flake.inputs.nixpkgs.follows = "nixpkgs-unstable";
