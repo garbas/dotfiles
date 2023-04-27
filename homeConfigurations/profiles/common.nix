@@ -25,6 +25,8 @@ in {
 
   home.packages = with pkgs; [
     entr
+    fd
+    coreutils
     file
     htop
     jq
