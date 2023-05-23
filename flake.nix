@@ -82,6 +82,7 @@
                   ({ ... }: {
                     system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
                     nix.registry.nixpkgs.flake = nixpkgs;
+                    networking.hostName = name;
                     nixpkgs = {
                       overlays = [
                         (final: prev: {
