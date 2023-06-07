@@ -27,6 +27,7 @@ in {
     entr
     fd
     coreutils
+    gnutar
     file
     htop
     jq
@@ -589,12 +590,12 @@ in {
       '';
     }
     # AI
-    { plugin = ChatGPT-nvim;
-      config = asLua ''
-        require("chatgpt").setup({
-        })
-      '';
-    }
+    #{ plugin = ChatGPT-nvim;
+    #  config = asLua ''
+    #    require("chatgpt").setup({
+    #    })
+    #  '';
+    #}
   ];
 
   programs.ssh.enable = true;
