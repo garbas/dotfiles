@@ -14,8 +14,9 @@
   ];
  
   programs.zsh.initExtra = ''
-  # to activate default flox environment by default
-  #  . <(flox activate)
+    export FLOX_AUTOUPDATE=2
+    eval "$(flox activate -e flox/prerelease)"
+    export FLOX_AUTOUPDATE=0
   '';
 
   programs.kitty.enable = true;
