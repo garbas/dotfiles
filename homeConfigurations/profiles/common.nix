@@ -52,8 +52,8 @@ in {
   programs.direnv.enableZshIntegration = true;
   programs.direnv.nix-direnv.enable = true;
 
-  programs.exa.enable = true;
-  programs.exa.enableAliases = true;
+  programs.eza.enable = true;
+  programs.eza.enableAliases = true;
 
   programs.fzf.enable = true;
   programs.fzf.enableZshIntegration = true;
@@ -96,6 +96,10 @@ in {
       path = "~/.config/git/config-flox";
       condition = "hasconfig:remote.*.url:git@github.com\:flox/**";
     }
+    {
+      path = "~/.config/git/config-flox";
+      condition = "hasconfig:remote.*.url:git@github.com\:flox-examples/**";
+    }
 
   ];
 
@@ -117,6 +121,7 @@ in {
     status.submodulesummary = true;
     push.default = "simple";
     push.autoSetupRemote = true;
+    init.defaultBranch = "main";
   };
 
   programs.htop.enable = true;
@@ -658,7 +663,7 @@ in {
   programs.zsh.enable = true;
   programs.zsh.enableAutosuggestions = true;
   programs.zsh.enableCompletion = true;
-  programs.zsh.enableSyntaxHighlighting = true;
+  programs.zsh.syntaxHighlighting.enable = true;
   programs.zsh.autocd = true;
   programs.zsh.defaultKeymap = "viins";
   programs.zsh.history.expireDuplicatesFirst = true;

@@ -2,6 +2,10 @@
 
   # use existing nix installation
   nix.useDaemon = true;
+  nix.extraOptions = ''
+    experimental-features = nix-command flakes
+    trusted-users = root rok
+  '';
 
   # this does the trick to load the nix-darwin environment
   programs.zsh.enable = true;
