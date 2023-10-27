@@ -105,13 +105,16 @@ in {
 
   programs.git.enable = true;
   programs.git.package = pkgs.gitAndTools.gitFull;
-  programs.git.aliases.s = "status";
+  programs.git.aliases.s = "status -s";
   programs.git.aliases.d = "diff";
   programs.git.aliases.ci = "commit -v";
   programs.git.aliases.cia = "commit -v -a";
   programs.git.aliases.co = "checkout";
   programs.git.aliases.l = "log --graph --oneline --decorate --all";
   programs.git.aliases.b = "branch";
+  # list branches sorted by last modified
+  programs.git.aliases.bb = "!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'";
+  programs.git.aliases.entr = "!git ls-files -cdmo --exclude-standard | entr -d";
   programs.git.delta.enable = true;
   programs.git.extraConfig = {
     gpg.format = "ssh";
