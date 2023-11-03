@@ -54,6 +54,9 @@
     mouse_action1       = "move";    # left click + drag
     mouse_action2       = "resize";  # righ click + drag
     mouse_drop_action   = "swap";
+
+    # integrate spacebar
+    #external_bar        = "all:26";
   };
   services.yabai.extraConfig = ''
     yabai -m rule --add app='System Settings' manage=off
