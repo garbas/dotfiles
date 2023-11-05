@@ -544,6 +544,7 @@ in {
         local servers = {
           "bashls",
           "beancount",
+          "ccls",
           "cssls",
           "elmls",
           "html",
@@ -670,6 +671,14 @@ in {
   programs.zsh.autocd = true;
   programs.zsh.defaultKeymap = "viins";
   programs.zsh.history.expireDuplicatesFirst = true;
+  programs.zsh.initExtraBeforeCompInit = ''
+    # for Docker Labs Debug Tools
+    fpath=(~/.local/share/zsh/functions $fpath)
+  '';
+  programs.zsh.initExtra = ''
+    # for Docker Labs Debug Tools
+    export PATH="$PATH:/Users/${username}/.local/bin"
+  '';
   programs.zsh.plugins = [
     {
       file = "powerlevel10k.zsh-theme";
