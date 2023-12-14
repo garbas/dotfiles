@@ -1,12 +1,13 @@
-{ ... }: {
+user: { ... }: let
+
+  homeUser = {
+    inherit (user) username email fullname;
+    sshKey = "${user.machines.jaime.sshKey} ${user.username}@jaime";
+  };
+in {
 
   imports = [
-    (import ./profiles/darwin.nix {
-      sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKex8HTaW5y1IrhxVKU4r9XfLNWl6kvzpBF74VXovfPu rok@jaime";
-      username = "rok";
-      email = "rok@garbas.si";
-      fullname = "Rok Garbas";
-    })
+    (import ./profiles/darwin.nix homeUser)
   ];
 
   programs.ssh.matchBlocks."cercei" = {

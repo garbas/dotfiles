@@ -105,7 +105,7 @@ in {
 
   programs.git.enable = true;
   programs.git.package = pkgs.gitAndTools.gitFull;
-  programs.git.aliases.s = "status -s";
+  programs.git.aliases.s = "status";
   programs.git.aliases.d = "diff";
   programs.git.aliases.ci = "commit -v";
   programs.git.aliases.cia = "commit -v -a";
@@ -134,7 +134,11 @@ in {
   programs.keychain.enable = true;
   programs.keychain.enableZshIntegration = true;
   programs.keychain.agents = ["ssh"];
-  programs.keychain.extraFlags = ["--nogui"];
+  programs.keychain.extraFlags = [
+    "--quiet"
+    "--nogui"
+    "--quick"
+  ];
   programs.keychain.keys = ["id_ed25519"];
 
   programs.less.enable = true;
@@ -423,6 +427,15 @@ in {
         }, { prefix = "<leader>" })
       '';
     }
+    # AI
+    { plugin = copilot-lua;
+      config = asLua ''
+        require("copilot").setup({
+          suggestion = { enabled = false },
+          panel = { enabled = false },
+        })
+      '';
+    }
     # EDITING - AUTOCOMPLETION / SNIPPETS
     luasnip
     vim-snippets
@@ -434,8 +447,11 @@ in {
     cmp_luasnip
     cmp-nvim-lsp
     cmp-nvim-lsp-document-symbol
+    copilot-cmp
     { plugin = nvim-cmp;
       config = asLua ''
+        require("copilot_cmp").setup()
+
         local has_words_before = function()
           local line, col = unpack(vim.api.nvim_win_get_cursor(0))
           return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
@@ -486,6 +502,7 @@ in {
             end, { "i", "s" }),
           },
           sources = cmp.config.sources({
+            { name = 'copilot' },
             { name = 'nvim_lsp' },
             { name = 'nvim_lsp_document_symbol' },
             { name = 'luasnip' },
@@ -598,13 +615,6 @@ in {
         }, { prefix = "<leader>" })
       '';
     }
-    # AI
-    #{ plugin = ChatGPT-nvim;
-    #  config = asLua ''
-    #    require("chatgpt").setup({
-    #    })
-    #  '';
-    #}
   ];
 
   programs.ssh.enable = true;

@@ -1,5 +1,9 @@
 { pkgs, user, ... }: {
 
+  imports = [
+    (import ./flox-remote-builders.nix "/Users/${user.username}/.ssh/id_ed25519")
+  ];
+
   # use existing nix installation
   nix.useDaemon = true;
   nix.extraOptions = ''
@@ -17,7 +21,7 @@
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.rok = import ./../homeConfigurations/jaime.nix;
+  home-manager.users.rok = import ./../homeConfigurations/jaime.nix user;
 
   services.skhd.enable  = true;
   services.skhd.skhdConfig = ''
