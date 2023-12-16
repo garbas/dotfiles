@@ -2,19 +2,30 @@
   description = "Garbas's dotfiles";
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
+
   inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-22.05";
   inputs.nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.nixpkgs-master.url = "github:NixOS/nixpkgs/master";
+
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
   inputs.darwin.url = "github:lnl7/nix-darwin/master";
   inputs.darwin.inputs.nixpkgs.follows = "nixpkgs-unstable";
-  inputs.home-manager.url = "github:nix-community/home-manager";
+
+  #inputs.home-manager.url = "github:nix-community/home-manager";
+  inputs.home-manager.url = "github:garbas/home-manager/gh-fix";
   inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
   inputs.neovim-flake.url = "github:neovim/neovim?dir=contrib";
   inputs.neovim-flake.inputs.flake-utils.follows = "flake-utils";
   inputs.neovim-flake.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
   inputs.nightfox-src.url = "github:EdenEast/nightfox.nvim";
   inputs.nightfox-src.flake = false;
+
+  inputs.mac-app-util.url = "github:hraban/mac-app-util";
+  inputs.mac-app-util.inputs.nixpkgs.follows = "nixpkgs-unstable";
+  inputs.mac-app-util.inputs.flake-utils.follows = "flake-utils";
 
   outputs =
     { self
@@ -27,6 +38,7 @@
     , home-manager
     , neovim-flake
     , nightfox-src
+    , mac-app-util
     } @ inputs:
     let
       overlays = [
@@ -60,10 +72,12 @@
         {
           "${name}" = darwin.lib.darwinSystem
             { inherit system;
-              specialArgs = { inherit user; };
+              specialArgs = { inherit user inputs; };
               modules =
-                [ (import (self + "/darwinConfigurations/${name}.nix"))
+                [ 
+                  mac-app-util.darwinModules.default
                   home-manager.darwinModules.home-manager
+                  (import (self + "/darwinConfigurations/${name}.nix"))
                 ];
               inputs = { inherit nixpkgs home-manager; };
             };

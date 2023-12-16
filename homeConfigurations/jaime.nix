@@ -1,4 +1,4 @@
-user: { ... }: let
+{ user, inputs, ... }: let
 
   homeUser = {
     inherit (user) username email fullname;
@@ -7,6 +7,7 @@ user: { ... }: let
 in {
 
   imports = [
+    inputs.mac-app-util.homeManagerModules.default
     (import ./profiles/darwin.nix homeUser)
   ];
 

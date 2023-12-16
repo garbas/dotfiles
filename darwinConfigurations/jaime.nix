@@ -1,4 +1,4 @@
-{ pkgs, user, ... }: {
+{ pkgs, user, inputs, ... }: {
 
   imports = [
     (import ./flox-remote-builders.nix "/Users/${user.username}/.ssh/id_ed25519")
@@ -21,7 +21,8 @@
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.rok = import ./../homeConfigurations/jaime.nix user;
+  home-manager.users.rok = import ./../homeConfigurations/jaime.nix;
+  home-manager.extraSpecialArgs = { inherit user inputs; };
 
   services.skhd.enable  = true;
   services.skhd.skhdConfig = ''
