@@ -2,6 +2,7 @@ sshKey: { ... }: {
 
   services.tailscale.enable = true;
 
+  nix.distributedBuilds = true;
   nix.buildMachines = [
     {
       protocol = "ssh-ng";
