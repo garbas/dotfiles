@@ -59,8 +59,9 @@
          "${name}" = home-manager.lib.homeManagerConfiguration rec {
             pkgs = import nixpkgs { inherit system overlays; };
             modules = [
-              (import (self + "/homeConfiguration/${name}.nix"))
+              (import (self + "/homeConfigurations/${name}.nix"))
             ];
+            extraSpecialArgs = { inherit user inputs; };
           };
       };
 
@@ -125,6 +126,9 @@
         username = "rok";
         email = "rok@garbas.si";
         machines = {
+          solo = {
+            sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwOFnH4EHVCV/8/aaNg4n/zywH7IlSWur92iN9eeHGX";
+          };
           jaime = {
             sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKex8HTaW5y1IrhxVKU4r9XfLNWl6kvzpBF74VXovfPu";
           };
@@ -138,6 +142,7 @@
         homeConfigurations =
           {}
           // mkHomeConfiguration   { system = "aarch64-darwin"; name = "jaime"; }
+          // mkHomeConfiguration   { system = "aarch64-linux"; name = "solo"; }
           ;
         darwinConfigurations =
           {}
