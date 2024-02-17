@@ -332,6 +332,7 @@ in {
         p."tree-sitter-bash"
         p."tree-sitter-html"
         p."tree-sitter-css"
+        p."tree-sitter-astro"
       ]);
       config = asLua ''
         require'nvim-treesitter.configs'.setup {
@@ -559,6 +560,7 @@ in {
         -- map buffer local keybindings when the language server attaches
 
         local servers = {
+          "astro",
           "bashls",
           "beancount",
           "ccls",
@@ -570,7 +572,6 @@ in {
           "pyright",
           "rls",
           "rust_analyzer",
-          "nil_ls",
           "rnix",
           "terraformls",
           "tailwindcss",
