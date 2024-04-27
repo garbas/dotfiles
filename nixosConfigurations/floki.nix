@@ -1,22 +1,7 @@
 inputs:
 { config, pkgs, lib, ... }:
 
-let
-  secrets = import ./../secrets.nix;
-  healthcheck = url: healthcheck_id:
-    pkgs.writeScriptBin "healthcheck" ''
-      #!${pkgs.bash}/bin/bash
-      ${pkgs.curl}/bin/curl ${url} -sfo /dev/null \
-        && ( \
-             echo "Website UP" && \
-             ${pkgs.curl}/bin/curl --retry 3 https://hc-ping.com/${healthcheck_id} \
-           ) \
-        || ( \
-             echo "Website DOWN" && \
-             ${pkgs.curl}/bin/curl --retry 3 https://hc-ping.com/${healthcheck_id}/fail \
-           )
-    '';
-in {
+{
   imports =
     [ "${pkgs.path}/nixos/modules/profiles/qemu-guest.nix"
       ./profiles/console.nix
@@ -102,19 +87,6 @@ in {
     { server-port = 25565;
       max-players = 20;
       enable-command-block = true;
-    };
-
-  systemd.timers."healthcheck-garbas.si".enable = true;
-  systemd.timers."healthcheck-garbas.si".description = "Run 10min healthcheck for garbas.si";
-  systemd.timers."healthcheck-garbas.si".timerConfig.OnCalendar = "*:0/10:0";
-  systemd.timers."healthcheck-garbas.si".timerConfig.Persistent = "yes";
-  systemd.services."healthcheck-garbas.si".enable = true;
-  systemd.services."healthcheck-garbas.si".description = "Run healthcheck for garbas.si";
-  systemd.services."healthcheck-garbas.si".after = [ "network.target" ];
-  systemd.services."healthcheck-garbas.si".serviceConfig =
-    { DynamicUser = true;
-      Type = "oneshot";
-      ExecStart = "${healthcheck "https://garbas.si" secrets.healthcheck.garbas}/bin/healthcheck";
     };
 
   security.acme.acceptTerms = true;
