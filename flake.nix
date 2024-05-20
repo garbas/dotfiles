@@ -116,9 +116,6 @@
         in rec {
           devShell = pkgs.mkShell {
             system = "aarch64-darwin";
-            packages = [
-              pkgs.rnix-lsp
-            ];
           };
         });
 
