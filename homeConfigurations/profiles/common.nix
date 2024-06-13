@@ -115,6 +115,7 @@ in {
   # list branches sorted by last modified
   programs.git.aliases.bb = "!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'";
   programs.git.aliases.entr = "!git ls-files -cdmo --exclude-standard | entr -d";
+  programs.git.lfs.enable = true;
   programs.git.delta.enable = true;
   programs.git.extraConfig = {
     gpg.format = "ssh";

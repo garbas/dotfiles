@@ -9,6 +9,9 @@
   nix.extraOptions = ''
     experimental-features = nix-command flakes
     trusted-users = root rok
+
+    system = aarch64-darwin
+    extra-platforms = aarch64-darwin x86_64-darwin
   '';
 
   # this does the trick to load the nix-darwin environment

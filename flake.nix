@@ -115,9 +115,7 @@
           pkgs = import nixpkgs-unstable { inherit system overlays; };
         in rec {
           devShell = pkgs.mkShell {
-            packages = [
-              pkgs.rnix-lsp
-            ];
+            system = "aarch64-darwin";
           };
         });
 
