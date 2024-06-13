@@ -85,7 +85,7 @@ in {
   xdg.configFile."git/config-flox".text = ''
     [user]
       name = ${fullname}
-      email = rok@floxdev.com
+      email = rok@flox.dev
   '';
   programs.git.includes = [
     {
