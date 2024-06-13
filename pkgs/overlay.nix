@@ -1,4 +1,4 @@
-{ neovim-flake, nightfox-src }:
+{ nightfox-src }:
 
 final: prev:
 
@@ -20,11 +20,6 @@ in rec {
   };
 
   neovim = final.callPackage ./neovim { inherit myConfig nightfox-src; };
-
-  neovim-nightly = final.callPackage ./neovim {
-    inherit myConfig nightfox-src;
-    neovim-unwrapped = neovim-flake.packages.${prev.system}.neovim;
-  };
 
   neofetch = prev.neofetch.overrideAttrs (old: {
     patches = (final.lib.optionals (builtins.hasAttr "patches" old) old.patches) ++ [

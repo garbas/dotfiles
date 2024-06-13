@@ -7,7 +7,6 @@
 in {
 
   imports = [
-    inputs.mac-app-util.homeManagerModules.default
     (import ./profiles/darwin.nix homeUser)
   ];
 

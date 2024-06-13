@@ -3,9 +3,8 @@
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
-  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-22.05";
+  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
   inputs.nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-  inputs.nixpkgs-master.url = "github:NixOS/nixpkgs/master";
 
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
@@ -15,10 +14,6 @@
   #inputs.home-manager.url = "github:nix-community/home-manager";
   inputs.home-manager.url = "github:garbas/home-manager/gh-fix";
   inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
-
-  inputs.neovim-flake.url = "github:neovim/neovim?dir=contrib";
-  inputs.neovim-flake.inputs.flake-utils.follows = "flake-utils";
-  inputs.neovim-flake.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
   inputs.nightfox-src.url = "github:EdenEast/nightfox.nvim";
   inputs.nightfox-src.flake = false;
@@ -32,17 +27,15 @@
     , flake-utils
     , nixpkgs-stable
     , nixpkgs-unstable
-    , nixpkgs-master
     , nixos-hardware
     , darwin
     , home-manager
-    , neovim-flake
     , nightfox-src
     , mac-app-util
     } @ inputs:
     let
       overlays = [
-        (import ./pkgs/overlay.nix { inherit neovim-flake nightfox-src; })
+        (import ./pkgs/overlay.nix { inherit nightfox-src; })
       ];
 
       mkHomeConfiguration =
@@ -78,6 +71,13 @@
                 [ 
                   mac-app-util.darwinModules.default
                   home-manager.darwinModules.home-manager
+                  ({ pkgs, config, inputs, ... }:
+                   {
+                     home-manager.sharedModules = [
+                       mac-app-util.homeManagerModules.default
+                     ];
+                   })
+
                   (import (self + "/darwinConfigurations/${name}.nix"))
                 ];
               inputs = { inherit nixpkgs home-manager; };
