@@ -12,8 +12,7 @@
   inputs.darwin.url = "github:lnl7/nix-darwin/master";
   inputs.darwin.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
-  #inputs.home-manager.url = "github:nix-community/home-manager";
-  inputs.home-manager.url = "github:garbas/home-manager/gh-fix";
+  inputs.home-manager.url = "github:nix-community/home-manager";
   inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
   inputs.neovim-flake.url = "github:neovim/neovim?dir=contrib";
@@ -98,13 +97,6 @@
                     system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
                     nix.registry.nixpkgs.flake = nixpkgs;
                     networking.hostName = name;
-                    nixpkgs = {
-                      overlays = [
-                        (final: prev: {
-                          vaapiIntel = prev.vaapiIntel.override { enableHybridCodec = true; };
-                        })
-                      ] ++ overlays;
-                    };
                   })
                 ];
             };
@@ -150,7 +142,7 @@
           {}
           // mkNixOSConfiguration  { system = "x86_64-linux";   name = "pono"; }
           // mkNixOSConfiguration  { system = "aarch64-linux";  name = "cercei"; }
-          // mkNixOSConfiguration  { system = "x86_64-linux";   name = "floki"; nixpkgs = nixpkgs-stable; }
+          // mkNixOSConfiguration  { system = "x86_64-linux";   name = "floki"; } #nixpkgs = nixpkgs-stable; }
           ;
       };
 }
