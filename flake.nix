@@ -3,7 +3,6 @@
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
-  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
   inputs.nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -24,7 +23,6 @@
   outputs =
     { self
     , flake-utils
-    , nixpkgs-stable
     , nixpkgs-unstable
     , nixos-hardware
     , darwin
@@ -142,7 +140,7 @@
           {}
           // mkNixOSConfiguration  { system = "x86_64-linux";   name = "pono"; }
           // mkNixOSConfiguration  { system = "aarch64-linux";  name = "cercei"; }
-          // mkNixOSConfiguration  { system = "x86_64-linux";   name = "floki"; } #nixpkgs = nixpkgs-stable; }
+          // mkNixOSConfiguration  { system = "x86_64-linux";   name = "floki"; }
           ;
       };
 }
