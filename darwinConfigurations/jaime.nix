@@ -1,7 +1,7 @@
 { pkgs, user, inputs, ... }: {
 
   imports = [
-    #(import ./flox-remote-builders.nix "/Users/${user.username}/.ssh/id_ed25519")
+    (import ./flox-remote-builders.nix "/Users/${user.username}/.ssh/id_ed25519")
   ];
 
   # use existing nix installation

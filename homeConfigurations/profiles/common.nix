@@ -53,7 +53,9 @@ in {
   programs.direnv.nix-direnv.enable = true;
 
   programs.eza.enable = true;
-  programs.eza.enableAliases = true;
+  programs.eza.enableZshIntegration = true;
+  programs.eza.git = true;
+  programs.eza.icons = true;
 
   programs.fzf.enable = true;
   programs.fzf.enableZshIntegration = true;
@@ -677,10 +679,10 @@ in {
   programs.zoxide.enableZshIntegration = true;
 
   programs.zsh.enable = true;
-  programs.zsh.enableAutosuggestions = true;
   programs.zsh.enableCompletion = true;
-  programs.zsh.syntaxHighlighting.enable = true;
   programs.zsh.autocd = true;
+  programs.zsh.autosuggestion.enable = true;
+  programs.zsh.syntaxHighlighting.enable = true;
   programs.zsh.defaultKeymap = "viins";
   programs.zsh.history.expireDuplicatesFirst = true;
   programs.zsh.initExtraBeforeCompInit = ''

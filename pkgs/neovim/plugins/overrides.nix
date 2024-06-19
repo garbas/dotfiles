@@ -144,9 +144,9 @@ self: super: {
     dependencies = with self; [ nvim-cmp plenary-nvim ];
   });
 
-  cmp-copilot = super.cmp-copilot.overrideAttrs (old: {
-    dependencies = with self; [ nvim-cmp copilot-vim ];
-  });
+  #cmp-copilot = super.cmp-copilot.overrideAttrs (old: {
+  #  dependencies = with self; [ nvim-cmp copilot-vim ];
+  #});
 
   cmp-dap = super.cmp-dap.overrideAttrs (old: {
     dependencies = with self; [ nvim-cmp nvim-dap ];
