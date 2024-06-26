@@ -1,13 +1,10 @@
-{ sshKey
-, username
-, email
-, fullname
-}:
-{ pkgs, lib, config, ... }: {
+{ pkgs, lib, config, user, ... }: {
 
-  imports = [ (import ./common.nix {inherit sshKey username email fullname;}) ];
+  imports = [
+    (import ./common.nix)
+  ];
 
-  home.homeDirectory = "/home/${username}";
+  home.homeDirectory = "/home/${user.username}";
 
   home.packages = with pkgs; [
     _1password

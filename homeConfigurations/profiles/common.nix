@@ -1,9 +1,4 @@
-{ sshKey
-, username
-, email
-, fullname
-}:
-{ pkgs, lib, config, ... }: let
+{ pkgs, lib, config, user, hostname, ... }: let
   asLua = t: ''
     lua << EOF
     ${t}
@@ -11,7 +6,7 @@
   '';
 in {
 
-  home.username = username;
+  home.username = user.username;
   home.stateVersion = "22.11";
 
   home.sessionVariables.EDITOR = "nvim";
@@ -81,12 +76,12 @@ in {
 
   xdg.configFile."git/config-me".text = ''
     [user]
-      name = ${fullname}
-      email = ${email}
+      name = ${user.fullname}
+      email = ${user.email}
   '';
   xdg.configFile."git/config-flox".text = ''
     [user]
-      name = ${fullname}
+      name = ${user.fullname}
       email = rok@flox.dev
   '';
   programs.git.includes = [
@@ -121,7 +116,7 @@ in {
   programs.git.delta.enable = true;
   programs.git.extraConfig = {
     gpg.format = "ssh";
-    user.signingKey = sshKey;
+    user.signingKey = user.machines.${hostname}.sshKey;
     commit.gpgsign = true;
     tag.gpgsign = true;
     status.submodulesummary = true;
@@ -691,7 +686,7 @@ in {
   '';
   programs.zsh.initExtra = ''
     # for Docker Labs Debug Tools
-    export PATH="$PATH:/Users/${username}/.local/bin"
+    export PATH="$PATH:/Users/${user.username}/.local/bin"
   '';
   programs.zsh.plugins = [
     {
