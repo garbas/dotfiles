@@ -1,17 +1,13 @@
-{ sshKey
-, username
-, email
-, fullname
-}:
-{ pkgs, lib, config, ... }: {
+{ user, ... }: {
 
-  imports = [ (import ./common.nix {inherit sshKey username email fullname;}) ];
+  imports = [
+    (import ./common.nix)
+  ];
 
-  home.homeDirectory = "/Users/${username}";
+  home.homeDirectory = "/Users/${user.username}";
 
   # darwin specific packages
-  home.packages = with pkgs; [
-  ];
+  home.packages = [];
  
   # XXX: enable once flox is stable
   #programs.zsh.initExtra = ''

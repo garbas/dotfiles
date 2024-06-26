@@ -51,7 +51,10 @@
             modules = [
               (import (self + "/homeConfigurations/${name}.nix"))
             ];
-            extraSpecialArgs = { inherit user inputs; };
+            extraSpecialArgs = {
+              inherit user inputs;
+              hostname = name;
+            };
           };
       };
 
@@ -63,7 +66,10 @@
         {
           "${name}" = darwin.lib.darwinSystem
             { inherit system;
-              specialArgs = { inherit user inputs; };
+              specialArgs = {
+                inherit user inputs;
+                hostname = name;
+              };
               modules =
                 [ 
                   mac-app-util.darwinModules.default
@@ -90,8 +96,8 @@
           "${name}" = nixpkgs.lib.nixosSystem
             { inherit system;
               specialArgs = {
-	      	inherit user inputs;
-		hostname = name;
+                inherit user inputs;
+                hostname = name;
               };
               modules =
                 [ (import (self + "/nixosConfigurations/${name}.nix"))
