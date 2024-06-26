@@ -14,6 +14,10 @@
     extra-platforms = aarch64-darwin x86_64-darwin
   '';
 
+  nixpkgs.config.allowBroken = false;
+  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfreeRedistributable = true;
+
   # this does the trick to load the nix-darwin environment
   programs.zsh.enable = true;
 
