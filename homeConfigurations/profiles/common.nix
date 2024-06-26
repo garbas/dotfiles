@@ -36,6 +36,8 @@ in {
     unzip
     wget
     which
+    _1password
+    kitty.terminfo
   ];
 
   nixpkgs.config.allowBroken = false;

@@ -1,6 +1,12 @@
 { config, pkgs, lib, user, ... }:
 {
 
+  environment.systemPackages = with pkgs; [
+    kitty.terminfo
+    termite.terminfo
+    foot.terminfo
+  ];
+
   documentation.info.enable = true;
 
   i18n.defaultLocale = "en_US.UTF-8";
