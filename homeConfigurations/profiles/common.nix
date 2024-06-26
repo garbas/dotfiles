@@ -19,16 +19,17 @@ in {
   home.shellAliases.cat = "bat";
 
   home.packages = with pkgs; [
+    coreutils
     entr
     fd
-    coreutils
-    gnutar
     file
+    gnutar
     htop
     jq
     kitty.terminfo
-    ripgrep
+    nix-output-monitor
     procs
+    ripgrep
     tig
     tmate
     tree
