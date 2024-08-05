@@ -5,6 +5,7 @@
   ];
 
   # use existing nix installation
+  nix.package = pkgs.nixVersions.latest;
   nix.useDaemon = true;
   nix.extraOptions = ''
     experimental-features = nix-command flakes
@@ -17,6 +18,11 @@
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
+
+  homebrew.enable = true;
+  homebrew.brews = [
+    "create-dmg"
+  ];
 
   # this does the trick to load the nix-darwin environment
   programs.zsh.enable = true;
@@ -73,12 +79,4 @@
   services.yabai.extraConfig = ''
     yabai -m rule --add app='System Settings' manage=off
   '';
-
-  services.spacebar.enable  = true;
-  services.spacebar.package = pkgs.spacebar;
-  services.spacebar.config = {
-    clock_format     = "%R";
-    background_color = "0xff202020";
-    foreground_color = "0xffa8a8a8";
-  };
 }

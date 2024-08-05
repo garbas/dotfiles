@@ -1,4 +1,4 @@
-{ pkgs, lib, config, user, hostname, ... }: let
+{ pkgs, lib, config, user, hostname, inputs, ... }: let
   asLua = t: ''
     lua << EOF
     ${t}
@@ -19,6 +19,7 @@ in {
   home.shellAliases.cat = "bat";
 
   home.packages = with pkgs; [
+    inputs.flox.packages.${pkgs.system}.flox
     coreutils
     entr
     fd

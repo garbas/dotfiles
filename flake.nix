@@ -1,6 +1,13 @@
 {
   description = "Garbas's dotfiles";
 
+  nixConfig.extra-substituters = [
+    "https://cache.flox.dev"
+  ];
+  nixConfig.extra-trusted-public-keys = [
+    "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
+  ];
+
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   inputs.nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -20,6 +27,8 @@
   inputs.mac-app-util.inputs.nixpkgs.follows = "nixpkgs-unstable";
   inputs.mac-app-util.inputs.flake-utils.follows = "flake-utils";
 
+  inputs.flox.url = "github:flox/flox/v1.2.2";
+
   outputs =
     { self
     , flake-utils
@@ -29,6 +38,7 @@
     , home-manager
     , nightfox-src
     , mac-app-util
+    , flox
     } @ inputs:
     let
       overlays = [
