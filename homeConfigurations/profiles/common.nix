@@ -19,7 +19,8 @@ in {
   home.shellAliases.cat = "bat";
 
   home.packages = with pkgs; [
-    inputs.flox.packages.${pkgs.system}.flox
+    inputs.flox.packages.${pkgs.system}.default
+    inputs.devenv.packages.${pkgs.system}.default
     coreutils
     entr
     fd

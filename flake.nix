@@ -3,9 +3,11 @@
 
   nixConfig.extra-substituters = [
     "https://cache.flox.dev"
+    "https://devenv.cachix.org"
   ];
   nixConfig.extra-trusted-public-keys = [
     "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
+    "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
   ];
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
@@ -28,6 +30,7 @@
   inputs.mac-app-util.inputs.flake-utils.follows = "flake-utils";
 
   inputs.flox.url = "github:flox/flox/v1.2.3";
+  inputs.devenv.url = "github:cachix/devenv/v1.0.8";
 
   outputs =
     { self
