@@ -27,7 +27,7 @@
   inputs.mac-app-util.inputs.nixpkgs.follows = "nixpkgs-unstable";
   inputs.mac-app-util.inputs.flake-utils.follows = "flake-utils";
 
-  inputs.flox.url = "github:flox/flox/v1.2.2";
+  inputs.flox.url = "github:flox/flox/v1.2.3";
 
   outputs =
     { self
