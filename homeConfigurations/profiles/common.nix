@@ -9,18 +9,16 @@ in {
   home.username = user.username;
   home.stateVersion = "22.11";
 
+  home.sessionVariables.DIRENV_LOG_FORMAT = "";
   home.sessionVariables.EDITOR = "nvim";
-  home.sessionVariables.GIT_EDITOR = "nvim";
   home.sessionVariables.FZF_DEFAULT_COMMAND = "rg --files";
-
-  home.shellAliases.grep = "rg";
-  home.shellAliases.find = "fd";
-  home.shellAliases.ps = "procs";
-  home.shellAliases.cat = "bat";
+  home.sessionVariables.GIT_EDITOR = "nvim";
 
   home.packages = with pkgs; [
     inputs.flox.packages.${pkgs.system}.default
     inputs.devenv.packages.${pkgs.system}.default
+    devbox
+    asdf
     coreutils
     entr
     fd
@@ -102,8 +100,9 @@ in {
       path = "~/.config/git/config-flox";
       condition = "hasconfig:remote.*.url:git@github.com\:flox-examples/**";
     }
-
   ];
+  programs.git.userName = user.fullname;
+  programs.git.userEmail = user.email;
 
   programs.git.enable = true;
   programs.git.package = pkgs.gitAndTools.gitFull;
