@@ -16,8 +16,8 @@
 
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-  inputs.darwin.url = "github:lnl7/nix-darwin/master";
-  inputs.darwin.inputs.nixpkgs.follows = "nixpkgs-unstable";
+  inputs.nix-darwin.url = "github:lnl7/nix-darwin/master";
+  inputs.nix-darwin.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
   inputs.home-manager.url = "github:nix-community/home-manager";
   inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -37,7 +37,7 @@
     , flake-utils
     , nixpkgs-unstable
     , nixos-hardware
-    , darwin
+    , nix-darwin
     , home-manager
     , nightfox-src
     , mac-app-util
@@ -65,7 +65,8 @@
               (import (self + "/homeConfigurations/${name}.nix"))
             ];
             extraSpecialArgs = {
-              inherit user inputs;
+              inherit inputs;
+              user = user // user.machines.${name};
               hostname = name;
             };
           };
@@ -77,10 +78,11 @@
         , system ? "aarch64-darwin"
         }:
         {
-          "${name}" = darwin.lib.darwinSystem
+          "${name}" = nix-darwin.lib.darwinSystem
             { inherit system;
               specialArgs = {
-                inherit user inputs;
+                inherit inputs;
+                user = user // user.machines.${name};
                 hostname = name;
               };
               modules =
@@ -109,7 +111,8 @@
           "${name}" = nixpkgs.lib.nixosSystem
             { inherit system;
               specialArgs = {
-                inherit user inputs;
+                inherit inputs;
+                user = user // user.machines.${name};
                 hostname = name;
               };
               modules =
@@ -128,14 +131,18 @@
           pkgs = import nixpkgs-unstable { inherit system overlays; };
         in rec {
           devShell = pkgs.mkShell {
-            system = "aarch64-darwin";
+            inherit system;
+            packages = pkgs.lib.optionals pkgs.stdenv.isDarwin [
+              nix-darwin.packages.${system}.default
+            ];
+
           };
         });
 
       user = {
         fullname = "Rok Garbas";
-        username = "rok";
         email = "rok@garbas.si";
+        username = "rok";
         hashedPassword = "$6$sBFfflUBZtZMD$h.EWNsmmX8iwTM7jShIvYwvS2/h7dncGTNhG.yPN1dOte1Et0TTz7HSFmzkuWjQpnBAfANYdptF3EQoUNSYwx/";
         machines = {
           floki = {
@@ -144,14 +151,16 @@
           solo = {
             sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwOFnH4EHVCV/8/aaNg4n/zywH7IlSWur92iN9eeHGX";
           };
-          # work macos
           jaime = {
             sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKex8HTaW5y1IrhxVKU4r9XfLNWl6kvzpBF74VXovfPu";
           };
           cercei = {
             sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICZr0HtRTIngjPGi4yliL4vffUYxx1OMCcfHcecAhgO5";
           };
-
+          brienne = {
+            username = "rok.garbas";
+            sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE6EoPJOTe245KXcxpXb1qwHH26Bi1C77+qQLXsOUnBS";
+          };
         };
       };
     in
@@ -159,11 +168,13 @@
         homeConfigurations =
           {}
           // mkHomeConfiguration   { system = "aarch64-darwin"; name = "jaime"; }
-          // mkHomeConfiguration   { system = "aarch64-linux"; name = "solo"; }  # 
+          // mkHomeConfiguration   { system = "aarch64-darwin"; name = "brienne"; }
+          // mkHomeConfiguration   { system = "aarch64-linux"; name = "solo"; }
           ;
         darwinConfigurations =
           {}
-          // mkDarwinConfiguration { system = "aarch64-darwin"; name = "jaime"; }  # macos machine work
+          // mkDarwinConfiguration { system = "aarch64-darwin"; name = "jaime"; }
+          // mkDarwinConfiguration { system = "aarch64-darwin"; name = "brienne"; }
           ;
         nixosConfigurations =
           {}

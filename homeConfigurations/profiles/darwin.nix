@@ -26,8 +26,7 @@
   };
   programs.kitty.settings.copy_on_select = "yes";
   programs.kitty.settings.enable_audio_bell = "no";
-  programs.kitty.settings.open_url_with = "/Applications/Firefox.app/Contents/MacOS/firefox";
   programs.kitty.settings.tab_bar_edge = "top";
   programs.kitty.shellIntegration.enableZshIntegration = true;
-  programs.kitty.theme = "Nord";
+  programs.kitty.themeFile = "Nord";
 }
