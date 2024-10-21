@@ -108,76 +108,12 @@ in {
     # https://github.com/folke/which-key.nvim
     { plugin = which-key-nvim;
       config = asLua ''
-        require("which-key").setup({
-          plugins = {
-            marks = true, -- shows a list of your marks on ' and `
-            registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
-            spelling = {
-              enabled = true, -- enabling this will show WhichKey when pressing z= to select spelling suggestions
-              suggestions = 20, -- how many suggestions should be shown in the list?
-            },
-            -- the presets plugin, adds help for a bunch of default keybindings in Neovim
-            -- No actual key bindings are created
-            presets = {
-              operators = true, -- adds help for operators like d, y, ... and registers them for motion / text object completion
-              motions = true, -- adds help for motions
-              text_objects = true, -- help for text objects triggered after entering an operator
-              windows = true, -- default bindings on <c-w>
-              nav = true, -- misc bindings to work with windows
-              z = true, -- bindings for folds, spelling and others prefixed with z
-              g = true, -- bindings for prefixed with g
-            },
-          },
-          -- add operators that will trigger motion and text object completion
-          -- to enable all native operators, set the preset / operators plugin above
-          operators = { gc = "Comments" },
-          key_labels = {
-            -- override the label used to display some keys. It doesn't effect WK in any other way.
-            -- For example:
-            -- ["<space>"] = "SPC",
-            -- ["<cr>"] = "RET",
-            -- ["<tab>"] = "TAB",
-          },
-          icons = {
-            breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
-            separator = "➜", -- symbol used between a key and it's label
-            group = "+", -- symbol prepended to a group
-          },
-          popup_mappings = {
-            scroll_down = '<c-d>', -- binding to scroll down inside the popup
-            scroll_up = '<c-u>', -- binding to scroll up inside the popup
-          },
-          window = {
-            border = "none", -- none, single, double, shadow
-            position = "bottom", -- bottom, top
-            margin = { 1, 0, 1, 0 }, -- extra window margin [top, right, bottom, left]
-            padding = { 2, 2, 2, 2 }, -- extra window padding [top, right, bottom, left]
-            winblend = 0
-          },
-          layout = {
-            height = { min = 4, max = 25 }, -- min and max height of the columns
-            width = { min = 20, max = 50 }, -- min and max width of the columns
-            spacing = 3, -- spacing between columns
-            align = "left", -- align columns left, center or right
-          },
-          ignore_missing = false, -- enable this to hide mappings for which you didn't specify a label
-          hidden = { "<silent>", "<cmd>", "<Cmd>", "<CR>", "call", "lua", "^:", "^ "}, -- hide mapping boilerplate
-          show_help = true, -- show help message on the command line when the popup is visible
-          triggers = "auto", -- automatically setup triggers
-          -- triggers = {"<leader>"} -- or specify a list manually
-          triggers_blacklist = {
-            -- list of mode / prefixes that should never be hooked by WhichKey
-            -- this is mostly relevant for key maps that start with a native binding
-            -- most people should not need to change this
-            i = { "j", "k" },
-            v = { "j", "k" },
-          },
-        })
         local wk = require("which-key")
+        wk.setup()
         wk.register({
-          q = { ":wqa<cr>", "Save and exit" },
-          w = { ":bd<cr>", "Close buffer" },
-        } , { prefix = '<leader>' })
+          { "<leader>q", ":wqa<cr>", desc = "Save and exit" },
+          { "<leader>w", ":bd<cr>", desc = "Close buffer" },
+        })
       '';
     }
     # Syntax highlighting (via treesitter)
@@ -196,7 +132,7 @@ in {
         require'nvim-treesitter.configs'.setup {
           ensure_installed = {},
           sync_install = false,
-	  auto_install = false,
+          auto_install = false,
           highlight = {
             enable = true,
             additional_vim_regex_highlighting = false,
@@ -252,38 +188,31 @@ in {
 
         local wk = require("which-key")
         wk.register({
-          b = {
-            name = "buffers",
-            b = { "<cmd>Telescope buffers<cr>"      , "Buffers" },
-          },
-          f = {
-            name = "files",
-            n = { "<cmd>enew<cr>"                   , "New File" },
-            r = { "<cmd>Telescope oldfiles<cr>"     , "Open Recent File" },
-            f = { "<cmd>Telescope find_files<cr>"   , "Find File" },
-            F = { "<cmd>Telescope file_browser<cr>" , "File browser" },
-            s = { "<cmd>Telescope live_grep<cr>"    , "Live grep" },
-          },
-          g = {
-            name = "git",
-            c = { "<cmd>Telescope git_commits<cr>"  , "Commits diff" },
-            C = { "<cmd>Telescope git_bcommits<cr>" , "Buffer's commits diff" },
-            b = { "<cmd>Telescope git_branches<cr>" , "Branches" },
-            s = { "<cmd>Telescope git_status<cr>"   , "Status" },
-            S = { "<cmd>Telescope git_stash<cr>"    , "Stash" },
-            g = { name = "GitHub",
-              i = { "<cmd>Telescope gh issues<cr>"       , "Issues" },
-              p = { "<cmd>Telescope gh pull_request<cr>" , "Pull Requests" },
-              g = { "<cmd>Telescope gh gist<cr>"         , "Gists" },
-              r = { "<cmd>Telescope gh run<cr>"          , "Workflow runs" },
-            },
-          },
-          s = { "<cmd>Telescope spell_suggest<cr>", "Spell suggest" },
-          H = { "<cmd>Telescope man_pages<cr>"    , "Man pages" },
-          h = { "<cmd>Telescope help_tags<cr>"    , "Help tags" },
-          m = { "<cmd>Telescope marks<cr>"        , "Marks" },
-          p = { "<cmd>Telescope project<cr>"      , "Projects" },
-        }, { prefix = "<leader>" })
+          { "<leader>H", "<cmd>Telescope man_pages<cr>", desc = "Man pages" },
+          { "<leader>b", group = "buffers" },
+          { "<leader>bb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
+          { "<leader>f", group = "files" },
+          { "<leader>fF", "<cmd>Telescope file_browser<cr>", desc = "File browser" },
+          { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find File" },
+          { "<leader>fn", "<cmd>enew<cr>", desc = "New File" },
+          { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Open Recent File" },
+          { "<leader>fs", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
+          { "<leader>g", group = "git" },
+          { "<leader>gC", "<cmd>Telescope git_bcommits<cr>", desc = "Buffer's commits diff" },
+          { "<leader>gS", "<cmd>Telescope git_stash<cr>", desc = "Stash" },
+          { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "Branches" },
+          { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Commits diff" },
+          { "<leader>gg", group = "GitHub" },
+          { "<leader>ggg", "<cmd>Telescope gh gist<cr>", desc = "Gists" },
+          { "<leader>ggi", "<cmd>Telescope gh issues<cr>", desc = "Issues" },
+          { "<leader>ggp", "<cmd>Telescope gh pull_request<cr>", desc = "Pull Requests" },
+          { "<leader>ggr", "<cmd>Telescope gh run<cr>", desc = "Workflow runs" },
+          { "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Status" },
+          { "<leader>h", "<cmd>Telescope help_tags<cr>", desc = "Help tags" },
+          { "<leader>m", "<cmd>Telescope marks<cr>", desc = "Marks" },
+          { "<leader>p", "<cmd>Telescope project<cr>", desc = "Projects" },
+          { "<leader>s", "<cmd>Telescope spell_suggest<cr>", desc = "Spell suggest" },
+        })
       '';
     }
     # AI
@@ -448,30 +377,22 @@ in {
         -- https://github.com/nvim-telescope/telescope.nvim#neovim-lsp-pickers
         local wk = require("which-key")
         wk.register({
-          l = {
-            name = "LSP",
-            l = { "<cmd>lua vim.lsp.buf.hover()<cr>"                  , "Hover" },
-            f = { "<cmd>lua vim.lsp.buf.formatting()<cr>"             , "Format" },
-            --r = { "<cmd>lua vim.lsp.buf.references()<cr>"             , "References" },
-            r = { "<cmd>Telescope lsp_references<cr>"                 , "References" },
-            R = { "<cmd>lua vim.lsp.buf.rename()<cr>"                 , "Rename" },
-            --s = { "<cmd>lua vim.lsp.buf.signature_help()<cr>"         , "Singnature help" },
-            s = { "<cmd>Telescope lsp_document_symbols<cr>"           , "Document symbols" },
-            S = { "<cmd>Telescope lsp_workspace_symbols<cr>"          , "Workspace symbols" },
-            y = { "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>"  , "Workspace symbols" },
-            --d = { "<cmd>lua vim.lsp.buf.definition()<cr>"             , "Definition" },
-            d = { "<cmd>Telescope lsp_definitions<cr>"                , "Definitions" },
-            D = { "<cmd>lua vim.lsp.buf.declaration()<cr>"            , "Declaration" },
-            --t = { "<cmd>lua vim.lsp.buf.type_definition()<cr>"        , "Type definition" },
-            t = { "<cmd>Telescope lsp_type_definitions<cr>"           , "Type definition" },
-            --I = { "<cmd>lua vim.lsp.buf.implementation()<cr>"         , "Implementation" },
-            I = { "<cmd>Telescope lsp_implementations<cr>"            , "Implementation" },
-            i = { "<cmd>Telescope lsp_incoming_calls<cr>"             , "Incoming calls" },
-            o = { "<cmd>Telescope lsp_outgoing_calls<cr>"             , "Outgoing calls" },
-            Y = { "<cmd>Telescope diagnostics<cr>"                    , "Diagnostics" },
-
-          },
-        }, { prefix = "<leader>" })
+          { "<leader>l", group = "LSP" },
+          { "<leader>lD", "<cmd>lua vim.lsp.buf.declaration()<cr>", desc = "Declaration" },
+          { "<leader>lI", "<cmd>Telescope lsp_implementations<cr>", desc = "Implementation" },
+          { "<leader>lR", "<cmd>lua vim.lsp.buf.rename()<cr>", desc = "Rename" },
+          { "<leader>lS", "<cmd>Telescope lsp_workspace_symbols<cr>", desc = "Workspace symbols" },
+          { "<leader>lY", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
+          { "<leader>ld", "<cmd>Telescope lsp_definitions<cr>", desc = "Definitions" },
+          { "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<cr>", desc = "Format" },
+          { "<leader>li", "<cmd>Telescope lsp_incoming_calls<cr>", desc = "Incoming calls" },
+          { "<leader>ll", "<cmd>lua vim.lsp.buf.hover()<cr>", desc = "Hover" },
+          { "<leader>lo", "<cmd>Telescope lsp_outgoing_calls<cr>", desc = "Outgoing calls" },
+          { "<leader>lr", "<cmd>Telescope lsp_references<cr>", desc = "References" },
+          { "<leader>ls", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document symbols" },
+          { "<leader>lt", "<cmd>Telescope lsp_type_definitions<cr>", desc = "Type definition" },
+          { "<leader>ly", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", desc = "Workspace symbols" },
+        })
       '';
     }
   ];

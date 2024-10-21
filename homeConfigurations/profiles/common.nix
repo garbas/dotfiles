@@ -50,7 +50,7 @@
   programs.eza.enable = true;
   programs.eza.enableZshIntegration = true;
   programs.eza.git = true;
-  programs.eza.icons = true;
+  programs.eza.icons = "auto";
 
   programs.fzf.enable = true;
   programs.fzf.enableZshIntegration = true;
