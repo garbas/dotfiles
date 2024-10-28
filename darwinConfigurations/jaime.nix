@@ -1,8 +1,10 @@
 { pkgs, user, hostname, inputs, ... }: {
 
-  imports = [
-    (import ./flox-remote-builders.nix "/Users/${user.username}/.ssh/id_ed25519")
-  ];
+  #imports = [
+  #    (import ./flox-remote-builders.nix "/Users/${user.username}/.ssh/id_ed25519")
+  #];
+
+  system.stateVersion = 5;
 
   # use existing nix installation
   nix.package = pkgs.nixVersions.latest;
