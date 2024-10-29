@@ -148,9 +148,12 @@
   programs.tmux.clock24 = true;
   programs.tmux.keyMode = "vi";
   programs.tmux.historyLimit = 10000;
+  programs.tmux.newSession = true;
   programs.tmux.prefix = "C-Space";
   programs.tmux.shortcut = "Space";
   programs.tmux.baseIndex = 1;
+  programs.tmux.mouse = true;
+  programs.tmux.shell = "${pkgs.zsh}/bin/zsh";
   programs.tmux.plugins = with pkgs.tmuxPlugins; [
     nord
     tmux-fzf

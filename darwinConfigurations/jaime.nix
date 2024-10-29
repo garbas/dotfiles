@@ -23,6 +23,9 @@
   homebrew.brews = [
     "create-dmg"
   ];
+  homebrew.casks = [
+    "alt-tab"
+  ];
 
   # this does the trick to load the nix-darwin environment
   programs.zsh.enable = true;

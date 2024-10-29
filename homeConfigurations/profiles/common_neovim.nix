@@ -1,10 +1,5 @@
-{ pkgs, lib, config, user, hostname, inputs, ... }: let
-  asLua = t: ''
-    lua << EOF
-    ${t}
-    EOF
-  '';
-in {
+{ pkgs, lib, config, user, hostname, inputs, ... }:
+{
 
   programs.neovim.enable = true;
   programs.neovim.viAlias = true;
@@ -13,109 +8,172 @@ in {
   programs.neovim.withNodeJs = true;
   programs.neovim.withPython3 = true;
   programs.neovim.withRuby = true;
-  programs.neovim.extraConfig = ''
-    " Use <Space> as the leader key
-    let mapleader=" "
+  programs.neovim.defaultEditor = true;
+  programs.neovim.extraLuaConfig = ''
+    local g = vim.g
+    local o = vim.opt
 
-    " Allows you to change buffers even if the current on has unsaved changes
-    set hidden
+    -- Use <Space> as the leader key
+    g.mapleader = " "
+    g.maplocalleader = "\\"
 
-    " Intuit the indentation of new lines when creating them
-    set smartindent
+    -- o.number         = true  -- enable line number
+    -- o.relativenumber = true  -- enable relative line number
+    o.undofile       = true     -- persistent undo
+    o.backup         = false    -- disable backup
+    o.number         = true     -- enable line number
+    o.relativenumber = false    -- enable relative line number
+    o.cursorline     = true     -- enable cursor line
+    o.cursorlineopt  = "both"
+    o.expandtab      = true     -- use spaces instead of tabs
+    o.autowrite      = true     -- auto write buffer when it's not focused
+    o.hidden         = true     -- keep hidden buffers
+    o.hlsearch       = true     -- highlight matching search
+    o.ignorecase     = true     -- case insensitive on search..
+    o.smartcase      = true     -- ..unless there's a capital
+    o.equalalways    = true     -- make window size always equal
+    o.list           = true     -- display listchars
+    o.showmode       = false    -- don't show mode
+    o.autoindent     = true     -- enable autoindent
+    o.smartindent    = true     -- smarter indentation
+    o.smarttab       = true     -- make tab behaviour smarter
+    o.splitbelow     = true     -- split below instead of above
+    o.splitright     = true     -- split right instead of left
+    o.splitkeep      = "screen" -- stabilize split
+    o.startofline    = false    -- don't go to the start of the line when moving to another file
+    o.swapfile       = false    -- disable swapfile
+    o.termguicolors  = true     -- true colours for better experience
+    o.wrap           = false    -- don't wrap lines
+    o.writebackup    = false    -- disable backup
+    o.swapfile       = false    -- disable swap
+    o.backupcopy     = "yes"    -- fix weirdness for stuff that replaces the entire file when hot reloading
+    o.completeopt    = {
+      "menu",
+      "menuone",
+      "noselect",
+      "noinsert",
+    }                           -- better completion
+    o.encoding       = "UTF-8"  -- set encoding
+    o.fillchars      = {
+      vert = "│",
+      eob = " ",
+      diff = " ",
+      fold = " ",
+      foldopen = "",
+      foldsep = " ",
+      foldclose = "",
+    }                           -- make vertical split sign better
+    o.foldmethod     = "expr"
+    o.foldopen       = {
+      "percent",
+      "search",
+    }                           -- don't open fold if I don't tell it to do so
+    o.inccommand     = "split"  -- incrementally show result of command
+    o.list           = true;
+    o.listchars      = {
+      -- eol = "↲",
+      -- tab = "» ",
+      tab = "▸▸",
+      trail = "·",
+    }                           -- set listchars
+    o.mouse          = "nvi"    -- enable mouse support in normal, insert, and visual mode
+    o.shortmess      = "csa"    -- disable some stuff on shortmess
+    o.signcolumn     = "yes:1"  -- enable sign column all the time 4 column
+    o.shell          = "${pkgs.zsh}/bin/zsh" 
+                                -- use bash instead of zsh
+    o.colorcolumn    = { "80" } -- 80 chars color column
+    o.laststatus     = 3        -- always enable statusline
+    o.pumheight      = 10       -- limit completion items
+    o.re             = 0        -- set regexp engine to auto
+    o.scrolloff      = 2        -- make scrolling better
+    o.sidescroll     = 2        -- make scrolling better
+    o.shiftwidth     = 2        -- set indentation width
+    o.sidescrolloff  = 15       -- make scrolling better
+    o.tabstop        = 2        -- tabsize
+    o.timeoutlen     = 400      -- faster timeout wait time
+    o.updatetime     = 1000     -- set faster update time
+    o.joinspaces     = false
+    o.diffopt:append { "algorithm:histogram", "indent-heuristic" }
 
-    " Who wants .swap files??
-    set noswapfile
+    -- Turn persistent undo on, means that you can undo even when you close a buffer/VIM
+    o.undofile       = true
+    o.undodir        = vim.fn.expand("$HOME/.cache/vim_runtime/temp_dirs/undodir")
 
-    " Turn persistent undo on
-    " means that you can undo even when you close a buffer/VIM
-    set undodir=~/.vim_runtime/temp_dirs/undodir
-    set undofile
+    -- Use the system clipboard
+    o.clipboard      = "unnamed"
 
-    " TODO: add text
-    set completeopt=menu,menuone,noselect
 
-    " Use absolute line numbers
-    set number norelativenumber
-
-    " Use the system clipboard
-    set clipboard=unnamed
-
-    " Use a color column on the 80-character mark
-    set colorcolumn=80
-
-    " Press <tab>, get two spaces
-    set expandtab shiftwidth=2
-
-    " Show `▸▸` for tabs: 	, `·` for tailing whitespace: 
-    set list listchars=tab:▸▸,trail:·
-
-    " Enable mouse support
-    set mouse=a
-
-    " Time in milliseconds to wait for a key code sequence to complete.
-    set timeoutlen=300
   '';
+
   programs.neovim.plugins = with pkgs.vimPlugins; [
+
     # Intelligently reopen files at your last edit position.
     # https://github.com/farmergreg/vim-lastplace
-    { plugin = vim-lastplace;
-      config = ''
-        let g:lastplace_ignore = "gitcommit,gitrebase,svn,hgcommit"
-        let g:lastplace_ignore_buftype = "quickfix,nofile,help"
-      '';
-    }
+    vim-lastplace
+
     # Nord-ish color theme
     { plugin = nordic-nvim;
-      config = asLua ''
-        require('nordic').colorscheme({
-          -- Underline style used for spelling
-          -- Options: 'none', 'underline', 'undercurl'
-          underline_option = 'none',
+      type = "lua";
+      config = ''
+        -- XXX: next release will only need
+        -- require("nordic").load()
+        require("nordic").colorscheme({
+            -- Underline style used for spelling
+            -- Options: 'none', 'underline', 'undercurl'
+            underline_option = "none",
 
-          -- Italics for certain keywords such as constructors, functions,
-          -- labels and namespaces
-          italic = true,
+            -- Italics for certain keywords such as constructors, functions,
+            -- labels and namespaces
+            italic = true,
 
-          -- Italic styled comments
-          italic_comments = true,
+            -- Italic styled comments
+            italic_comments = false,
 
-          -- Minimal mode: different choice of colors for Tabs and StatusLine
-          minimal_mode = false,
+            -- Minimal mode: different choice of colors for Tabs and StatusLine
+            minimal_mode = false,
 
-          -- Darker backgrounds for certain sidebars, popups, etc.
-          -- Options: true, false, or a table of explicit names
-          -- Supported: terminal, qf, vista_kind, packer, nvim-tree, telescope, whichkey
-          alternate_backgrounds = true,
+            -- Darker backgrounds for certain sidebars, popups, etc.
+            -- Options: true, false, or a table of explicit names
+            -- Supported: terminal, qf, vista_kind, packer, nvim-tree, telescope, whichkey
+            alternate_backgrounds = false,
 
-          -- Callback function to define custom color groups
-          -- See 'lua/nordic/colors/example.lua' for example defitions
-          --custom_colors = function(c, s, cs)
-          --  return {}
-          --end
+            -- Callback function to define custom color groups
+            -- See 'lua/nordic/colors/example.lua' for example defitions
+            --custom_colors = function(c, s, cs)
+            --  return {}
+            --end
         })
       '';
     }
+
     # A lua powered greeter (like vim-startify / dashboard-nvim)
     # https://github.com/goolord/alpha-nvim
     nvim-web-devicons
     { plugin = alpha-nvim;
-      config = asLua ''
-        require("alpha").setup(require"alpha.themes.startify".config)
+      type = "lua";
+      config = ''
+        local startify = require("alpha.themes.startify")
+        startify.file_icons.provider = "devicons"
+        require("alpha").setup(
+          startify.config
+        )
       '';
     }
+
     # Displays a popup with possible keybindings of the command you
     # started typing.
     # https://github.com/folke/which-key.nvim
     { plugin = which-key-nvim;
-      config = asLua ''
+      type = "lua";
+      config = ''
         local wk = require("which-key")
-        wk.setup()
-        wk.register({
+        wk.add({
           { "<leader>q", ":wqa<cr>", desc = "Save and exit" },
           { "<leader>w", ":bd<cr>", desc = "Close buffer" },
         })
       '';
     }
+
     # Syntax highlighting (via treesitter)
     { plugin = nvim-treesitter.withPlugins (p: [
         p."tree-sitter-rust"
@@ -128,8 +186,9 @@ in {
         p."tree-sitter-css"
         p."tree-sitter-astro"
       ]);
-      config = asLua ''
-        require'nvim-treesitter.configs'.setup {
+      type = "lua";
+      config = ''
+        require("nvim-treesitter.configs").setup {
           ensure_installed = {},
           sync_install = false,
           auto_install = false,
@@ -152,6 +211,7 @@ in {
         }
       '';
     }
+
     # Navigation using Telescope
     # https://github.com/nvim-telescope/telescope.nvim/
     telescope-fzf-native-nvim
@@ -162,8 +222,9 @@ in {
     #TODO: telescope-manix-nvim
     #TODO: telescope-zoxide-nvim
     { plugin = telescope-nvim;
-      config = asLua ''
-        require('telescope').setup {
+      type = "lua";
+      config = ''
+        require("telescope").setup {
           extensions = {
             fzf = {
               fuzzy = true,                    -- false will only do exact matching
@@ -187,7 +248,7 @@ in {
         }
 
         local wk = require("which-key")
-        wk.register({
+        wk.add({
           { "<leader>H", "<cmd>Telescope man_pages<cr>", desc = "Man pages" },
           { "<leader>b", group = "buffers" },
           { "<leader>bb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
@@ -215,15 +276,20 @@ in {
         })
       '';
     }
+
     # AI
+    # https://github.com/zbirenbaum/copilot.lua
     { plugin = copilot-lua;
-      config = asLua ''
+      type = "lua";
+      config = ''
         require("copilot").setup({
           suggestion = { enabled = false },
           panel = { enabled = false },
+          copilot_node_command = "${pkgs.nodejs_22}/bin/node", -- Node.js version must be > 18.x
         })
       '';
     }
+
     # EDITING - AUTOCOMPLETION / SNIPPETS
     luasnip
     vim-snippets
@@ -237,7 +303,8 @@ in {
     cmp-nvim-lsp-document-symbol
     copilot-cmp
     { plugin = nvim-cmp;
-      config = asLua ''
+      type = "lua";
+      config = ''
         require("copilot_cmp").setup()
 
         local has_words_before = function()
@@ -305,9 +372,11 @@ in {
         })
       '';
     }
+
     # LSP
     { plugin = nvim-lspconfig;
-      config = asLua ''
+      type = "lua";
+      config = ''
         local capabilities = vim.lsp.protocol.make_client_capabilities()
         capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
@@ -347,19 +416,15 @@ in {
         -- map buffer local keybindings when the language server attaches
 
         local servers = {
-          "astro",
           "bashls",
           "beancount",
           "ccls",
           "cssls",
-          "elmls",
           "html",
           "jsonls",
           "nickel_ls",
           "pyright",
-          "rls",
           "rust_analyzer",
-          "rnix",
           "terraformls",
           "tailwindcss",
         }
@@ -376,7 +441,7 @@ in {
 
         -- https://github.com/nvim-telescope/telescope.nvim#neovim-lsp-pickers
         local wk = require("which-key")
-        wk.register({
+        wk.add({
           { "<leader>l", group = "LSP" },
           { "<leader>lD", "<cmd>lua vim.lsp.buf.declaration()<cr>", desc = "Declaration" },
           { "<leader>lI", "<cmd>Telescope lsp_implementations<cr>", desc = "Implementation" },
