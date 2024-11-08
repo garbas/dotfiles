@@ -9,13 +9,6 @@
   # darwin specific packages
   home.packages = [];
  
-  # XXX: enable once flox is stable
-  #programs.zsh.initExtra = ''
-  #  export FLOX_AUTOUPDATE=2
-  #  eval "$(flox activate -e flox/prerelease)"
-  #  export FLOX_AUTOUPDATE=0
-  #'';
-
   programs.kitty.enable = true;
   programs.kitty.font.name = "Fira Code Light";
   programs.kitty.font.size = 12;
