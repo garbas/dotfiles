@@ -29,7 +29,7 @@
   inputs.mac-app-util.inputs.nixpkgs.follows = "nixpkgs-unstable";
   inputs.mac-app-util.inputs.flake-utils.follows = "flake-utils";
 
-  inputs.flox.url = "github:flox/flox/v1.3.3";
+  inputs.flox.url = "github:flox/flox/v1.3.4";
   inputs.devenv.url = "github:cachix/devenv/v1.3.1";
 
   outputs =

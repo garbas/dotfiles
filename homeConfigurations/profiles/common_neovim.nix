@@ -285,7 +285,7 @@
         require("copilot").setup({
           suggestion = { enabled = false },
           panel = { enabled = false },
-          copilot_node_command = "${pkgs.nodejs_22}/bin/node", -- Node.js version must be > 18.x
+          copilot_node_command = "${pkgs.nodejs}/bin/node", -- Node.js version must be > 18.x
         })
       '';
     }
