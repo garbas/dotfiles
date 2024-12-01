@@ -20,6 +20,7 @@
   programs.kitty.settings.copy_on_select = "yes";
   programs.kitty.settings.enable_audio_bell = "no";
   programs.kitty.settings.tab_bar_edge = "top";
+  programs.kitty.settings.scrollback_lines = 10000;
   programs.kitty.shellIntegration.enableZshIntegration = true;
   programs.kitty.themeFile = "Nord";
 }
