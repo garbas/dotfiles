@@ -34,7 +34,7 @@
     unzip
     wget
     which
-    _1password
+    _1password-cli
     kitty.terminfo
   ];
 
