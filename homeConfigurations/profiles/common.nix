@@ -15,6 +15,7 @@
   home.packages = with pkgs; [
     inputs.flox.packages.${pkgs.system}.default
     inputs.devenv.packages.${pkgs.system}.default
+    inputs.ghostty.packages.${pkgs.system}.default
     asciinema
     devbox
     asdf
