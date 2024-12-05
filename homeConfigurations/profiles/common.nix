@@ -192,6 +192,10 @@
 
   '';
 
+  programs.vscode.enable = true;
+
+  programs.zed-editor.enable = true;
+
   programs.zoxide.enable = true;
   programs.zoxide.enableZshIntegration = true;
 
