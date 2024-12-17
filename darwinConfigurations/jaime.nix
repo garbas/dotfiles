@@ -39,6 +39,7 @@
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
+  home-manager.backupFileExtension = "backup";
   home-manager.users.rok = import ./../homeConfigurations/jaime.nix;
   home-manager.extraSpecialArgs = { inherit user inputs hostname; };
 

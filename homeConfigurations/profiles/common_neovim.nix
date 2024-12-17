@@ -176,15 +176,17 @@
 
     # Syntax highlighting (via treesitter)
     { plugin = nvim-treesitter.withPlugins (p: [
+        p."tree-sitter-go"
         p."tree-sitter-rust"
-        p."tree-sitter-nix"
-        p."tree-sitter-json"
         p."tree-sitter-javascript"
         p."tree-sitter-typescript"
+        p."tree-sitter-python"
+        p."tree-sitter-nix"
+        p."tree-sitter-json"
+        p."tree-sitter-toml"
         p."tree-sitter-bash"
         p."tree-sitter-html"
         p."tree-sitter-css"
-        p."tree-sitter-astro"
       ]);
       type = "lua";
       config = ''
@@ -416,17 +418,8 @@
         -- map buffer local keybindings when the language server attaches
 
         local servers = {
-          "bashls",
-          "beancount",
-          "ccls",
-          "cssls",
-          "html",
-          "jsonls",
-          "nickel_ls",
-          "pyright",
           "rust_analyzer",
-          "terraformls",
-          "tailwindcss",
+          "gopls",
         }
 
         for _, lsp in pairs(servers) do
