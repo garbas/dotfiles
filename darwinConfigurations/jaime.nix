@@ -29,6 +29,12 @@
     "alt-tab"
     "ghostty"
   ];
+  homebrew.onActivation.autoUpdate = true;
+  homebrew.onActivation.upgrade = true;
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.iosevka
+  ];
 
   # this does the trick to load the nix-darwin environment
   programs.zsh.enable = true;

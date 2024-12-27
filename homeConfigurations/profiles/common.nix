@@ -41,7 +41,12 @@
   # So happy when home manager is almost having Ghostty support hours after release:
   # See https://github.com/nix-community/home-manager/pull/6235
   xdg.configFile."ghostty/config".source = pkgs.writeText "ghostty-config" ''
-    font-family = "Fira Code";
+    font-family = "Iosevka Nerd Font Mono"
+    font-size = 14
+    background-opacity = 0.9
+    macos-titlebar-style = "hidden"
+    window-padding-x = 10
+    window-padding-y = 10
   '';
 
   nixpkgs.config.allowBroken = false;
