@@ -15,7 +15,6 @@
   home.packages = with pkgs; [
     inputs.flox.packages.${pkgs.system}.default
     inputs.devenv.packages.${pkgs.system}.default
-    inputs.ghostty.packages.${pkgs.system}.default
     asciinema
     devbox
     asdf
@@ -36,8 +35,14 @@
     wget
     which
     _1password-cli
-    kitty.terminfo
+    #kitty.terminfo
   ];
+
+  # So happy when home manager is almost having Ghostty support hours after release:
+  # See https://github.com/nix-community/home-manager/pull/6235
+  xdg.configFile."ghostty/config".source = pkgs.writeText "ghostty-config" ''
+    font-family = "Fira Code";
+  '';
 
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
@@ -91,7 +96,13 @@
   programs.git.userEmail = user.email;
 
   programs.git.enable = true;
-  programs.git.package = pkgs.gitAndTools.gitFull;
+  programs.git.package = pkgs.git.override {
+    svnSupport = false;
+    guiSupport = true;
+    sendEmailSupport = true;
+    withSsh = true;
+    withLibsecret = !pkgs.stdenv.isDarwin;
+  };
   programs.git.aliases.s = "status";
   programs.git.aliases.d = "diff";
   programs.git.aliases.ci = "commit -v";

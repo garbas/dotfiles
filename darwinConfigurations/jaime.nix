@@ -27,6 +27,7 @@
   ];
   homebrew.casks = [
     "alt-tab"
+    "ghostty"
   ];
 
   # this does the trick to load the nix-darwin environment

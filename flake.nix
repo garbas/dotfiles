@@ -30,7 +30,7 @@
   inputs.mac-app-util.inputs.flake-utils.follows = "flake-utils";
 
   inputs.ghostty.url = "github:ghostty-org/ghostty/v1.0.0";
-  inputs.flox.url = "github:flox/flox/v1.3.5";
+  inputs.flox.url = "github:flox/flox/v1.3.8";
   inputs.devenv.url = "github:cachix/devenv/v1.3.1";
 
   outputs =
