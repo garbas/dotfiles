@@ -1,8 +1,11 @@
-{ pkgs, lib, config, user, hostname, inputs, ... }:
 {
-  imports = [
-    (import ./common_neovim.nix)
-  ];
+  pkgs,
+  user,
+  inputs,
+  ...
+}:
+{
+  imports = [ (import ./common_neovim.nix) ];
 
   home.username = user.username;
   home.stateVersion = "22.11";
@@ -35,19 +38,26 @@
     wget
     which
     _1password-cli
-    #kitty.terminfo
   ];
 
   # So happy when home manager is almost having Ghostty support hours after release:
   # See https://github.com/nix-community/home-manager/pull/6235
-  xdg.configFile."ghostty/config".source = pkgs.writeText "ghostty-config" ''
-    font-family = "Iosevka Nerd Font Mono"
+  xdg.configFile."ghostty/config".text = ''
+    font-family = Iosevka Nerd Font Mono
     font-size = 14
-    background-opacity = 0.9
-    macos-titlebar-style = "hidden"
+    macos-titlebar-style = hidden
     window-padding-x = 10
     window-padding-y = 10
+    theme = dark:catppuccin-mocha,light:catppuccin-latte
   '';
+  xdg.configFile."ghostty/themes/catppuccin-latte.conf".source =
+    "${inputs.catppuccin-ghostty}/themes/catppuccin-latte.conf";
+  xdg.configFile."ghostty/themes/catppuccin-frappe.conf".source =
+    "${inputs.catppuccin-ghostty}/themes/catppuccin-frappe.conf";
+  xdg.configFile."ghostty/themes/catppuccin-macchiato.conf".source =
+    "${inputs.catppuccin-ghostty}/themes/catppuccin-macchiato.conf";
+  xdg.configFile."ghostty/themes/catppuccin-mocha.conf".source =
+    "${inputs.catppuccin-ghostty}/themes/catppuccin-mocha.conf";
 
   nixpkgs.config.allowBroken = false;
   nixpkgs.config.allowUnfree = true;
@@ -77,14 +87,13 @@
   programs.gh.settings.extensions = with pkgs; [
     #gh-poi               # Safely cleanup local branches
     #gh-markdown-preview  # README preview
-    gh-dash              # Dashboard of PRs and Issues
+    gh-dash # Dashboard of PRs and Issues
     #gh-label             # Label management
     #gh-milestone         # Milestone management
     #gh-notify            # Display notifications
     #gh-changelog         # Create changelogs (https://keepachangelog.com)
     #gh-s                 # Search Github repositories
   ];
-
 
   xdg.configFile."git/config-me".text = ''
     [user]
@@ -94,7 +103,7 @@
   programs.git.includes = [
     {
       path = "~/.config/git/config-me";
-      condition = "hasconfig:remote.*.url:git@github.com\:garbas/**";
+      condition = "hasconfig:remote.*.url:git@github.com:garbas/**";
     }
   ];
   programs.git.userName = user.fullname;
@@ -137,13 +146,45 @@
 
   programs.keychain.enable = true;
   programs.keychain.enableZshIntegration = true;
-  programs.keychain.agents = ["ssh"];
+  programs.keychain.agents = [ "ssh" ];
   programs.keychain.extraFlags = [
     "--quiet"
     "--nogui"
     "--quick"
   ];
-  programs.keychain.keys = ["id_ed25519"];
+  programs.keychain.keys = [ "id_ed25519" ];
+
+  programs.lazygit.enable = true;
+  programs.lazygit.settings =
+    let
+      importYAML =
+        file:
+        builtins.fromJSON (
+          builtins.readFile (
+            pkgs.runCommandNoCC "import-yaml.json" ''${pkgs.yj}/bin/yj < "${file}" > "$out"''
+          )
+        );
+      catppuccinTheme = importYAML "${inputs.catppuccin-lazygit}/themes/mocha/blue.yml";
+    in
+    {
+      gui.theme = {
+        activeBorderColor = [
+          "'#89b4fa"
+          "bold"
+        ];
+        inactiveBorderColor = [ "#a6adc8" ];
+        optionsTextColor = [ "#89b4fa" ];
+        selectedLineBgColor = [ "#313244" ];
+        cherryPickedCommitBgColor = [ "#45475a" ];
+        cherryPickedCommitFgColor = [ "#89b4fa" ];
+        unstagedChangesColor = [ "#f38ba8" ];
+        defaultFgColor = [ "#cdd6f4" ];
+        searchingActiveBorderColor = [ "#f9e2af" ];
+      };
+      gui.authorColors = {
+        "*" = "#b4befe";
+      };
+    };
 
   programs.less.enable = true;
 
@@ -173,7 +214,7 @@
   programs.tmux.mouse = true;
   programs.tmux.shell = "${pkgs.zsh}/bin/zsh";
   programs.tmux.plugins = with pkgs.tmuxPlugins; [
-    nord
+    catppuccin
     tmux-fzf
   ];
   programs.tmux.extraConfig = ''

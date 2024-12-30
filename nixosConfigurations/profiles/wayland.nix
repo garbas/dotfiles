@@ -1,9 +1,16 @@
 inputs:
-{ hostName
-, hostId
-, audio
+{
+  hostName,
+  hostId,
+  audio,
 }:
-{ config, lib, pkgs, modulesPath, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 
 let
   swayRun = pkgs.writeShellScript "sway-run" ''
@@ -13,10 +20,11 @@ let
 
     systemd-run --user --scope --collect --quiet --unit=sway systemd-cat --identifier=sway ${pkgs.sway}/bin/sway $@
   '';
-in {
-  imports =
-    [ (import ./console.nix inputs)
-    ];
+in
+{
+  imports = [
+    (import ./console.nix inputs)
+  ];
 
   console.keyMap = "us";
 
@@ -29,17 +37,24 @@ in {
   networking.hostName = hostName;
   networking.hostId = hostId;
   networking.nat.enable = true;
-  networking.nat.internalInterfaces = ["ve-+"];
+  networking.nat.internalInterfaces = [ "ve-+" ];
   networking.nat.externalInterface = "wlp2s0";
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
-  # TODO: factor out 
+  networking.firewall.allowedUDPPortRanges = [
+    {
+      from = 60000;
+      to = 61000;
+    }
+  ];
+  # TODO: factor out
   #networking.networkmanager.enable = true;
 
   services.greetd.enable = true;
   services.greetd.restart = false;
-  services.greetd.settings.default_session.command = "${lib.makeBinPath [pkgs.greetd.tuigreet] }/tuigreet --time --cmd ${swayRun}";
+  services.greetd.settings.default_session.command = "${
+    lib.makeBinPath [ pkgs.greetd.tuigreet ]
+  }/tuigreet --time --cmd ${swayRun}";
   services.greetd.settings.default_session.user = "greeter";
   services.greetd.settings.initial_session.command = "${swayRun}";
   services.greetd.settings.initial_session.user = "rok";
@@ -59,16 +74,16 @@ in {
       wofi
       ulauncher
 
-      dmenu-wayland #sway dep
+      dmenu-wayland # sway dep
       obs-studio
-      pavucontrol #i3status-rust dep
-      playerctl #sway dep
-      pulseaudio #i3status-rust dep
-      sway-contrib.grimshot #sway dep
-      swayidle #sway dep
-      swaylock #sway dep
-      wf-recorder #sway
-      wl-clipboard #sway dep
+      pavucontrol # i3status-rust dep
+      playerctl # sway dep
+      pulseaudio # i3status-rust dep
+      sway-contrib.grimshot # sway dep
+      swayidle # sway dep
+      swaylock # sway dep
+      wf-recorder # sway
+      wl-clipboard # sway dep
     ];
   };
 
@@ -94,7 +109,8 @@ in {
     # Fonts use for icons in i3status-rs
     font-awesome_5
   ];
-} // lib.optionalAttrs audio {
+}
+// lib.optionalAttrs audio {
   services.pipewire.enable = false;
   services.pipewire.pulse.enable = false;
   services.pipewire.wireplumber.enable = false;

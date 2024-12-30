@@ -2,7 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
 
@@ -46,18 +51,24 @@ let
 
     alacritty = self.stdenv.mkDerivation {
       name = "alacritty-${self.lib.getVersion super.alacritty}";
-      buildCommand = let bin = "${super.alacritty}/bin/alacritty"; in ''
-        if [ ! -x "${bin}" ];
-        then
-            echo "cannot find executable file \`${bin}'"
-            exit 1
-        fi
-        mkdir -p $out/bin
-        ln -s ${bin} $out/bin/alacritty
-        wrapProgram $out/bin/alacritty --set WINIT_HIDPI_FACTOR 1.0
-      '';
+      buildCommand =
+        let
+          bin = "${super.alacritty}/bin/alacritty";
+        in
+        ''
+          if [ ! -x "${bin}" ];
+          then
+              echo "cannot find executable file \`${bin}'"
+              exit 1
+          fi
+          mkdir -p $out/bin
+          ln -s ${bin} $out/bin/alacritty
+          wrapProgram $out/bin/alacritty --set WINIT_HIDPI_FACTOR 1.0
+        '';
       buildInputs = [ self.makeWrapper ];
-      passthru = { unwrapped = super.alacritty; };
+      passthru = {
+        unwrapped = super.alacritty;
+      };
     };
 
     uhk-agent =
@@ -75,7 +86,8 @@ let
             chmod ugo+rx $out/appimage
           '';
         };
-      in self.runCommand "uhk-agent" {} ''
+      in
+      self.runCommand "uhk-agent" { } ''
         mkdir -p $out/bin $out/etc/udev/rules.d 
         echo "${self.appimage-run}/bin/appimage-run ${image}/appimage" > $out/bin/uhk-agent
         chmod +x $out/bin/uhk-agent
@@ -89,16 +101,22 @@ let
         EOF
       '';
 
-      neovim = import ./../../nvim-config { };
+    neovim = import ./../../nvim-config { };
   };
 
-in {
-  imports =
-    [ "${nixos-hardware}/lenovo/thinkpad/x1/6th-gen/default.nix"
-      <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
-    ];
+in
+{
+  imports = [
+    "${nixos-hardware}/lenovo/thinkpad/x1/6th-gen/default.nix"
+    <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
+  ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "nvme"
+    "usb_storage"
+    "sd_mod"
+  ];
   boot.kernelModules = [ "kvm-intel" ];
   # Enable S3 suspend state: you have to manually follow the
   # instructions shown here: https://delta-xi.net/#056 in order to
@@ -113,30 +131,29 @@ in {
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 
-  fileSystems."/" =
-    { device = "rpool/ROOT/NIXOS";
-      encrypted = {
-        enable = true;
-        blkDev = "/dev/disk/by-partlabel/cryptroot";
-        label = "encrypted_root";
-      };
-      fsType = "zfs";
+  fileSystems."/" = {
+    device = "rpool/ROOT/NIXOS";
+    encrypted = {
+      enable = true;
+      blkDev = "/dev/disk/by-partlabel/cryptroot";
+      label = "encrypted_root";
     };
+    fsType = "zfs";
+  };
 
-  fileSystems."/home" =
-    { device = "rpool/HOME";
-      fsType = "zfs";
-    };
+  fileSystems."/home" = {
+    device = "rpool/HOME";
+    fsType = "zfs";
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/A95E-D517";
-      fsType = "vfat";
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/A95E-D517";
+    fsType = "vfat";
+  };
 
-  swapDevices =
-    [ { device = "/dev/zd0"; }
-    ];
-
+  swapDevices = [
+    { device = "/dev/zd0"; }
+  ];
 
   boot.plymouth.enable = true;
   boot.loader.systemd-boot.enable = true;
@@ -177,7 +194,7 @@ in {
   networking.hostName = "grayworm";
 
   networking.nat.enable = true;
-  networking.nat.internalInterfaces = ["ve-+"];
+  networking.nat.internalInterfaces = [ "ve-+" ];
   networking.nat.externalInterface = "wlp3s0";
 
   networking.extraHosts = ''
@@ -188,7 +205,12 @@ in {
 
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
+  networking.firewall.allowedUDPPortRanges = [
+    {
+      from = 60000;
+      to = 61000;
+    }
+  ];
 
   networking.networkmanager.enable = true;
 
@@ -213,11 +235,11 @@ in {
   environment.variables.EDITOR = lib.mkForce "nvim";
   # Trick firefox so it doesn't create new profiles, see https://github.com/mozilla/nixpkgs-mozilla/issues/163
   environment.variables.SNAP_NAME = "firefox";
-  environment.shellAliases =
-    { dotfiles = "git --git-dir=$HOME/.dotfiles --work-tree=$HOME";
-      moz-cloudops-jenkins = "ssh -N jenkins-proxy & (sleep 5; firefox -P DeployMozAws https://deploy.mozaws.net) && sleep 5 && kill -9 $(jobs -p)";
-      moz-cloudops-jenkins2 = "ssh -N jenkins-proxy & (sleep 5; firefox -P DeployMozAws https://ops-master.jenkinsv2.prod.mozaws.net) && sleep 5 && kill -9 $(jobs -p)";
-    };
+  environment.shellAliases = {
+    dotfiles = "git --git-dir=$HOME/.dotfiles --work-tree=$HOME";
+    moz-cloudops-jenkins = "ssh -N jenkins-proxy & (sleep 5; firefox -P DeployMozAws https://deploy.mozaws.net) && sleep 5 && kill -9 $(jobs -p)";
+    moz-cloudops-jenkins2 = "ssh -N jenkins-proxy & (sleep 5; firefox -P DeployMozAws https://ops-master.jenkinsv2.prod.mozaws.net) && sleep 5 && kill -9 $(jobs -p)";
+  };
 
   environment.systemPackages = with pkgs; [
     # mozilla
@@ -237,17 +259,16 @@ in {
     neovim
     #vscode
     (vscode-with-extensions.override {
-       vscodeExtensions = [
-         vscode-extensions.bbenoist.Nix
-         vscode-extensions.ms-vscode.cpptools
-         vscode-extensions.ms-python.python
-         vscode-extensions.WakaTime.vscode-wakatime
-         vscode-extensions.vscodevim.vim
-         vscode-extensions.github.vscode-pull-request-github
-         vscode-extensions.akamud.vscode-theme-onelight
-       ];
+      vscodeExtensions = [
+        vscode-extensions.bbenoist.Nix
+        vscode-extensions.ms-vscode.cpptools
+        vscode-extensions.ms-python.python
+        vscode-extensions.WakaTime.vscode-wakatime
+        vscode-extensions.vscodevim.vim
+        vscode-extensions.github.vscode-pull-request-github
+        vscode-extensions.akamud.vscode-theme-onelight
+      ];
     })
-
 
     # IM clients
     skype
@@ -356,14 +377,14 @@ in {
     export SPACESHIP_VI_MODE_COLOR=black
   '';
   programs.zsh.ohMyZsh.enable = true;
-  programs.zsh.ohMyZsh.plugins =
-    [ "git"
-      "mosh"
-      "pass"
-      "vi-mode"
-      "zsh-autosuggestions"
-      "zsh-syntax-highlighting"
-    ];
+  programs.zsh.ohMyZsh.plugins = [
+    "git"
+    "mosh"
+    "pass"
+    "vi-mode"
+    "zsh-autosuggestions"
+    "zsh-syntax-highlighting"
+  ];
   programs.zsh.ohMyZsh.theme = "spaceship";
 
   # Fingerprint reader: login and unlock with fingerprint (if you add one with `fprintd-enroll`)
@@ -401,7 +422,7 @@ in {
   #  load-module module-switch-on-connect
   #  load-module module-bluetooth-policy
   #  load-module module-bluetooth-discover
-  #  ## module fails to load with 
+  #  ## module fails to load with
   #  ##   module-bluez5-device.c: Failed to get device path from module arguments
   #  ##   module.c: Failed to load module "module-bluez5-device" (argument: ""): initialization failed.
   #  # load-module module-bluez5-device
@@ -431,7 +452,7 @@ in {
   services.xserver.xkbOptions = "eurosign:e, ctrl:nocaps";
   services.xserver.autoRepeatDelay = 200;
   services.xserver.autoRepeatInterval = 25;
-  services.xserver.videoDrivers = ["intel"];
+  services.xserver.videoDrivers = [ "intel" ];
   services.xserver.synaptics.enable = false;
   services.xserver.libinput.enable = true;
   services.xserver.libinput.additionalOptions = ''
@@ -440,7 +461,15 @@ in {
 
   services.xserver.displayManager.gdm.enable = false;
   services.xserver.displayManager.lightdm.enable = true;
-  services.xserver.displayManager.lightdm.greeters.gtk.indicators = [ "~host" "~spacer" "~clock" "~spacer" "~a11y" "~session" "~power"];
+  services.xserver.displayManager.lightdm.greeters.gtk.indicators = [
+    "~host"
+    "~spacer"
+    "~clock"
+    "~spacer"
+    "~a11y"
+    "~session"
+    "~power"
+  ];
   services.xserver.windowManager.i3.enable = true;
 
   services.xserver.desktopManager.default = "xfce";
@@ -460,7 +489,6 @@ in {
   services.locate.enable = true;
   services.blueman.enable = true;
 
-
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
   security.hideProcessInformation = true;
@@ -472,7 +500,13 @@ in {
     isNormalUser = true;
     uid = 1000;
     description = "Rok Garbas";
-    extraGroups = [ "audio" "wheel" "vboxusers" "networkmanager" "docker" ] ;
+    extraGroups = [
+      "audio"
+      "wheel"
+      "vboxusers"
+      "networkmanager"
+      "docker"
+    ];
     group = "users";
     home = "/home/rok";
   };

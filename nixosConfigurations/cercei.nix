@@ -3,35 +3,47 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 inputs:
-{ config, lib, pkgs, modulesPath, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 
 {
-  imports =
-    [ (modulesPath + "/profiles/qemu-guest.nix")
-      inputs.home-manager.nixosModules.home-manager
-      (import ./profiles/wayland.nix inputs {
-        hostName = "cercei";
-        hostId = "dae19db5";
-        audio = false;
-      })
-    ];
+  imports = [
+    (modulesPath + "/profiles/qemu-guest.nix")
+    inputs.home-manager.nixosModules.home-manager
+    (import ./profiles/wayland.nix inputs {
+      hostName = "cercei";
+      hostId = "dae19db5";
+      audio = false;
+    })
+  ];
 
   # -- HARDWARE ---------------------------------------------------------------
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "virtio_pci" "usbhid" "usb_storage" "sr_mod" ];
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "virtio_pci"
+    "usbhid"
+    "usb_storage"
+    "sr_mod"
+  ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/2d3a4959-87f9-406d-86f4-3e9bcc1db548";
-      fsType = "ext4";
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/2d3a4959-87f9-406d-86f4-3e9bcc1db548";
+    fsType = "ext4";
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/0DB0-40C8";
-      fsType = "vfat";
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/0DB0-40C8";
+    fsType = "vfat";
+  };
 
   swapDevices = [ ];
 
@@ -59,9 +71,16 @@ inputs:
   services.spice-vdagentd.enable = true;
 
   nix.settings.extra-trusted-substituters = [ "https://cache.floxdev.com" ];
-  nix.settings.extra-trusted-public-keys = [ "flox-store-public-0:8c/B+kjIaQ+BloCmNkRUKwaVPFWkriSAd0JJvuDu4F0=" ];
+  nix.settings.extra-trusted-public-keys = [
+    "flox-store-public-0:8c/B+kjIaQ+BloCmNkRUKwaVPFWkriSAd0JJvuDu4F0="
+  ];
 
-  networking.firewall.allowedTCPPorts = [ 8000 8001 8002 8003 ];
+  networking.firewall.allowedTCPPorts = [
+    8000
+    8001
+    8002
+    8003
+  ];
 
   virtualisation.docker.enable = true;
 }

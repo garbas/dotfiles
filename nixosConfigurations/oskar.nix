@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   # TODO: pin external repos bellow
@@ -52,7 +57,8 @@ let
             chmod ugo+rx $out/appimage
           '';
         };
-      in self.runCommand "uhk-agent" {} ''
+      in
+      self.runCommand "uhk-agent" { } ''
         mkdir -p $out/bin $out/etc/udev/rules.d 
         echo "${self.appimage-run}/bin/appimage-run ${image}/appimage" > $out/bin/uhk-agent
         chmod +x $out/bin/uhk-agent
@@ -68,15 +74,28 @@ let
 
     neovim = import ./../../nvim-config { pkgs = self; };
   };
-in {
-  imports =
-    [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
-      "${nixos-hardware}/lenovo/thinkpad/x220/default.nix"
-    ];
+in
+{
+  imports = [
+    <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
+    "${nixos-hardware}/lenovo/thinkpad/x220/default.nix"
+  ];
 
-  boot.initrd.kernelModules = [ "dm_mod" "dm-crypt" "dm-snapshot" "ext4" "kvm-intel" ];
+  boot.initrd.kernelModules = [
+    "dm_mod"
+    "dm-crypt"
+    "dm-snapshot"
+    "ext4"
+    "kvm-intel"
+  ];
   boot.initrd.luks.cryptoModules = [ "ecb" ];
-  boot.initrd.luks.devices = [ { name = "luksroot"; device = "/dev/sda2"; allowDiscards = true; } ];
+  boot.initrd.luks.devices = [
+    {
+      name = "luksroot";
+      device = "/dev/sda2";
+      allowDiscards = true;
+    }
+  ];
   boot.extraModprobeConfig = ''
     options snd_hda_intel index=1,0
     options thinkpad_acpi fan_control=1 force-load=1
@@ -164,7 +183,10 @@ in {
   services.compton.enable = true;
   services.nixosManual.showManual = true;
   services.openssh.enable = true;
-  services.dbus.packages = with pkgs; [ gnome3.dconf gnome2.GConf ];
+  services.dbus.packages = with pkgs; [
+    gnome3.dconf
+    gnome2.GConf
+  ];
   services.printing.enable = true;
   services.printing.drivers = with pkgs; [ hplip ];
 
@@ -187,7 +209,12 @@ in {
     isNormalUser = true;
     uid = 1001;
     description = "Marta Rychlewski";
-    extraGroups = [ "audio" "wheel" "vboxusers" "networkmanager" ] ;
+    extraGroups = [
+      "audio"
+      "wheel"
+      "vboxusers"
+      "networkmanager"
+    ];
     group = "users";
     home = "/home/marta";
   };
@@ -196,7 +223,13 @@ in {
     isNormalUser = true;
     uid = 1000;
     description = "Rok Garbas";
-    extraGroups = [ "audio" "wheel" "vboxusers" "networkmanager" "docker" ] ;
+    extraGroups = [
+      "audio"
+      "wheel"
+      "vboxusers"
+      "networkmanager"
+      "docker"
+    ];
     group = "users";
     home = "/home/rok";
   };
@@ -285,14 +318,14 @@ in {
     export SPACESHIP_VI_MODE_COLOR=black
   '';
   programs.zsh.ohMyZsh.enable = true;
-  programs.zsh.ohMyZsh.plugins =
-    [ "git"
-      "mosh"
-      "pass"
-      "vi-mode"
-      "zsh-autosuggestions"
-      "zsh-syntax-highlighting"
-    ];
+  programs.zsh.ohMyZsh.plugins = [
+    "git"
+    "mosh"
+    "pass"
+    "vi-mode"
+    "zsh-autosuggestions"
+    "zsh-syntax-highlighting"
+  ];
   programs.zsh.ohMyZsh.theme = "spaceship";
 
   # TODO:networking.hostId = "4214f894";
@@ -304,9 +337,14 @@ in {
   '';
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
+  networking.firewall.allowedUDPPortRanges = [
+    {
+      from = 60000;
+      to = 61000;
+    }
+  ];
   networking.nat.enable = true;
-  networking.nat.internalInterfaces = ["ve-+"];
+  networking.nat.internalInterfaces = [ "ve-+" ];
   networking.nat.externalInterface = "wlp3s0";
 
   networking.networkmanager.enable = true;
@@ -323,11 +361,12 @@ in {
   security.hideProcessInformation = true;
 
   system.autoUpgrade.enable = true;
-  system.autoUpgrade.flags = lib.mkForce
-    [ "--fast"
-      "--no-build-output"
-      "-I" "nixpkgs=/etc/nixos/nixpkgs-channels"
-    ];
+  system.autoUpgrade.flags = lib.mkForce [
+    "--fast"
+    "--no-build-output"
+    "-I"
+    "nixpkgs=/etc/nixos/nixpkgs-channels"
+  ];
 
   systemd.extraConfig = ''
     DefaultCPUAccounting=true
@@ -335,11 +374,10 @@ in {
     DefaultMemoryAccounting=true
     DefaultTasksAccounting=true
   '';
-  systemd.services."systemd-vconsole-setup".serviceConfig.ExecStart =
-    lib.mkForce
-      [ ""
-        "${pkgs.systemd}/lib/systemd/systemd-vconsole-setup /dev/tty3"
-      ];
+  systemd.services."systemd-vconsole-setup".serviceConfig.ExecStart = lib.mkForce [
+    ""
+    "${pkgs.systemd}/lib/systemd/systemd-vconsole-setup /dev/tty3"
+  ];
 
   environment.variables.NIX_PATH = lib.mkForce "nixpkgs=/etc/nixos/nixpkgs-channels:nixos-config=/etc/nixos/configuration.nix";
   environment.variables.GIT_EDITOR = lib.mkForce "nvim";

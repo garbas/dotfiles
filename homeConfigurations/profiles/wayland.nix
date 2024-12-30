@@ -1,16 +1,22 @@
-{ username
-, email
-, fullname
-, sshKey
-, outputs
-, bluetooth ? true
+{
+  username,
+  email,
+  fullname,
+  sshKey,
+  outputs,
+  bluetooth ? true,
 }:
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 let
-  gtkTheme = "Nordic";  # via nordic
-  gtkIconTheme = "Nordzy-dark";  # via nordzy-icon-theme
-  gtkCursorTheme = "Nordzy-cursors";  # via nordzy-cursor-theme
+  gtkTheme = "Nordic"; # via nordic
+  gtkIconTheme = "Nordzy-dark"; # via nordzy-icon-theme
+  gtkCursorTheme = "Nordzy-cursors"; # via nordzy-cursor-theme
 
   checkNixosUpdates = pkgs.writeShellScript "checkUpdates.sh" ''
     UPDATE='{"icon":"upd","state":"Info", "text": ""}'
@@ -20,18 +26,25 @@ let
     REMOTE_REVISION=$(curl -s $GITHUB_URL | jq '.object.sha' -r )
     [ $CURRENT_REVISION == $REMOTE_REVISION ] && echo $NO_UPDATE || echo $UPDATE
   '';
-  idleCmd = ''swayidle -w \
-    timeout 300 'swaylock --daemonize --ignore-empty-password --color 3c3836' \
-    timeout 600 'swaymsg "output * dpms off"' \
-         resume 'swaymsg "output * dpms on"' \
-    before-sleep 'swaylock --daemonize --ignore-empty-password --color 3c3836'
+  idleCmd = ''
+    swayidle -w \
+        timeout 300 'swaylock --daemonize --ignore-empty-password --color 3c3836' \
+        timeout 600 'swaymsg "output * dpms off"' \
+             resume 'swaymsg "output * dpms on"' \
+        before-sleep 'swaylock --daemonize --ignore-empty-password --color 3c3836'
   '';
   gsettings = "${pkgs.glib}/bin/gsettings";
   gnomeSchema = "org.gnome.desktop.interface";
-  systemdRun = { pkg, bin ? pkg.pname, args ? "" }: ''
-    systemd-run --user --scope --collect --quiet --unit=${bin} \
-    systemd-cat --identifier=${bin} ${lib.makeBinPath [ pkg ]}/${bin} ${args}
-  '';
+  systemdRun =
+    {
+      pkg,
+      bin ? pkg.pname,
+      args ? "",
+    }:
+    ''
+      systemd-run --user --scope --collect --quiet --unit=${bin} \
+      systemd-cat --identifier=${bin} ${lib.makeBinPath [ pkg ]}/${bin} ${args}
+    '';
   importGsettings = pkgs.writeShellScript "import_gsettings.sh" ''
     ${gsettings} set ${gnomeSchema} gtk-theme ${gtkTheme}
     ${gsettings} set ${gnomeSchema} icon-theme ${gtkIconTheme}
@@ -198,10 +211,9 @@ in
   wayland.windowManager.sway.config.floating.modifier = "Mod4";
   wayland.windowManager.sway.config.defaultWorkspace = workspace."1";
 
-  wayland.windowManager.sway.config.output =
-    lib.concatMapAttrs
-      (n: v: {${v.monitor} = lib.filterAttrs (x: _: x != "monitor" && x != "workspaces") v;})
-      outputs;
+  wayland.windowManager.sway.config.output = lib.concatMapAttrs (n: v: {
+    ${v.monitor} = lib.filterAttrs (x: _: x != "monitor" && x != "workspaces") v;
+  }) outputs;
 
   wayland.windowManager.sway.config.keybindings = {
     "${mod}+Return" = "exec ${config.wayland.windowManager.sway.config.terminal}";
@@ -308,7 +320,8 @@ in
     "XF86MonBrightnessDown" = "exec light -U 5%";
     "XF86MonBrightnessUp" = "exec light -A 5%";
     "--release Print" = "exec grimshot --notify save area ~/scr/scr_`date +%Y%m%d.%H.%M.%S`.png";
-    "--release ${mod}+Print" = "exec grimshot --notify save output ~/scr/scr_`date +%Y%m%d.%H.%M.%S`.png";
+    "--release ${mod}+Print" =
+      "exec grimshot --notify save output ~/scr/scr_`date +%Y%m%d.%H.%M.%S`.png";
     # TODO: services.flameshot.enable
 
     # bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume $out_sink +5% && killall -s USR1 py3status
@@ -321,21 +334,15 @@ in
   };
 
   # assign workspace to screen
-  wayland.windowManager.sway.config.workspaceOutputAssign =
-    lib.flatten
-      (lib.mapAttrsToList
-        (n: v: 
-          builtins.map
-            (w:
-              {
-                workspace = workspace.${w};
-                output = n;
-              }
-            )
-            v.workspaces
-        )
-        outputs
-      );
+  wayland.windowManager.sway.config.workspaceOutputAssign = lib.flatten (
+    lib.mapAttrsToList (
+      n: v:
+      builtins.map (w: {
+        workspace = workspace.${w};
+        output = n;
+      }) v.workspaces
+    ) outputs
+  );
 
   # resize window (you can also use the mouse for that)
   wayland.windowManager.sway.config.modes.resize = {
@@ -347,7 +354,6 @@ in
     "k" = "resize shrink height 20 px";
     "l" = "resize grow width 20 px";
   };
-
 
   ## Start i3bar to display a workspace bar (plus the system information
   ## i3status finds out, if available)
@@ -364,7 +370,7 @@ in
   #    statusline #81a1c1
 
   #    #                   border  background text
-  #    focused_workspace  $base01 $base01    #81a1c1 
+  #    focused_workspace  $base01 $base01    #81a1c1
   #    active_workspace   $base01 $base02    $base03
   #    inactive_workspace $base01 $base01    #4c566a
   #    urgent_workspace   $base01 $base01    $base08
@@ -372,28 +378,56 @@ in
   #  }
   #}
 
-    #lib.mkOptionDefault {
-    #  "${mod}+Tab" = "workspace back_and_forth";
-    #  "${mod}+Shift+f" = "exec ${systemdRun { pkg = pkgs.firefox; bin = "firefox";} }";
-    #  "${mod}+Shift+o" = "exec ${systemdRun { pkg = pkgs.obs-studio; bin = "obs";} }";
-    #  "${mod}+Shift+s" = "exec ${systemdRun { pkg = pkgs.slack; args= "--logLevel=error";} }";
-    #};
-
+  #lib.mkOptionDefault {
+  #  "${mod}+Tab" = "workspace back_and_forth";
+  #  "${mod}+Shift+f" = "exec ${systemdRun { pkg = pkgs.firefox; bin = "firefox";} }";
+  #  "${mod}+Shift+o" = "exec ${systemdRun { pkg = pkgs.obs-studio; bin = "obs";} }";
+  #  "${mod}+Shift+s" = "exec ${systemdRun { pkg = pkgs.slack; args= "--logLevel=error";} }";
+  #};
 
   # GAPS
   wayland.windowManager.sway.config.gaps.smartGaps = true;
 
-
   # SWAY / COLORS
-  wayland.windowManager.sway.config.colors.background      = "#242424";
-  wayland.windowManager.sway.config.colors.focused         = { background = "#81a1c1"; border = "#81a1c1"; childBorder = "#81a1c1"; indicator = "#81a1c1"; text = "#ffffff"; };
-  wayland.windowManager.sway.config.colors.focusedInactive = { background = "#2e3440"; border = "#2e3440"; childBorder = "#2e3440"; indicator = "#2e3440"; text = "#888888"; };
-  wayland.windowManager.sway.config.colors.placeholder     = { background = "#2e3440"; border = "#2e3440"; childBorder = "#2e3440"; indicator = "#2e3440"; text = "#888888"; };
-  wayland.windowManager.sway.config.colors.unfocused       = { background = "#2e3440"; border = "#2e3440"; childBorder = "#2e3440"; indicator = "#2e3440"; text = "#888888"; };
-  wayland.windowManager.sway.config.colors.urgent          = { background = "#900000"; border = "#900000"; childBorder = "#900000"; indicator = "#900000"; text = "#ffffff"; };
+  wayland.windowManager.sway.config.colors.background = "#242424";
+  wayland.windowManager.sway.config.colors.focused = {
+    background = "#81a1c1";
+    border = "#81a1c1";
+    childBorder = "#81a1c1";
+    indicator = "#81a1c1";
+    text = "#ffffff";
+  };
+  wayland.windowManager.sway.config.colors.focusedInactive = {
+    background = "#2e3440";
+    border = "#2e3440";
+    childBorder = "#2e3440";
+    indicator = "#2e3440";
+    text = "#888888";
+  };
+  wayland.windowManager.sway.config.colors.placeholder = {
+    background = "#2e3440";
+    border = "#2e3440";
+    childBorder = "#2e3440";
+    indicator = "#2e3440";
+    text = "#888888";
+  };
+  wayland.windowManager.sway.config.colors.unfocused = {
+    background = "#2e3440";
+    border = "#2e3440";
+    childBorder = "#2e3440";
+    indicator = "#2e3440";
+    text = "#888888";
+  };
+  wayland.windowManager.sway.config.colors.urgent = {
+    background = "#900000";
+    border = "#900000";
+    childBorder = "#900000";
+    indicator = "#900000";
+    text = "#ffffff";
+  };
 
   # BAR
-  wayland.windowManager.sway.config.bars = [];
+  wayland.windowManager.sway.config.bars = [ ];
 
   # INPUTS
   wayland.windowManager.sway.config.input."type:keyboard".repeat_delay = "300";
@@ -409,49 +443,72 @@ in
   wayland.windowManager.sway.config.window.hideEdgeBorders = "smart";
   wayland.windowManager.sway.config.window.commands = [
     {
-      criteria = { app_id = "gsimplecal"; };
+      criteria = {
+        app_id = "gsimplecal";
+      };
       command = "floating enable";
     }
-    { 
-      criteria = { app_id = "firefox";
-                   title = "About Mozilla Firefox";
-                 };
-      command = "floating enable"; 
+    {
+      criteria = {
+        app_id = "firefox";
+        title = "About Mozilla Firefox";
+      };
+      command = "floating enable";
     }
-    { 
-      criteria = { app_id = "^(?i)slack$"; };
+    {
+      criteria = {
+        app_id = "^(?i)slack$";
+      };
       command = "move container to workspace 2";
     }
-    { 
-      criteria = { app_id = "firefox"; };
+    {
+      criteria = {
+        app_id = "firefox";
+      };
       command = "move container to workspace 3";
     }
-    { 
-      criteria = { title = "Save File"; };
+    {
+      criteria = {
+        title = "Save File";
+      };
       command = "floating enable, resize set width 600px height 800px";
     }
-    { # browser zoom|meet|bluejeans
-      criteria = { title = "(Blue Jeans)|(Meet)|(Zoom Meeting)"; };
+    {
+      # browser zoom|meet|bluejeans
+      criteria = {
+        title = "(Blue Jeans)|(Meet)|(Zoom Meeting)";
+      };
       command = "inhibit_idle visible";
     }
-    { 
-      criteria = { title = "(Sharing Indicator)"; };
+    {
+      criteria = {
+        title = "(Sharing Indicator)";
+      };
       command = "inhibit_idle visible, floating enable";
     }
-    { 
-      criteria = { class = "pavucontrol"; };
+    {
+      criteria = {
+        class = "pavucontrol";
+      };
       command = "floating enable";
     }
-    { 
-      criteria = { class = "1Password"; };
+    {
+      criteria = {
+        class = "1Password";
+      };
       command = "floating enable";
     }
   ];
 
   wayland.windowManager.sway.config.startup = [
-    { command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY DBUS_SESSION_BUS_ADDRESS SWAYSOCK XDG_SESSION_TYPE XDG_SESSION_DESKTOP XDG_CURRENT_DESKTOP"; } #workaround
+    {
+      command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY DBUS_SESSION_BUS_ADDRESS SWAYSOCK XDG_SESSION_TYPE XDG_SESSION_DESKTOP XDG_CURRENT_DESKTOP";
+    } # workaround
     { command = "${idleCmd}"; }
-    { command = "${importGsettings}"; always = true; }
+    {
+      command = "${importGsettings}";
+      always = true;
+    }
     #{ command = "foot"; }
     #{ command = "element-desktop --no-update --hidden"; }
     #{ command = "nm-applet --indicator"; }
@@ -475,7 +532,7 @@ in
     "sway/mode"
     "sway/window"
   ];
-  programs.waybar.settings.main.modules-center = [];
+  programs.waybar.settings.main.modules-center = [ ];
   programs.waybar.settings.main.modules-right = [
     "network"
     "cpu"
@@ -499,8 +556,14 @@ in
   programs.waybar.settings.main."temperature".critical-threshold = 80;
   programs.waybar.settings.main."temperature".format = "{temperatureC}°C ";
   programs.waybar.settings.main."backlight".format = "{percent}% {icon}";
-  programs.waybar.settings.main."backlight".states = [0 50];
-  programs.waybar.settings.main."backlight".format-icons = ["" ""];
+  programs.waybar.settings.main."backlight".states = [
+    0
+    50
+  ];
+  programs.waybar.settings.main."backlight".format-icons = [
+    ""
+    ""
+  ];
   programs.waybar.settings.main."pulseaudio".format = "{volume}% {icon}";
   programs.waybar.settings.main."pulseaudio".format-bluetooth = ": {volume}% {icon}";
   programs.waybar.settings.main."pulseaudio".format-muted = "";
@@ -510,20 +573,28 @@ in
   programs.waybar.settings.main."pulseaudio".format-icons.phone = "";
   programs.waybar.settings.main."pulseaudio".format-icons.portable = "";
   programs.waybar.settings.main."pulseaudio".format-icons.car = "";
-  programs.waybar.settings.main."pulseaudio".format-icons.default = ["" ""];
+  programs.waybar.settings.main."pulseaudio".format-icons.default = [
+    ""
+    ""
+  ];
   programs.waybar.settings.main."pulseaudio".on-click = "pavucontrol";
   programs.waybar.settings.main."battery".states.good = 95;
   programs.waybar.settings.main."battery".states.warning = 30;
   programs.waybar.settings.main."battery".states.critical = 15;
   programs.waybar.settings.main."battery".format = "{capacity}% {icon}";
-  programs.waybar.settings.main."battery".format-icons = ["" "" "" "" ""];
+  programs.waybar.settings.main."battery".format-icons = [
+    ""
+    ""
+    ""
+    ""
+    ""
+  ];
   programs.waybar.settings.main."clock".format = "{:%F %H:%M}";
   programs.waybar.settings.main."tray".icon-size = 21;
   programs.waybar.settings.main."tray".spacing = 10;
   programs.waybar.systemd.enable = true;
   programs.waybar.systemd.target = "sway-session.target";
   systemd.user.services.waybar.Service.ExecStart = lib.mkForce "${pkgs.waybar}/bin/waybar -b 0";
-
 
   # TODO: KANSHI - Dynamic display configuration
   #services.kanshi.enable = true;
@@ -534,7 +605,6 @@ in
   #  { criteria = output.right; }
   #];
   #services.kanshi.systemdTarget = "sway-session.target";
-
 
   # NETWORK MANAGER APPLET
   #services.network-manager-applet.enable = true;
@@ -575,6 +645,7 @@ in
   xdg.userDirs.enable = true;
   xdg.userDirs.createDirectories = true;
 
-} // lib.optionalAttrs bluetooth {
+}
+// lib.optionalAttrs bluetooth {
   services.blueman-applet.enable = true;
 }

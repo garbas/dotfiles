@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 # https://github.com/benley/dotfiles/blob/master/modules/dunst.nix
 with lib;
@@ -34,8 +39,7 @@ in
         Type = "dbus";
         BusName = "org.freedesktop.Notifications";
         ExecStart = lib.concatStringsSep " " (
-          ["${pkgs.dunst}/bin/dunst"] ++
-          (lib.optional (! isNull cfg.config) "-config ${dunstrcFile}")
+          [ "${pkgs.dunst}/bin/dunst" ] ++ (lib.optional (!isNull cfg.config) "-config ${dunstrcFile}")
         );
       };
     };

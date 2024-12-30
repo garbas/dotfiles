@@ -1,5 +1,10 @@
 inputs:
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   sshKey = "/home/rok/.ssh/id_ed25519";
@@ -14,13 +19,13 @@ let
 
     systemd-run --user --scope --collect --quiet --unit=sway systemd-cat --identifier=sway ${pkgs.sway}/bin/sway $@
   '';
-in {
-  imports =
-    [ (import "${inputs.nixos-hardware}/dell/xps/13-7390/default.nix")
-      inputs.home-manager.nixosModules.home-manager
-      (import ./profiles/console.nix inputs)
-    ];
-
+in
+{
+  imports = [
+    (import "${inputs.nixos-hardware}/dell/xps/13-7390/default.nix")
+    inputs.home-manager.nixosModules.home-manager
+    (import ./profiles/console.nix inputs)
+  ];
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
@@ -40,7 +45,13 @@ in {
     options kvm ignore_msrs=1
     options v4l2loopback exclusive_caps=1 video_nr=9 card_label="obs"
   '';
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "nvme"
+    "usb_storage"
+    "sd_mod"
+    "rtsx_pci_sdmmc"
+  ];
   boot.initrd.kernelModules = [ ];
   boot.kernelPackages = lib.mkForce linuxPackages;
   boot.kernelModules = [
@@ -52,24 +63,24 @@ in {
   boot.loader.grub.copyKernels = true;
   #boot.zfs.enableUnstable = true;
 
-  fileSystems."/" =
-    { device = "rpool/ROOT";
-      fsType = "zfs";
-    };
+  fileSystems."/" = {
+    device = "rpool/ROOT";
+    fsType = "zfs";
+  };
 
-  fileSystems."/home" =
-    { device = "rpool/HOME";
-      fsType = "zfs";
-    };
+  fileSystems."/home" = {
+    device = "rpool/HOME";
+    fsType = "zfs";
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/ADB6-356E";
-      fsType = "vfat";
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/ADB6-356E";
+    fsType = "vfat";
+  };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/f38786d1-369a-42e5-8962-13ce86877d98"; }
-    ];
+  swapDevices = [
+    { device = "/dev/disk/by-uuid/f38786d1-369a-42e5-8962-13ce86877d98"; }
+  ];
 
   nix.settings.max-jobs = lib.mkDefault 8;
   nix.buildMachines = [
@@ -80,17 +91,27 @@ in {
       sshUser = "nix";
       inherit sshKey;
       system = "x86_64-linux";
-      supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
+      supportedFeatures = [
+        "benchmark"
+        "big-parallel"
+        "kvm"
+      ];
     }
     {
       hostName = "build02.tweag.io";
       maxJobs = 24;
       sshUser = "nix";
       inherit sshKey;
-      systems = [ "aarch64-darwin" "x86_64-darwin" ];
-      supportedFeatures = [ "benchmark" "big-parallel" ];
+      systems = [
+        "aarch64-darwin"
+        "x86_64-darwin"
+      ];
+      supportedFeatures = [
+        "benchmark"
+        "big-parallel"
+      ];
     }
-    ];
+  ];
 
   nixpkgs.config.firefox.enableFoofleTalkPlugin = true;
   #nixpkgs.config.pulseaudio = true;
@@ -104,18 +125,23 @@ in {
   networking.hostName = "khal";
   networking.hostId = "b0f5a1e0";
   networking.nat.enable = true;
-  networking.nat.internalInterfaces = ["ve-+"];
+  networking.nat.internalInterfaces = [ "ve-+" ];
   networking.nat.externalInterface = "wlp2s0";
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
+  networking.firewall.allowedUDPPortRanges = [
+    {
+      from = 60000;
+      to = 61000;
+    }
+  ];
   networking.networkmanager.enable = true;
 
   #environment.variables.GDK_DPI_SCALE = "0.5";
   #environment.variables.GDK_SCALE = "2";
   #environment.variables.QT_AUTO_SCREEN_SCALE_FACTOR = "1";
   environment.systemPackages = with pkgs; [
-    xorg.setxkbmap  # needed by i3status-rust
+    xorg.setxkbmap # needed by i3status-rust
 
     # chat
     slack
@@ -166,8 +192,8 @@ in {
     which
 
     ## other console tools
-    feh          # image viewer
-    mpv          # video player
+    feh # image viewer
+    mpv # video player
 
     # password managers
     _1password-gui
@@ -196,7 +222,7 @@ in {
     restart = false;
     settings = {
       default_session = {
-        command = "${lib.makeBinPath [pkgs.greetd.tuigreet] }/tuigreet --time --cmd ${swayRun}";
+        command = "${lib.makeBinPath [ pkgs.greetd.tuigreet ]}/tuigreet --time --cmd ${swayRun}";
         user = "greeter";
       };
       initial_session = {
@@ -210,7 +236,10 @@ in {
     enable = true;
     description = "Start Ulauncher";
     script = "${pkgs.ulauncher}/bin/ulauncher --hide-window";
-    wantedBy = [ "graphical.target" "multi-user.target" ];
+    wantedBy = [
+      "graphical.target"
+      "multi-user.target"
+    ];
     after = [ "greetd.service" ];
   };
 
@@ -233,18 +262,18 @@ in {
       wofi
       ulauncher
 
-      dmenu-wayland #sway dep
-      light #sway dep
+      dmenu-wayland # sway dep
+      light # sway dep
       obs-studio
       obs-studio-plugins.wlrobs
-      pavucontrol #i3status-rust dep
-      playerctl #sway dep
-      pulseaudio #i3status-rust dep
-      sway-contrib.grimshot #sway dep
-      swayidle #sway dep
-      swaylock #sway dep
-      wf-recorder #sway
-      wl-clipboard #sway dep
+      pavucontrol # i3status-rust dep
+      playerctl # sway dep
+      pulseaudio # i3status-rust dep
+      sway-contrib.grimshot # sway dep
+      swayidle # sway dep
+      swaylock # sway dep
+      wf-recorder # sway
+      wl-clipboard # sway dep
     ];
   };
 
@@ -299,7 +328,14 @@ in {
     isNormalUser = true;
     uid = 1000;
     description = "Rok Garbas";
-    extraGroups = [ "audio" "wheel" "vboxusers" "networkmanager" "docker" "libvirtd" ] ;
+    extraGroups = [
+      "audio"
+      "wheel"
+      "vboxusers"
+      "networkmanager"
+      "docker"
+      "libvirtd"
+    ];
     group = "users";
     home = "/home/rok";
     shell = pkgs.zsh;

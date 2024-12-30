@@ -1,4 +1,5 @@
-{ user, ... }: {
+{ user, ... }:
+{
 
   imports = [
     (import ./common.nix)
@@ -7,8 +8,8 @@
   home.homeDirectory = "/Users/${user.username}";
 
   # darwin specific packages
-  home.packages = [];
- 
+  home.packages = [ ];
+
   # Kitty 0.38.0 broken, see https://github.com/NixOS/nixpkgs/pull/368580
   #programs.kitty.enable = true;
   #programs.kitty.font.name = "Fira Code Light";

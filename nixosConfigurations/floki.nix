@@ -1,4 +1,13 @@
-{ config, pkgs, lib, modulesPath, user, hostname, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  modulesPath,
+  user,
+  hostname,
+  inputs,
+  ...
+}:
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
@@ -10,24 +19,41 @@
   # -- HARDWARE ---------------------------------------------------------------
 
   boot.extraModulePackages = [ ];
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "sd_mod" "sr_mod" ];
+  boot.initrd.availableKernelModules = [
+    "ata_piix"
+    "uhci_hcd"
+    "virtio_pci"
+    "sd_mod"
+    "sr_mod"
+  ];
   boot.kernelModules = [ ];
   boot.loader.grub.device = "/dev/sda";
   boot.loader.grub.enable = true;
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/2f54e8e6-ff9c-497a-88ea-ce159f6cd283";
-      fsType = "ext4";
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/2f54e8e6-ff9c-497a-88ea-ce159f6cd283";
+    fsType = "ext4";
+  };
 
   swapDevices = [ ];
 
   nix.settings.max-jobs = lib.mkDefault 2;
 
   networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ 22 80 443 8888 25565 ];
+  networking.firewall.allowedTCPPorts = [
+    22
+    80
+    443
+    8888
+    25565
+  ];
   networking.firewall.allowedUDPPorts = [ 25565 ];
-  networking.firewall.allowedUDPPortRanges = [ { from = 60000; to = 61000; } ];
+  networking.firewall.allowedUDPPortRanges = [
+    {
+      from = 60000;
+      to = 61000;
+    }
+  ];
 
   # -- HOME MANAGER -----------------------------------------------------------
 
@@ -39,59 +65,59 @@
 
   # ---------------------------------------------------------------------------
 
-# TODO:
-#  # https://www.digitalocean.com/community/tutorials/how-to-optimize-nginx-configuration
-#  services.nginx.enable = true;
-#  services.nginx.recommendedGzipSettings = true;
-#  services.nginx.recommendedOptimisation = true;
-#  services.nginx.recommendedProxySettings = true;
-#  services.nginx.recommendedTlsSettings = true;
-#  services.nginx.sslProtocols = "TLSv1.2";
-#  services.nginx.sslCiphers = "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256";
-#  services.nginx.sslDhparam = "/etc/ssl/certs/dhparam.pem";
-#  services.nginx.statusPage = true;
-#  services.nginx.appendHttpConfig = ''
-#    limit_req_zone $binary_remote_addr zone=weechat:10m rate=5r/m;  # Setup brute force protection
-#  '';
-#  services.nginx.virtualHosts =
-#    { "garbas.si" =
-#        { default = true;
-#          forceSSL = true;
-#          enableACME = true;
-#          extraConfig = ''
-#            ssl_session_tickets  off;
-#          '';
-#          locations =
-#            { "/" =
-#                { root = "/var/www/garbas.si";
-#                  extraConfig = ''
-#                    add_header           X-Frame-Options SAMEORIGIN;
-#                    add_header           X-Content-Type-Options nosniff;
-#                    add_header           X-XSS-Protection "1; mode=block";
-#                    add_header           Content-Security-Policy "default-src 'self';script-src 'self' www.google-analytics.com;img-src 'self' www.google-analytics.com;";
-#                    add_header           Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
-#                  '';
-#                };
-#            };
-#
-#        };
-#      "url.garbas.si" =
-#        { forceSSL = true;
-#          enableACME = true;
-#          acmeRoot = "/var/www/challenges";
-#          extraConfig = ''
-#            ssl_session_tickets  off;
-#          '';
-#          locations =
-#            { "/" = 
-#                { proxyPass = "http://localhost:8123";
-#                };
-#            };
-#        };
-#    };
-#
-#  security.acme.acceptTerms = true;
-#  security.acme.defaults.email = user.email;
+  # TODO:
+  #  # https://www.digitalocean.com/community/tutorials/how-to-optimize-nginx-configuration
+  #  services.nginx.enable = true;
+  #  services.nginx.recommendedGzipSettings = true;
+  #  services.nginx.recommendedOptimisation = true;
+  #  services.nginx.recommendedProxySettings = true;
+  #  services.nginx.recommendedTlsSettings = true;
+  #  services.nginx.sslProtocols = "TLSv1.2";
+  #  services.nginx.sslCiphers = "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256";
+  #  services.nginx.sslDhparam = "/etc/ssl/certs/dhparam.pem";
+  #  services.nginx.statusPage = true;
+  #  services.nginx.appendHttpConfig = ''
+  #    limit_req_zone $binary_remote_addr zone=weechat:10m rate=5r/m;  # Setup brute force protection
+  #  '';
+  #  services.nginx.virtualHosts =
+  #    { "garbas.si" =
+  #        { default = true;
+  #          forceSSL = true;
+  #          enableACME = true;
+  #          extraConfig = ''
+  #            ssl_session_tickets  off;
+  #          '';
+  #          locations =
+  #            { "/" =
+  #                { root = "/var/www/garbas.si";
+  #                  extraConfig = ''
+  #                    add_header           X-Frame-Options SAMEORIGIN;
+  #                    add_header           X-Content-Type-Options nosniff;
+  #                    add_header           X-XSS-Protection "1; mode=block";
+  #                    add_header           Content-Security-Policy "default-src 'self';script-src 'self' www.google-analytics.com;img-src 'self' www.google-analytics.com;";
+  #                    add_header           Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+  #                  '';
+  #                };
+  #            };
+  #
+  #        };
+  #      "url.garbas.si" =
+  #        { forceSSL = true;
+  #          enableACME = true;
+  #          acmeRoot = "/var/www/challenges";
+  #          extraConfig = ''
+  #            ssl_session_tickets  off;
+  #          '';
+  #          locations =
+  #            { "/" =
+  #                { proxyPass = "http://localhost:8123";
+  #                };
+  #            };
+  #        };
+  #    };
+  #
+  #  security.acme.acceptTerms = true;
+  #  security.acme.defaults.email = user.email;
   security.sudo.enable = true;
 
   #users.users.root.hashedPassword = "$6$PS.1SD6/$kUv8wdXYH00dEvpqlC9SyX/E3Zm3HLPNmsxLwteJSQgpXDOfFZhWXkHby6hvZ.kFN2JbgXqJvwZfjOunBpcHX0";

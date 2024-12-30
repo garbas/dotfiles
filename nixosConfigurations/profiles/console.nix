@@ -1,4 +1,10 @@
-{ config, pkgs, lib, user, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  user,
+  ...
+}:
 {
 
   environment.systemPackages = with pkgs; [
@@ -19,7 +25,10 @@
 
   nix.package = pkgs.nixVersions.stable;
   nix.settings.sandbox = true;
-  nix.settings.trusted-users = ["@wheel" "${user.username}"];
+  nix.settings.trusted-users = [
+    "@wheel"
+    "${user.username}"
+  ];
   nix.distributedBuilds = true;
   nix.extraOptions = ''
     experimental-features = nix-command flakes
@@ -57,14 +66,20 @@
     isNormalUser = true;
     uid = 1000;
     description = user.fullname;
-    extraGroups = [ "audio" "wheel" "vboxusers" "networkmanager" "docker" "libvirtd" ] ;
+    extraGroups = [
+      "audio"
+      "wheel"
+      "vboxusers"
+      "networkmanager"
+      "docker"
+      "libvirtd"
+    ];
     group = "users";
     createHome = true;
     home = "/home/${user.username}";
     shell = pkgs.zsh;
-    openssh.authorizedKeys.keys =
-      builtins.map
-        (machine: user.machines.${machine}.sshKey + " ${user.username}@${machine}")
-        (builtins.attrNames user.machines);
+    openssh.authorizedKeys.keys = builtins.map (
+      machine: user.machines.${machine}.sshKey + " ${user.username}@${machine}"
+    ) (builtins.attrNames user.machines);
   };
 }

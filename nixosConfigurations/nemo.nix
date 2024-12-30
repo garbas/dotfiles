@@ -1,10 +1,10 @@
 { pkgs, ... }:
 
 {
-  imports =
-    [ ./hw/lenovo-x250.nix 
-      (import ./rok.nix { i3_tray_output = "eDP1"; })
-    ];
+  imports = [
+    ./hw/lenovo-x250.nix
+    (import ./rok.nix { i3_tray_output = "eDP1"; })
+  ];
 
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.device = "nodev";
@@ -29,16 +29,23 @@
   fileSystems."/home".fsType = "zfs";
   fileSystems."/tmp".device = "tmpfs";
   fileSystems."/tmp".fsType = "tmpfs";
-  fileSystems."/tmp".options = [ "nosuid" "nodev" "relatime" ];
+  fileSystems."/tmp".options = [
+    "nosuid"
+    "nodev"
+    "relatime"
+  ];
   fileSystems."/var".device = "rpool/VAR";
   fileSystems."/var".fsType = "zfs";
-  fileSystems."/var".options = [ "defaults" "noatime" "acl" ];
+  fileSystems."/var".options = [
+    "defaults"
+    "noatime"
+    "acl"
+  ];
 
-
-  nix.binaryCaches =
-    [ "https://cache.nixos.org"
-      "https://cache.mozilla-releng.net"
-    ];
+  nix.binaryCaches = [
+    "https://cache.nixos.org"
+    "https://cache.mozilla-releng.net"
+  ];
   nix.extraOptions = ''
     build-cores = 4
     require-sigs = false
@@ -104,34 +111,33 @@
   services.xserver.windowManager.i3.enable = true;
   services.xserver.windowManager.i3.configFile = "/tmp/config/i3";
 
-  environment.systemPackages = with pkgs;
-    [
-      gnupg
-      gitAndTools.gitflow
-      keybase
-      mercurialFull
-      pass
-      taskwarrior
-      st  # backup terminal
-      vifm
-      asciinema
-      mpv
-      youtube-dl
-      pythonPackages.Flootty
+  environment.systemPackages = with pkgs; [
+    gnupg
+    gitAndTools.gitflow
+    keybase
+    mercurialFull
+    pass
+    taskwarrior
+    st # backup terminal
+    vifm
+    asciinema
+    mpv
+    youtube-dl
+    pythonPackages.Flootty
 
-      # gui applications
-      pavucontrol
-      # TODO: chromium
-      firefox
-      pavucontrol
-      #skype
-      zathura
-      #VidyoDesktop
-      obs-studio
+    # gui applications
+    pavucontrol
+    # TODO: chromium
+    firefox
+    pavucontrol
+    #skype
+    zathura
+    #VidyoDesktop
+    obs-studio
 
-      # gnome3 theme
-      gnome3.dconf
-      gnome3.defaultIconTheme
-      gnome3.gnome_themes_standard
-    ];
+    # gnome3 theme
+    gnome3.dconf
+    gnome3.defaultIconTheme
+    gnome3.gnome_themes_standard
+  ];
 }

@@ -22,123 +22,196 @@
   inputs.home-manager.url = "github:nix-community/home-manager";
   inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
-  inputs.nightfox-src.url = "github:EdenEast/nightfox.nvim";
-  inputs.nightfox-src.flake = false;
-
   inputs.mac-app-util.url = "github:hraban/mac-app-util";
   inputs.mac-app-util.inputs.nixpkgs.follows = "nixpkgs-unstable";
   inputs.mac-app-util.inputs.flake-utils.follows = "flake-utils";
+
+  # Catppuccin olorscheme
+  inputs.catppuccin-ghostty.url = "github:catppuccin/ghostty";
+  inputs.catppuccin-ghostty.flake = false;
+  inputs.catppuccin-lazygit.url = "github:catppuccin/lazygit";
+  inputs.catppuccin-lazygit.flake = false;
 
   inputs.ghostty.url = "github:ghostty-org/ghostty/v1.0.0";
   inputs.flox.url = "github:flox/flox/v1.3.8";
   inputs.devenv.url = "github:cachix/devenv/v1.3.1";
 
+  # Custom vim/neovim plugins
+  inputs.vimPlugin-auto-dark-mode.url = "github:f-person/auto-dark-mode.nvim";
+  inputs.vimPlugin-auto-dark-mode.flake = false;
+
   outputs =
-    { self
-    , flake-utils
-    , nixpkgs-unstable
-    , nixos-hardware
-    , nix-darwin
-    , home-manager
-    , nightfox-src
-    , mac-app-util
-    , ...
-    } @ inputs:
+    {
+      self,
+      flake-utils,
+      nixpkgs-unstable,
+      nix-darwin,
+      home-manager,
+      mac-app-util,
+      ...
+    }@inputs:
     let
-      overlays = [
-        (import ./pkgs/overlay.nix { inherit nightfox-src; })
-      ];
+      mkCustomVimPlugins =
+        { pkgs }:
+        let
+          inherit (pkgs.vimUtils) buildVimPlugin;
+          pluginsPrefix = "vimPlugin-";
+          pluginsNames = builtins.filter (
+            n: builtins.substring 0 (builtins.stringLength pluginsPrefix) n == pluginsPrefix
+          ) (builtins.attrNames inputs);
+          toPluginVersion =
+            input:
+            let
+              year = builtins.substring 0 4 input.lastModifiedDate;
+              month = builtins.substring 4 6 input.lastModifiedDate;
+              day = builtins.substring 6 8 input.lastModifiedDate;
+            in
+            "${year}-${month}-${day}-${input.shortRev}";
+          normalizeName =
+            name:
+            "custom-"
+            + (builtins.substring (builtins.stringLength pluginsPrefix) (builtins.stringLength name) name);
+          plugins =
+            final:
+            builtins.listToAttrs (
+              builtins.map (name: {
+                name = normalizeName name;
+                value = buildVimPlugin {
+                  pname = normalizeName name;
+                  version = toPluginVersion inputs.${name};
+                  src = inputs.${name};
+                };
+              }) pluginsNames
+            );
+          overrides = final: prev: { };
+        in
+        pkgs.lib.makeExtensible (pkgs.lib.extends overrides plugins);
 
       mkHomeConfiguration =
-       { name
-       , nixpkgs ? nixpkgs-unstable
-       , system ? "x86_64-linux"
-       }:
-       let
-         homeConfiguration = 
-           if builtins.elem system ["x86_64-darwin" "aarch64-darwin"]
-           then ./homeConfigurations/darwin.nix
-           else ./homeConfigurations/linux.nix;
-       in {
-         "${name}" = home-manager.lib.homeManagerConfiguration rec {
-            pkgs = import nixpkgs { inherit system overlays; };
-            modules = [
-              (import (self + "/homeConfigurations/${name}.nix"))
-            ];
+        {
+          name,
+          nixpkgs ? nixpkgs-unstable,
+          system ? "x86_64-linux",
+        }:
+        let
+          homeConfiguration =
+            if
+              builtins.elem system [
+                "x86_64-darwin"
+                "aarch64-darwin"
+              ]
+            then
+              ./homeConfigurations/darwin.nix
+            else
+              ./homeConfigurations/linux.nix;
+        in
+        {
+          "${name}" = home-manager.lib.homeManagerConfiguration rec {
+            pkgs = import nixpkgs { inherit system; };
+            modules = [ (import (self + "/homeConfigurations/${name}.nix")) ];
             extraSpecialArgs = {
               inherit inputs;
+              customVimPlugins = mkCustomVimPlugins { inherit pkgs; };
               user = user // user.machines.${name};
               hostname = name;
             };
           };
-      };
+        };
 
       mkDarwinConfiguration =
-        { name
-        , nixpkgs ? nixpkgs-unstable
-        , system ? "aarch64-darwin"
-        }:
         {
-          "${name}" = nix-darwin.lib.darwinSystem
-            { inherit system;
-              specialArgs = {
-                inherit inputs;
-                user = user // user.machines.${name};
-                hostname = name;
-              };
-              modules =
-                [ 
-                  mac-app-util.darwinModules.default
-                  home-manager.darwinModules.home-manager
-                  ({ pkgs, config, inputs, ... }:
-                   {
-                     home-manager.sharedModules = [
-                       mac-app-util.homeManagerModules.default
-                     ];
-                   })
-
-                  (import (self + "/darwinConfigurations/${name}.nix"))
-                ];
-              inputs = { inherit nixpkgs home-manager; };
+          name,
+          nixpkgs ? nixpkgs-unstable,
+          system ? "aarch64-darwin",
+        }:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          "${name}" = nix-darwin.lib.darwinSystem {
+            inherit system;
+            specialArgs = {
+              inherit inputs;
+              customVimPlugins = mkCustomVimPlugins { inherit pkgs; };
+              user = user // user.machines.${name};
+              hostname = name;
             };
+            modules = [
+              mac-app-util.darwinModules.default
+              home-manager.darwinModules.home-manager
+              (
+                { ... }:
+                {
+                  home-manager.sharedModules = [ mac-app-util.homeManagerModules.default ];
+                }
+              )
+
+              (import (self + "/darwinConfigurations/${name}.nix"))
+            ];
+            inputs = { inherit nixpkgs home-manager; };
+          };
         };
 
       mkNixOSConfiguration =
-        { name
-        , nixpkgs ? nixpkgs-unstable
-        , system ? "x86_64-linux"
-        }:
         {
-          "${name}" = nixpkgs.lib.nixosSystem
-            { inherit system;
-              specialArgs = {
-                inherit inputs;
-                user = user // user.machines.${name};
-                hostname = name;
-              };
-              modules =
-                [ (import (self + "/nixosConfigurations/${name}.nix"))
-                  ({ ... }: {
-                    system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
-                    nix.registry.nixpkgs.flake = nixpkgs;
-                    networking.hostName = name;
-                  })
-                ];
+          name,
+          nixpkgs ? nixpkgs-unstable,
+          system ? "x86_64-linux",
+        }:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          "${name}" = nixpkgs.lib.nixosSystem {
+            inherit system;
+            specialArgs = {
+              inherit inputs;
+              customVimPlugins = mkCustomVimPlugins { inherit pkgs; };
+              user = user // user.machines.${name};
+              hostname = name;
             };
+            modules = [
+              (import (self + "/nixosConfigurations/${name}.nix"))
+              (
+                { ... }:
+                {
+                  system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
+                  nix.registry.nixpkgs.flake = nixpkgs;
+                  networking.hostName = name;
+                }
+              )
+            ];
+          };
         };
 
-      flake = flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ] (system:
-        let
-          pkgs = import nixpkgs-unstable { inherit system overlays; };
-        in rec {
-          devShell = pkgs.mkShell {
-            inherit system;
-            packages = pkgs.lib.optionals pkgs.stdenv.isDarwin [
-              nix-darwin.packages.${system}.default
-            ];
-
-          };
-        });
+      flake =
+        flake-utils.lib.eachSystem
+          [
+            "x86_64-linux"
+            "aarch64-linux"
+            "aarch64-darwin"
+          ]
+          (
+            system:
+            let
+              pkgs = import nixpkgs-unstable { inherit system; };
+            in
+            {
+              inherit inputs;
+              packages.customVimPlugins = mkCustomVimPlugins { inherit pkgs; };
+              devShells.default = pkgs.mkShell {
+                inherit system;
+                packages =
+                  with pkgs;
+                  [
+                    nixd
+                    #nixfmt-classic
+                    nixfmt-rfc-style
+                  ]
+                  ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [ nix-darwin.packages.${system}.default ];
+              };
+            }
+          );
 
       user = {
         fullname = "Rok Garbas";
@@ -165,23 +238,46 @@
         };
       };
     in
-      flake // {
-        homeConfigurations =
-          {}
-          // mkHomeConfiguration   { system = "aarch64-darwin"; name = "jaime"; }
-          // mkHomeConfiguration   { system = "aarch64-darwin"; name = "brienne"; }
-          // mkHomeConfiguration   { system = "aarch64-linux"; name = "solo"; }
-          ;
-        darwinConfigurations =
-          {}
-          // mkDarwinConfiguration { system = "aarch64-darwin"; name = "jaime"; }
-          // mkDarwinConfiguration { system = "aarch64-darwin"; name = "brienne"; }
-          ;
-        nixosConfigurations =
-          {}
-          // mkNixOSConfiguration  { system = "x86_64-linux";   name = "pono"; }   # aws machine (old)
-          // mkNixOSConfiguration  { system = "aarch64-linux";  name = "cercei"; } # vm on jaime (not used that much)
-          // mkNixOSConfiguration  { system = "x86_64-linux";   name = "floki"; }
-          ;
-      };
+    flake
+    // {
+      homeConfigurations =
+        { }
+        // mkHomeConfiguration {
+          system = "aarch64-darwin";
+          name = "jaime";
+        }
+        // mkHomeConfiguration {
+          system = "aarch64-darwin";
+          name = "brienne";
+        }
+        // mkHomeConfiguration {
+          system = "aarch64-linux";
+          name = "solo";
+        };
+      darwinConfigurations =
+        { }
+        // mkDarwinConfiguration {
+          system = "aarch64-darwin";
+          name = "jaime";
+        }
+        // mkDarwinConfiguration {
+          system = "aarch64-darwin";
+          name = "brienne";
+        };
+      nixosConfigurations =
+        { }
+        // mkNixOSConfiguration {
+          system = "x86_64-linux";
+          name = "pono";
+        }
+        # aws machine (old)
+        // mkNixOSConfiguration {
+          system = "aarch64-linux";
+          name = "cercei";
+        } # vm on jaime (not used that much)
+        // mkNixOSConfiguration {
+          system = "x86_64-linux";
+          name = "floki";
+        };
+    };
 }

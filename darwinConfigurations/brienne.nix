@@ -1,4 +1,10 @@
-{ pkgs, user, hostname, inputs, ... }:
+{
+  pkgs,
+  user,
+  hostname,
+  inputs,
+  ...
+}:
 {
 
   system.stateVersion = 5;
@@ -37,7 +43,7 @@
   home-manager.users."${user.username}" = import ./../homeConfigurations/${hostname}.nix;
   home-manager.extraSpecialArgs = { inherit user inputs hostname; };
 
-  services.skhd.enable  = true;
+  services.skhd.enable = true;
   services.skhd.skhdConfig = ''
     # Spaces: focus/switch
 
@@ -46,9 +52,9 @@
   services.yabai.enable = true;
   services.yabai.enableScriptingAddition = true;
   services.yabai.config = {
-    layout       = "bsp";
+    layout = "bsp";
     auto_balance = "on";
-    window_placement    = "second_child";
+    window_placement = "second_child";
 
     # window border
     window_border = "on";
@@ -58,20 +64,20 @@
     insert_window_border_color = "0xffd75f5f";
 
     # window paddixg
-    top_padding         = 5;
-    bottom_padding      = 5;
-    left_padding        = 5;
-    right_padding       = 5;
-    window_gap          = 5;
-    window_opacity      = "off";
+    top_padding = 5;
+    bottom_padding = 5;
+    left_padding = 5;
+    right_padding = 5;
+    window_gap = 5;
+    window_opacity = "off";
 
     # mouse setting
     focus_follows_mouse = "autoraise";
     mouse_follows_focus = "on";
-    mouse_modifier      = "alt";
-    mouse_action1       = "move";    # left click + drag
-    mouse_action2       = "resize";  # righ click + drag
-    mouse_drop_action   = "swap";
+    mouse_modifier = "alt";
+    mouse_action1 = "move"; # left click + drag
+    mouse_action2 = "resize"; # righ click + drag
+    mouse_drop_action = "swap";
 
     # integrate spacebar
     #external_bar        = "all:26";

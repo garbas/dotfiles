@@ -6,7 +6,7 @@
   ];
 
   home.sessionVariables = {
-    HOMEBREW_NO_ANALYTICS = "1";  # https://docs.brew.sh/Analytics
+    HOMEBREW_NO_ANALYTICS = "1"; # https://docs.brew.sh/Analytics
   };
 
   programs.zsh.initExtra = ''
