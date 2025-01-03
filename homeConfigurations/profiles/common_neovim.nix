@@ -1,6 +1,24 @@
 { pkgs, customVimPlugins, ... }:
 {
 
+  # TODO:
+  # - https://github.com/kwkarlwang/bufresize.nvim
+  # - https://github.com/mrjones2014/legendary.nvim
+  # - https://github.com/mrjones2014/op.nvim
+  # - https://github.com/sindrets/diffview.nvim
+  # - https://github.com/catppuccin/nvim?tab=readme-ov-file#integrations (See other plugins)
+
+  # - Toggleterm config example: https://github.com/cpow/neovim-for-newbs/issues/1
+  # - https://github.com/cpow/neovim-for-newbs/tree/main/lua/plugins
+  # - https://github.com/xzbdmw/colorful-menu.nvim
+  # - https://github.com/danymat/neogen
+  # - LSP
+  #   - https://nvimluau.dev/folke-trouble-nvim
+  #   - https://lsp-zero.netlify.app, https://github.com/VonHeikemen/lsp-zero.nvim
+  #   - https://github.com/nvimtools/none-ls.nvim
+  # - https://github.com/stevearc/dressing.nvim
+  # - https://github.com/nvim-neorg/neorg
+
   programs.neovim.enable = true;
   programs.neovim.viAlias = true;
   programs.neovim.vimAlias = true;
@@ -103,8 +121,6 @@
 
       -- Use the system clipboard
       o.clipboard      = "unnamed"
-
-
     '';
 
   programs.neovim.plugins =
@@ -112,7 +128,18 @@
     with customVimPlugins;
     [
 
-      # 🍨 Soothing pastel theme for (Neo)vim
+      # Map keys without delay when typing
+      # https://github.com/max397574/better-escape.nvim
+      {
+        plugin = better-escape-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require("better_escape").setup()
+          '';
+      }
+
+      # 🍨 Soothing pastel theme fsor (Neo)vim
       # https://github.com/catppuccin/nvim
       {
         plugin = catppuccin-nvim;
@@ -122,9 +149,47 @@
             require("catppuccin").setup({
               flavour = "mocha",
               background = {
-                  light = "latte",
-                  dark = "mocha",
+                light = "latte",
+                dark = "mocha",
               },
+              custom_highlights = function(colors)
+                return {
+                  WinSeparator = { fg = colors.surface1 },
+                }
+              end,
+              default_integrations = false,
+              integrations = {
+                alpha = true,
+                blink_cmp = true; 
+                gitsigns = true,
+                markdown = true,
+              },
+              native_lsp = {
+                enabled = true,
+                virtual_text = {
+                    errors = { "italic" },
+                    hints = { "italic" },
+                    warnings = { "italic" },
+                    information = { "italic" },
+                    ok = { "italic" },
+                },
+                underlines = {
+                    errors = { "underline" },
+                    hints = { "underline" },
+                    warnings = { "underline" },
+                    information = { "underline" },
+                    ok = { "underline" },
+                },
+                inlay_hints = {
+                    background = true,
+                },
+              },
+              notify = true,
+              treesitter = true,
+              telescope = {
+                enabled = true,
+              },
+              which_key = true,
             })
             vim.cmd.colorscheme("catppuccin")
           '';
@@ -177,6 +242,50 @@
       mini-icons # https://github.com/echasnovski/mini.icons
       nvim-web-devicons # https://github.com/nvim-tree/nvim-web-devicons
 
+      # Indent guides for Neovim
+      # https://github.com/lukas-reineke/indent-blankline.nvim
+      {
+        plugin = indent-blankline-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require("ibl").setup()
+          '';
+
+      }
+
+      # 🧘 Distraction-free coding for Neovim
+      # https://github.com/folke/zen-mode.nvim
+      {
+        plugin = zen-mode-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require("zen-mode").setup()
+            require("which-key").add({
+              { "<leader>z",  group = "Zen Mode" },
+              { "<leader>zz", "<cmd>:ZenMode<cr>", desc = "Zen Mode" },
+            })
+          '';
+      }
+
+      # A fancy, configurable, notification manager for NeoVim
+      # https://github.com/rcarriga/nvim-notify
+      {
+        plugin = nvim-notify;
+        type = "lua";
+        config = # lua
+          ''
+            vim.notify = require("notify")
+            require("which-key").add({
+              { "<leader>N",  group = "Notifications" },
+              { "<leader>Nn", "<cmd>:Telescope notify<cr>", desc = "Notification" },
+              { "<leader>Nc", "<cmd>lua require(\"notify\").clear_history()<cr>", desc = "Dismiss All Notifications" },
+              { "<leader>Nh", "<cmd>lua require(\"notify\").history()<cr>", desc = "Notification History" },
+            })
+          '';
+      }
+
       #  Neovim file explorer: edit your filesystem like a buffer
       # https://github.com/stevearc/oil.nvim
       {
@@ -195,116 +304,35 @@
           '';
       }
 
-      # 🍿 A collection of small QoL plugins for Neovim
-      # https://github.com/folke/snacks.nvim
+      # A lua powered greeter (like vim-startify / dashboard-nvim)
+      # https://github.com/goolord/alpha-nvim
+      nvim-web-devicons
       {
-        plugin = snacks-nvim;
+        plugin = alpha-nvim;
         type = "lua";
         config = # lua
           ''
-            require("snacks").setup({
+            local startify = require("alpha.themes.startify")
+            startify.file_icons.provider = "devicons"
+            require("alpha").setup(
+              startify.config
+            )
+          '';
+      }
 
-              -- Deal with big files
-              bigfile = { enabled = true },
-
-              -- Beautiful declarative dashboards
-              dashboard = {
-                enabled = true,
-                sections = {
-                  { section = "header" },
-                  { icon = " ", title = "Recent Files", section = "recent_files", padding = 1 },
-                  { icon = " ", title = "Projects", section = "projects", padding = 1 },
-                },
-              },
-
-              -- Focus on the active scope by dimming the rest
-              dim = { enabled = true },
-
-              -- Indent guides and scopes
-              indent = { enabled = true },
-
-              -- Better vim.ui.input
-              input = { enabled = true },
-
-              -- Open LazyGit in a float, auto-configure colorscheme and integration
-              -- with Neovim
-              lazygit = { enabled = true },
-
-              -- Pretty vim.notify
-              notifier = { enabled = true },
-
-              -- When doing nvim somefile.txt, it will render the file as quickly as
-              -- possible, before loading your plugins.
-              quickfile = { enabled = true },
-
-              -- LSP-integrated file renaming with support for plugins like
-              -- neo-tree.nvim and mini.files
-              rename = { enabled = true },
-
-              -- Scope detection, text objects and jumping based on treesitter or
-              -- indent
-              scope = { enabled = true },
-
-              -- Scratch buffers with a persistent file
-              scratch = { enabled = true },
-
-              -- Smooth scrolling
-              scroll = { enabled = true },
-
-              -- Pretty status column
-              statuscolumn = { enabled = true },
-
-              -- Create and toggle floating/split terminals
-              terminal = { enabled = true },
-
-              -- Toggle keymaps integrated with which-key icons / colors
-              toggle = { enabled = true },
-
-              -- Create and manage floating windows or splits
-              win = { enabled = true },
-
-              -- Auto-show LSP references and quickly navigate between them
-              words = { enabled = true },
-
-              -- Zen mode • distraction-free coding
-              zen = { enabled = true },
-
-            })
-            require("which-key").add({
-              { "<leader>z",  group = "Zen" },
-              { "<leader>zz",  "<cmd>lua Snacks.zen()<cr>", desc = "Toggle Zen Mode" },
-              { "<leader>zZ",  "<cmd>lua Snacks.zen.zoom()<cr>", desc = "Toggle Zoom" },
-
-              { "<leader>y",  group = "Scratch" },
-              { "<leader>y.",  "<cmd>lua Snacks.scratch()<cr>", desc = "Toggle Scratch Buffer" },
-              { "<leader>ys",  "<cmd>lua Snacks.scratch.select()<cr>", desc = "Select Scratch Buffer" },
-
-              { "<leader>n",  group = "Notifications" },
-              { "<leader>nn", "<cmd>lua Snacks.notifier.hide()<cr>", desc = "Dismiss All Notifications" },
-              { "<leader>nh",  "<cmd>lua Snacks.notifier.show_history()<cr>", desc = "Notification History" },
-
-              { "<leader>b",  group = "Buffers" },
-              { "<leader>bd", "<cmd>lua Snacks.bufdelete()<cr>", desc = "Delete Buffer" },
-
-              { "<leader>f",  group = "Files" },
-              { "<leader>fR", "<cmd>lua Snacks.rename.rename_file()<cr>", desc = "Rename File" },
-
-              { "<leader>f",  group = "Git" },
-              { "<leader>gB", "<cmd>lua Snacks.gitbrowse()<cr>", desc = "Git Browse", mode = { "n", "v" } },
-              { "<leader>gb", "<cmd>lua Snacks.git.blame_line()<cr>", desc = "Git Blame Line" },
-              { "<leader>gf", "<cmd>lua Snacks.lazygit.log_file()<cr>", desc = "Lazygit Current File History" },
-              { "<leader>gg", "<cmd>lua Snacks.lazygit()<cr>", desc = "Lazygit" },
-              { "<leader>gl", "<cmd>lua Snacks.lazygit.log()<cr>", desc = "Lazygit Log (cwd)" },
-
-              { "<leader><leader>",      "<cmd>lua Snacks.terminal()<cr>", desc = "Toggle Terminal" },
-              { "<c-_>",      "<cmd>lua Snacks.terminal()<cr>", desc = "which_key_ignore" },
-              { "]]",         "<cmd>lua Snacks.words.jump(vim.v.count1)<cr>", desc = "Next Reference", mode = { "n", "t" } },
-              { "[[",         "<cmd>lua Snacks.words.jump(-vim.v.count1)<cr>", desc = "Prev Reference", mode = { "n", "t" } },
-            })
+      # Smooth scrolling neovim plugin written in lua
+      # https://github.com/karb94/neoscroll.nvim
+      {
+        plugin = neoscroll-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require('neoscroll').setup()
           '';
       }
 
       # Syntax highlighting (via treesitter)
+      # https://github.com/nvim-treesitter/nvim-treesitter
       {
         plugin = pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
         type = "lua";
@@ -339,10 +367,8 @@
       # https://github.com/nvim-telescope/telescope.nvim/
       telescope-fzf-native-nvim
       telescope-file-browser-nvim
-      #TODO: telescope-dap-nvim
       telescope-github-nvim
-      #TODO: telescope-lsp-handlers-nvim
-      #TODO: telescope-manix-nvim
+      telescope-lsp-handlers-nvim
       {
         plugin = telescope-nvim;
         type = "lua";
@@ -382,6 +408,7 @@
                   case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
                                                    -- the default case_mode is "smart_case"
                 },
+                lsp_handlers = {},
               },
             }
 
@@ -441,32 +468,12 @@
       # Set of preconfigured snippets for different languages.
       # https://github.com/rafamadriz/friendly-snippets
       friendly-snippets
-
       # Compatibility layer for using nvim-cmp sources on blink.cmp
       # https://github.com/saghen/blink.compat
       blink-compat
-
       # Adds copilot suggestions as a source for Saghen/blink.cmp
       # https://github.com/giuxtaposition/blink-cmp-copilot
       blink-cmp-copilot
-
-      # Faster LuaLS setup for Neovim
-      # https://github.com/folke/lazydev.nvim
-      {
-        plugin = lazydev-nvim;
-        type = "lua";
-        config = # lua
-          ''
-            require("lazydev").setup({
-              library = {
-                -- See the configuration section for more details
-                -- Load luvit types when the `vim.uv` word is found
-                { path = "''${3 rd}/luv/library", words = { "vim%.uv" } },
-              },
-            })
-          '';
-      }
-
       # Performant, batteries-included completion plugin for Neovim
       # https://github.com/Saghen/blink.cmp
       {
@@ -481,7 +488,74 @@
               -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
               -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
               -- See the full "keymap" documentation for information on defining your own keymap.
-              keymap = { preset = 'enter' },
+              keymap = {
+                preset = 'enter',
+              },
+
+              signature = {
+                enabled = true,
+              },
+
+              -- Default list of enabled providers defined so that you can extend it
+              -- elsewhere in your config, without redefining it, due to `opts_extend`
+              sources = {
+                default = { 'lazydev', 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
+                providers = {
+                  lazydev = {
+                    name = "LazyDev",
+                    module = "lazydev.integrations.blink",
+                    score_offset = 100,
+                  },
+                  copilot = { 
+                    name = 'copilot',
+                    module = "blink-cmp-copilot",
+                    score_offset = 200,
+                    async = true,
+                    transform_items = function(_, items)
+                      local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
+                      local kind_idx = #CompletionItemKind + 1
+                      CompletionItemKind[kind_idx] = "Copilot"
+                      for _, item in ipairs(items) do
+                        item.kind = kind_idx
+                      end
+                      return items
+                    end,
+                  },
+                },
+              },
+
+              completion = {
+                documentation = {
+                  auto_show = true,
+                  auto_show_delay_ms = 500,
+                },
+                ghost_text = { enabled = false },
+                list = {
+                  selection = function(ctx)
+                    return ctx.mode == 'cmdline' and 'manual' or 'auto_insert'
+                  end,
+                },
+                menu = {
+                  draw = {
+                    -- Highlight the label text for the given list of sources.
+                    -- This feature is experimental!
+                    treesitter = { 'lsp' },
+                    -- Components to render, grouped by column
+                    columns = {
+                      { 'kind_icon' },
+                      { 'label', 'label_description', gap = 1 },
+                      { 'kind' },
+                      { 'source_name' },
+                    },
+                  },
+                },
+              },
+
+              fuzzy = {
+                prebuilt_binaries = {
+                  download = false,
+                },
+              },
 
               appearance = {
                 -- Sets the fallback highlight groups to nvim-cmp's highlight groups
@@ -524,71 +598,6 @@
                   Event = '󱐋',
                   Operator = '󰪚',
                   TypeParameter = '󰬛',
-                },
-              },
-
-              signature = {
-                enabled = true,
-              },
-
-              -- Default list of enabled providers defined so that you can extend it
-              -- elsewhere in your config, without redefining it, due to `opts_extend`
-              sources = {
-                default = { 'lazydev', 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
-                providers = {
-                  lazydev = {
-                    name = "LazyDev",
-                    module = "lazydev.integrations.blink",
-                    score_offset = 100,
-                  },
-                  copilot = { 
-                    name = 'copilot',
-                    module = "blink-cmp-copilot",
-                    score_offset = 200,
-                    async = true,
-                    transform_items = function(_, items)
-                      local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-                      local kind_idx = #CompletionItemKind + 1
-                      CompletionItemKind[kind_idx] = "Copilot"
-                      for _, item in ipairs(items) do
-                        item.kind = kind_idx
-                      end
-                      return items
-                    end,
-                  },
-                },
-              },
-
-              completion = {
-                documentation = {
-                  auto_show = true,
-                  auto_show_delay_ms = 500,
-                },
-                ghost_text = { enabled = true },
-                list = {
-                  selection = function(ctx)
-                    return ctx.mode == 'cmdline' and 'auto_insert' or 'preselect'
-                  end,
-                },
-                menu = {
-                  draw = {
-                    -- Highlight the label text for the given list of sources.
-                    -- This feature is experimental!
-                    treesitter = { 'lsp' },
-                    -- Components to render, grouped by column
-                    columns = {
-                      { 'kind_icon' },
-                      { 'label', 'label_description', gap = 1 },
-                      { 'kind' },
-                      { 'source_name' },
-                    },
-                  },
-                },
-              },
-
-              fuzzy = {
-                prebuilt_binaries = {
-                  download = false,
                 },
               },
             })
@@ -656,7 +665,22 @@
 
       # -- LSP ------------------------------------------------------------------
 
-      # TODO: https://github.com/folke/lazydev.nvim
+      # Faster LuaLS setup for Neovim
+      # https://github.com/folke/lazydev.nvim
+      {
+        plugin = lazydev-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require("lazydev").setup({
+              library = {
+                -- See the configuration section for more details
+                -- Load luvit types when the `vim.uv` word is found
+                { path = "''${3 rd}/luv/library", words = { "vim%.uv" } },
+              },
+            })
+          '';
+      }
 
       # Quickstart configs for Nvim LSP
       # https://github.com/neovim/nvim-lspconfig
@@ -719,6 +743,236 @@
           '';
       }
 
+      # -- Misc ---------------------------------------------------------------
+
+      # A neovim lua plugin to help easily manage multiple terminal windows
+      # https://github.com/akinsho/toggleterm.nvim
+      {
+        plugin = toggleterm-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require("toggleterm").setup({
+            })
+            require("which-key").add({
+              { "<leader>tt",      "<cmd>:ToggleTerm<cr>", desc = "Toggle Terminal" },
+              { "<leader>tT",      "<cmd>:ToggleTermToggleAll<cr>", desc = "Toggle All Terminal" },
+            })
+          '';
+      }
+
+      # The fastest Neovim colorizer
+      # https://github.com/catgoose/nvim-colorizer.lua
+      {
+        plugin = nvim-colorizer-lua;
+        type = "lua";
+        config = # lua
+          ''
+            require("colorizer").setup({
+            })
+          '';
+      }
+
+      # 👀 Move faster with unique f/F indicators.
+      # https://github.com/jinh0/eyeliner.nvim
+      {
+        plugin = eyeliner-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require("eyeliner").setup({
+              -- show highlights only after keypress
+              highlight_on_key = true,
+
+              -- dim all other characters if set to true (recommended!)
+              dim = true,
+
+              -- set the maximum number of characters eyeliner.nvim will check from
+              -- your current cursor position; this is useful if you are dealing with
+              -- large files: see https://github.com/jinh0/eyeliner.nvim/issues/41
+              max_length = 9999,
+
+              -- filetypes for which eyeliner should be disabled;
+              -- e.g., to disable on help files:
+              -- disabled_filetypes = {"help"}
+              disabled_filetypes = {},
+
+              -- buftypes for which eyeliner should be disabled
+              -- e.g., disabled_buftypes = {"nofile"}
+              disabled_buftypes = {},
+
+              -- add eyeliner to f/F/t/T keymaps;
+              -- see section on advanced configuration for more information
+              default_keymaps = true,
+            })
+          '';
+      }
+      # Super fast git decorations implemented purely in Lua.
+      # https://github.com/lewis6991/gitsigns.nvim
+      {
+        plugin = gitsigns-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require("gitsigns").setup({
+            })
+          '';
+      }
+
+      # A blazing fast and easy to configure neovim statusline plugin written
+      # in pure lua.
+      # https://github.com/nvim-lualine/lualine.nvim
+      {
+        plugin = lualine-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            local winbar = {
+              lualine_a = {'mode'},
+              lualine_b = {'branch', 'diff', 'diagnostics'},
+              lualine_c = {'filename'},
+              lualine_x = {'encoding', 'fileformat', 'filetype'},
+              lualine_y = {'progress'},
+              lualine_z = {'location'}
+            }
+            require("lualine").setup({
+              sections = {},
+              inactive_sections = {},
+              winbar = winbar,
+              inactive_winbar = winbar,
+              options = {
+                theme = "catppuccin",
+              },
+              extensions = { 'oil', 'toggleterm' },
+            })
+          '';
+      }
+
+      # 🧠 Smart, seamless, directional navigation and resizing of Neovim +
+      # terminal multiplexer splits. Supports tmux, Wezterm, and Kitty. Think
+      # about splits in terms of "up/down/left/right".
+      # https://github.com/mrjones2014/smart-splits.nvim
+      {
+        plugin = smart-splits-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require('smart-splits').setup({
+              -- Ignored buffer types (only while resizing)
+              ignored_buftypes = {
+                'nofile',
+                'quickfix',
+                'prompt',
+              },
+              -- Ignored filetypes (only while resizing)
+              ignored_filetypes = { 'NvimTree' },
+              -- the default number of lines/columns to resize by at a time
+              default_amount = 3,
+              -- Desired behavior when your cursor is at an edge and you
+              -- are moving towards that same edge:
+              -- 'wrap' => Wrap to opposite side
+              -- 'split' => Create a new split in the desired direction
+              -- 'stop' => Do nothing
+              -- function => You handle the behavior yourself
+              -- NOTE: If using a function, the function will be called with
+              -- a context object with the following fields:
+              -- {
+              --    mux = {
+              --      type:'tmux'|'wezterm'|'kitty'
+              --      current_pane_id():number,
+              --      is_in_session(): boolean
+              --      current_pane_is_zoomed():boolean,
+              --      -- following methods return a boolean to indicate success or failure
+              --      current_pane_at_edge(direction:'left'|'right'|'up'|'down'):boolean
+              --      next_pane(direction:'left'|'right'|'up'|'down'):boolean
+              --      resize_pane(direction:'left'|'right'|'up'|'down'):boolean
+              --      split_pane(direction:'left'|'right'|'up'|'down',size:number|nil):boolean
+              --    },
+              --    direction = 'left'|'right'|'up'|'down',
+              --    split(), -- utility function to split current Neovim pane in the current direction
+              --    wrap(), -- utility function to wrap to opposite Neovim pane
+              -- }
+              -- NOTE: `at_edge = 'wrap'` is not supported on Kitty terminal
+              -- multiplexer, as there is no way to determine layout via the CLI
+              at_edge = 'wrap',
+              -- Desired behavior when the current window is floating:
+              -- 'previous' => Focus previous Vim window and perform action
+              -- 'mux' => Always forward action to multiplexer
+              float_win_behavior = 'previous',
+              -- when moving cursor between splits left or right,
+              -- place the cursor on the same row of the *screen*
+              -- regardless of line numbers. False by default.
+              -- Can be overridden via function parameter, see Usage.
+              move_cursor_same_row = false,
+              -- whether the cursor should follow the buffer when swapping
+              -- buffers by default; it can also be controlled by passing
+              -- `{ move_cursor = true }` or `{ move_cursor = false }`
+              -- when calling the Lua function.
+              cursor_follows_swapped_bufs = false,
+              -- resize mode options
+              resize_mode = {
+                -- key to exit persistent resize mode
+                quit_key = '<ESC>',
+                -- keys to use for moving in resize mode
+                -- in order of left, down, up' right
+                resize_keys = { 'h', 'j', 'k', 'l' },
+                -- set to true to silence the notifications
+                -- when entering/exiting persistent resize mode
+                silent = false,
+                -- must be functions, they will be executed when
+                -- entering or exiting the resize mode
+                hooks = {
+                  on_enter = nil,
+                  on_leave = nil,
+                },
+              },
+              -- ignore these autocmd events (via :h eventignore) while processing
+              -- smart-splits.nvim computations, which involve visiting different
+              -- buffers and windows. These events will be ignored during processing,
+              -- and un-ignored on completed. This only applies to resize events,
+              -- not cursor movement events.
+              ignored_events = {
+                'BufEnter',
+                'WinEnter',
+              },
+              -- enable or disable a multiplexer integration;
+              -- automatically determined, unless explicitly disabled or set,
+              -- by checking the $TERM_PROGRAM environment variable,
+              -- and the $KITTY_LISTEN_ON environment variable for Kitty
+              multiplexer_integration = nil,
+              -- disable multiplexer navigation if current multiplexer pane is zoomed
+              -- this functionality is only supported on tmux and Wezterm due to kitty
+              -- not having a way to check if a pane is zoomed
+              disable_multiplexer_nav_when_zoomed = true,
+              -- Supply a Kitty remote control password if needed,
+              -- or you can also set vim.g.smart_splits_kitty_password
+              -- see https://sw.kovidgoyal.net/kitty/conf/#opt-kitty.remote_control_password
+              kitty_password = nil,
+              -- default logging level, one of: 'trace'|'debug'|'info'|'warn'|'error'|'fatal'
+              log_level = 'info',
+            })
+
+            require("which-key").add({
+              { "<leader>w",  group = "Windows" },
+              -- resizing splits
+              { "<leader>wrh", "<cmd>lua require('smart-splits').resize_left(10)<cr>", desc = "Resize left" },
+              { "<leader>wrj", "<cmd>lua require('smart-splits').resize_down(10)<cr>", desc = "Resize down" },
+              { "<leader>wrk", "<cmd>lua require('smart-splits').resize_up(10)<cr>", desc = "Resize up" },
+              { "<leader>wrl", "<cmd>lua require('smart-splits').resize_right(10)<cr>", desc = "Resize right" },
+              -- moving between splits
+              { "<leader>wh", "<cmd>lua require('smart-splits').move_cursor_left()<cr>", desc = "Move left" },
+              { "<leader>wj", "<cmd>lua require('smart-splits').move_cursor_down()<cr>", desc = "Mode down" },
+              { "<leader>wk", "<cmd>lua require('smart-splits').move_cursor_up()<cr>", desc = "Move up" },
+              { "<leader>wl", "<cmd>lua require('smart-splits').move_cursor_right()<cr>", desc = "Move right" },
+              { "<leader>w<tab>", "<cmd>lua require('smart-splits').move_cursor_previous()<cr>", desc = "Move previous" },
+              -- swapping buffers between windows
+              { "<leader>wH", "<cmd>lua require('smart-splits').swap_buf_left()<cr>", desc = "Swap left" },
+              { "<leader>wJ", "<cmd>lua require('smart-splits').swap_buf_down()<cr>", desc = "Swap down" },
+              { "<leader>wK", "<cmd>lua require('smart-splits').swap_buf_up()<cr>", desc = "Swap up" },
+              { "<leader>wL", "<cmd>lua require('smart-splits').swap_buf_right()<cr>", desc = "Swap right" },
+            })
+          '';
+      }
     ];
 
 }
