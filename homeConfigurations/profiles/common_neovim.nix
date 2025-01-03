@@ -312,11 +312,36 @@
         type = "lua";
         config = # lua
           ''
-            local startify = require("alpha.themes.startify")
-            startify.file_icons.provider = "devicons"
-            require("alpha").setup(
-              startify.config
-            )
+            local dashboard = require("alpha.themes.dashboard")
+            local theta = require("alpha.themes.theta")
+            -- See https://github.com/goolord/alpha-nvim/discussions/16#discussioncomment-10062303
+            theta.header.val = {
+              [[          ███████████████████████ ]],
+              [[       ██████████████████████████ ]],
+              [[    █████████████████████████████ ]],
+              [[ ████████████████████████████████ ]],
+              [[ █████████████████████████████    ]],
+              [[ ███████████████████████          ]],
+              [[ █████████████████                ]],
+              [[ ███████████                      ]],
+              [[            ██████████████████████ ]],
+              [[            ██████████████████████ ]],
+              [[            ██████████████████████ ]],
+              [[            ██████████████████████ ]],
+              [[ ███████████                       ]],
+              [[ ███████████                       ]],
+              [[ ███████████                       ]],
+              [[ ███████████                       ]],
+              [[                                   ]],
+            }
+            theta.buttons.val = {
+              dashboard.button( "e", "  > New file" , ":ene <BAR> startinsert <CR>"),
+              dashboard.button( "f", "  > Find file", ":cd $HOME/dev | Telescope find_files<CR>"),
+              dashboard.button( "r", "  > Recent"   , ":Telescope oldfiles<CR>"),
+              dashboard.button( "q", "  > Quit NVIM", ":qa<CR>"),
+            }
+            theta.file_icons.provider = "devicons"
+            require("alpha").setup(theta.config)
           '';
       }
 
