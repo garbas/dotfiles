@@ -185,7 +185,7 @@
         type = "lua";
         config = # lua
           ''
-            require("better_escape").setup()
+            require('better_escape').setup()
           '';
       }
 
@@ -196,7 +196,7 @@
         type = "lua";
         config = # lua
           ''
-            require("catppuccin").setup({
+            require('catppuccin').setup({
               flavour = "mocha",
               background = {
                 light = "latte",
@@ -299,7 +299,7 @@
         type = "lua";
         config = # lua
           ''
-            require("ibl").setup()
+            require('ibl').setup()
           '';
 
       }
@@ -311,7 +311,7 @@
         type = "lua";
         config = # lua
           ''
-            require("zen-mode").setup()
+            require('zen-mode').setup()
             require("which-key").add({
               { "<leader>z",  group = "Zen Mode" },
               { "<leader>zz", "<cmd>:ZenMode<cr>", desc = "Zen Mode" },
@@ -343,7 +343,7 @@
         type = "lua";
         config = # lua
           ''
-            require("oil").setup({
+            require('oil').setup({
               columns = {
                 "icon",
                 "permissions",
@@ -412,7 +412,7 @@
         type = "lua";
         config = # lua
           ''
-            require("nvim-treesitter.configs").setup {
+            require('nvim-treesitter.configs').setup {
               ensure_installed = {},
               sync_install = false,
               auto_install = false,
@@ -450,7 +450,7 @@
           ''
             local actions = require("telescope.actions")
             local actions_layout = require("telescope.actions.layout")
-            require("telescope").setup {
+            require('telescope').setup {
               defaults = {
                 mappings = {
                   i = {
@@ -530,7 +530,7 @@
         config = # lua
           ''
             require('avante_lib').load()
-            require("avante").setup({
+            require('avante').setup({
               -- See https://github.com/yetone/avante.nvim/blob/main/lua/avante/config.lua
 
               provider = 'copilot',  -- "claude",
@@ -555,7 +555,7 @@
         type = "lua";
         config = # lua
           ''
-            require("copilot").setup({
+            require('copilot').setup({
               suggestion = { enabled = false },
               panel = { enabled = false },
               copilot_node_command = "${pkgs.nodejs}/bin/node", -- Node.js version must be > 18.x
@@ -575,7 +575,7 @@
         type = "lua";
         config = # lua
           ''
-            require("blink-compat").setup()
+            require('blink-compat').setup()
             -- monkeypatch cmp.ConfirmBehavior for Avante
             require("cmp").ConfirmBehavior = {
               Insert = "insert",
@@ -593,7 +593,7 @@
         type = "lua";
         config = # lua
           ''
-            require("blink-cmp").setup({
+            require('blink-cmp').setup({
 
               -- 'default' for mappings similar to built-in completion
               -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
@@ -752,7 +752,7 @@
         type = "lua";
         config = # lua
           ''
-            require("conform").setup({
+            require('conform').setup({
               formatters_by_ft = {
                 nix = { "nixfmt" },
                 gci = { "gci" },
@@ -811,7 +811,7 @@
         type = "lua";
         config = # lua
           ''
-            require("lazydev").setup({
+            require('lazydev').setup({
               library = {
                 -- See the configuration section for more details
                 -- Load luvit types when the `vim.uv` word is found
@@ -891,7 +891,7 @@
         type = "lua";
         config = # lua
           ''
-            require("toggleterm").setup({
+            require('toggleterm').setup({
             })
             require("which-key").add({
               { "<leader>tt",      "<cmd>:ToggleTerm<cr>", desc = "Toggle Terminal" },
@@ -907,7 +907,7 @@
         type = "lua";
         config = # lua
           ''
-            require("colorizer").setup({
+            require('colorizer').setup({
               filetypes = {
                 "*", -- Highlight all files, but customize some others.
                 css = { rgb_fn = true }, -- Enable parsing rgb(...) functions in css.
@@ -924,7 +924,7 @@
         type = "lua";
         config = # lua
           ''
-            require("eyeliner").setup({
+            require('eyeliner').setup({
               -- show highlights only after keypress
               highlight_on_key = true,
 
@@ -958,7 +958,7 @@
         type = "lua";
         config = # lua
           ''
-            require("gitsigns").setup({
+            require('gitsigns').setup({
             })
           '';
       }
@@ -979,7 +979,7 @@
               lualine_y = {'progress'},
               lualine_z = {'location'}
             }
-            require("lualine").setup({
+            require('lualine').setup({
               sections = {},
               inactive_sections = {},
               winbar = winbar,
