@@ -2,6 +2,56 @@
 {
 
   # TODO:
+  # # Better navigation
+  # {
+  #   plugin = leap-nvim;
+  #   type = "lua";
+  #   config = # lua
+  #     ''
+  #       require('leap').add_default_mappings()
+  #     '';
+  # }
+  #
+  # # Better UI
+  # {
+  #   plugin = noice-nvim;
+  #   type = "lua";
+  #   config = # lua
+  #     ''
+  #       require("noice").setup({
+  #         lsp = {
+  #           override = {
+  #             ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+  #             ["vim.lsp.util.stylize_markdown"] = true,
+  #             ["cmp.entry.get_documentation"] = true,
+  #           },
+  #         },
+  #         presets = {
+  #           bottom_search = true,
+  #           command_palette = true,
+  #           long_message_to_split = true,
+  #           inc_rename = false,
+  #           lsp_doc_border = false,
+  #         },
+  #       })
+  #     '';
+  # }
+  #
+  # # Testing support
+  # {
+  #   plugin = neotest;
+  #   type = "lua";
+  #   config = # lua
+  #     ''
+  #       require("neotest").setup({
+  #         adapters = {
+  #           require("neotest-python"),
+  #           require("neotest-go"),
+  #           require("neotest-rust"),
+  #         },
+  #       })
+  #     '';
+  # }
   # - https://github.com/kwkarlwang/bufresize.nvim
   # - https://github.com/mrjones2014/legendary.nvim
   # - https://github.com/mrjones2014/op.nvim
@@ -336,8 +386,7 @@
             }
             theta.buttons.val = {
               dashboard.button( "e", "  > New file" , ":ene <BAR> startinsert <CR>"),
-              dashboard.button( "f", "  > Find file", ":cd $HOME/dev | Telescope find_files<CR>"),
-              dashboard.button( "r", "  > Recent"   , ":Telescope oldfiles<CR>"),
+              -- TODO: Search for repositories in ~/dev and open them with Telescope
               dashboard.button( "q", "  > Quit NVIM", ":qa<CR>"),
             }
             theta.file_icons.provider = "devicons"
@@ -473,7 +522,33 @@
       #  #    https://github.com/Robitx/gp.nvim
       #  #    https://github.com/NixOS/nixpkgs/issues/340281
 
-      # AI
+      # -- AI -----------------------------------------------------------------
+      # https://github.com/yetone/avante.nvim
+      {
+        plugin = avante-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require('avante_lib').load()
+            require("avante").setup({
+              -- See https://github.com/yetone/avante.nvim/blob/main/lua/avante/config.lua
+
+              provider = 'copilot',  -- "claude",
+              auto_suggestions_provider = 'copilot', -- "claude",
+
+              file_selector = {
+                provider = "telescope",
+                provider_opts = {},
+              },
+            })
+
+            require("which-key").add({
+              { "<leader>a", group = "AI" },
+            })
+          '';
+      }
+
+      #
       # https://github.com/zbirenbaum/copilot.lua
       {
         plugin = copilot-lua;
@@ -495,7 +570,19 @@
       friendly-snippets
       # Compatibility layer for using nvim-cmp sources on blink.cmp
       # https://github.com/saghen/blink.compat
-      blink-compat
+      {
+        plugin = blink-compat;
+        type = "lua";
+        config = # lua
+          ''
+            require("blink-compat").setup()
+            -- monkeypatch cmp.ConfirmBehavior for Avante
+            require("cmp").ConfirmBehavior = {
+              Insert = "insert",
+              Replace = "replace",
+            }
+          '';
+      }
       # Adds copilot suggestions as a source for Saghen/blink.cmp
       # https://github.com/giuxtaposition/blink-cmp-copilot
       blink-cmp-copilot
@@ -506,7 +593,6 @@
         type = "lua";
         config = # lua
           ''
-            require("blink-compat").setup()
             require("blink-cmp").setup({
 
               -- 'default' for mappings similar to built-in completion
@@ -524,13 +610,41 @@
               -- Default list of enabled providers defined so that you can extend it
               -- elsewhere in your config, without redefining it, due to `opts_extend`
               sources = {
-                default = { 'lazydev', 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
+                default = {
+                  'lazydev',
+                  'copilot',
+                  -- 'avante_commands',
+                  -- 'avante_mentions',
+                  -- 'avante_files',
+                  'lsp',
+                  'snippets',
+                  'path',
+                  'buffer',
+                },
                 providers = {
                   lazydev = {
                     name = "LazyDev",
                     module = "lazydev.integrations.blink",
                     score_offset = 100,
                   },
+                  -- avante_commands = {
+                  --   name = "avante_commands",
+                  --   module = "blink.compat.source",
+                  --   score_offset = 90, -- show at a higher priority than lsp
+                  --   opts = {},
+                  -- },
+                  -- avante_files = {
+                  --   name = 'avante_commands',
+                  --   module = 'blink.compat.source',
+                  --   score_offset = 100, -- show at a higher priority than lsp
+                  --   opts = {},
+                  -- },
+                  -- avante_mentions = {
+                  --   name = 'avante_mentions',
+                  --   module = 'blink-compat.source',
+                  --   score_offset = 1000, -- show at a higher priority than lsp
+                  --   opts = {},
+                  -- },
                   copilot = { 
                     name = 'copilot',
                     module = "blink-cmp-copilot",
@@ -794,6 +908,11 @@
         config = # lua
           ''
             require("colorizer").setup({
+              filetypes = {
+                "*", -- Highlight all files, but customize some others.
+                css = { rgb_fn = true }, -- Enable parsing rgb(...) functions in css.
+                html = { names = false }, -- Disable parsing "names" like Blue or Gray
+              },
             })
           '';
       }
@@ -867,6 +986,11 @@
               inactive_winbar = winbar,
               options = {
                 theme = "catppuccin",
+                disabled_filetypes = {
+                  'alpha',
+                  'Avante',
+                  'AvanteInput',
+                },
               },
               extensions = { 'oil', 'toggleterm' },
             })
