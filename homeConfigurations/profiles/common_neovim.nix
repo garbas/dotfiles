@@ -125,19 +125,15 @@
       }                           -- better completion
       o.encoding       = "UTF-8"  -- set encoding
       o.fillchars      = {
+        msgsep = "‾",
         vert = "│",
         eob = " ",
-        diff = " ",
+        diff = "/",
         fold = " ",
-        foldopen = "",
+        foldopen = "", --"",
         foldsep = " ",
-        foldclose = "",
+        foldclose = "", --"",
       }                           -- make vertical split sign better
-      o.foldmethod     = "expr"
-      o.foldopen       = {
-        "percent",
-        "search",
-      }                           -- don't open fold if I don't tell it to do so
       o.inccommand     = "split"  -- incrementally show result of command
       o.list           = true;
       o.listchars      = {
@@ -829,6 +825,13 @@
         config = # lua
           ''
             local capabilities = vim.lsp.protocol.make_client_capabilities()
+            -- Tell the server the capability of foldingRange,
+            -- Neovim hasn't added foldingRange to default capabilities, users must add it manually
+            -- See https://github.com/kevinhwang91/nvim-ufo?tab=readme-ov-file#minimal-configuration
+            capabilities.textDocument.foldingRange = {
+                dynamicRegistration = false,
+                lineFoldingOnly = true
+            }
 
             local lc = require('lspconfig')
             for _, item in ipairs({
@@ -958,8 +961,7 @@
         type = "lua";
         config = # lua
           ''
-            require('gitsigns').setup({
-            })
+            require('gitsigns').setup()
           '';
       }
 
@@ -1120,6 +1122,53 @@
               { "<leader>wK", "<cmd>lua require('smart-splits').swap_buf_up()<cr>", desc = "Swap up" },
               { "<leader>wL", "<cmd>lua require('smart-splits').swap_buf_right()<cr>", desc = "Swap right" },
             })
+          '';
+      }
+
+      # Status column plugin that provides a configurable 'statuscolumn' and
+      # click handlers.
+      # https://github.com/luukvbaal/statuscol.nvim
+      {
+        plugin = statuscol-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            local builtin = require("statuscol.builtin")
+            require("statuscol").setup({
+              relculright = true,
+              segments = {
+                { text = { builtin.foldfunc }, click = "v:lua.ScFa" },
+                { text = { builtin.lnumfunc, " " }, click = "v:lua.ScLa" },
+                { text = { "%s" }, click = "v:lua.ScSa" },
+              },
+            })
+          '';
+      }
+
+      # Not UFO in the sky, but an ultra fold in Neovim.
+      # https://github.com/kevinhwang91/nvim-ufo
+      {
+        plugin = nvim-ufo;
+        type = "lua";
+        config = # lua
+          ''
+            vim.o.foldenable     = true     -- enable fold
+            vim.o.foldcolumn     = '1'      -- show fold column
+            vim.o.foldlevel      = 99       -- minimum level of a fold that will be closed by default
+            vim.o.foldlevelstart = 99       -- top level folds are open, but anything nested beyond that is closed
+
+            -- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1,
+            -- remap yourself
+            vim.keymap.set('n', 'zR', require('ufo').openAllFolds, { desc = "Open all folds" })
+            vim.keymap.set('n', 'zM', require('ufo').closeAllFolds, { desc = "Close all folds" })
+            vim.keymap.set('n', 'zk', function()
+                local winid = require('ufo').peekFoldedLinesUnderCursor()
+                if not winid then
+                  vim.lsp.buf.hover()
+                end
+              end, { desc = "Peek fold" })
+
+            require('ufo').setup()
           '';
       }
     ];
