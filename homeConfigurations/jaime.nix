@@ -9,11 +9,6 @@
     HOMEBREW_NO_ANALYTICS = "1"; # https://docs.brew.sh/Analytics
   };
 
-  programs.zsh.initExtra = ''
-    eval "$(flox activate -d ~ -m run)"
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  '';
-
   xdg.configFile."git/config-flox".text = ''
     [user]
       name = ${user.fullname}
