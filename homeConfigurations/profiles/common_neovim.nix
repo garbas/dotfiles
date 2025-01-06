@@ -667,7 +667,7 @@
                 ghost_text = { enabled = false },
                 list = {
                   selection = function(ctx)
-                    return ctx.mode == 'cmdline' and 'manual' or 'auto_insert'
+                    return ctx.mode == 'cmdline' and 'manual' or 'preselect'
                   end,
                 },
                 menu = {
