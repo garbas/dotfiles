@@ -2,6 +2,9 @@
 {
 
   # TODO:
+  # https://github.com/samjwill/nvim-unception
+  # https://github.com/NeogitOrg/neogit
+  # https://github.com/pwntester/octo.nvim
   # # Better navigation
   # {
   #   plugin = leap-nvim;
@@ -383,7 +386,7 @@
             theta.buttons.val = {
               dashboard.button( "e", "  > New file" , ":ene <BAR> startinsert <CR>"),
               -- TODO: Search for repositories in ~/dev and open them with Telescope
-              dashboard.button( "q", "  > Quit NVIM", ":qa<CR>"),
+              dashboard.button( "q", "  > Save & Quit", ":wqa<CR>"),
             }
             theta.file_icons.provider = "devicons"
             require("alpha").setup(theta.config)
@@ -529,8 +532,12 @@
             require('avante').setup({
               -- See https://github.com/yetone/avante.nvim/blob/main/lua/avante/config.lua
 
-              provider = 'copilot',  -- "claude",
-              auto_suggestions_provider = 'copilot', -- "claude",
+              provider = 'claude',
+              auto_suggestions_provider = 'claude',
+              --provider = 'openai',
+              --auto_suggestions_provider = 'openai',
+              --provider = 'copilot',
+              --auto_suggestions_provider = 'copilot',
 
               file_selector = {
                 provider = "telescope",
