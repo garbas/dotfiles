@@ -142,7 +142,7 @@
       o.listchars      = {
         -- eol = "↲",
         -- tab = "» ",
-        tab = "▸▸",
+        tab = "",
         trail = "·",
       }                           -- set listchars
       o.mouse          = "nvi"    -- enable mouse support in normal, insert, and visual mode
@@ -487,8 +487,10 @@
 
             require("which-key").add({
               { "<leader>H", "<cmd>Telescope man_pages<cr>", desc = "Man pages" },
+
               { "<leader>b", group = "Buffers" },
               { "<leader>bb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
+
               { "<leader>f", group = "Files" },
               { "<leader>fF", "<cmd>Telescope file_browser<cr>", desc = "File browser" },
               { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find File" },
@@ -496,18 +498,12 @@
               { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Open Recent File" },
               { "<leader>fs", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
 
-              { "<leader>g", group = "Git" },
-              { "<leader>gC", "<cmd>Telescope git_bcommits<cr>", desc = "Buffer's commits diff" },
-              { "<leader>gS", "<cmd>Telescope git_stash<cr>", desc = "Stash" },
-              { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "Branches" },
-              { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Commits diff" },
-              { "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Status" },
-
-              { "<leader>gh", group = "GitHub" },
-              { "<leader>ghg", "<cmd>Telescope gh gist<cr>", desc = "Gists" },
-              { "<leader>ghi", "<cmd>Telescope gh issues<cr>", desc = "Issues" },
-              { "<leader>ghp", "<cmd>Telescope gh pull_request<cr>", desc = "Pull Requests" },
-              { "<leader>ghr", "<cmd>Telescope gh run<cr>", desc = "Workflow runs" },
+              -- TODO: replace with octo
+              --{ "<leader>gH", group = "GitHub" },
+              --{ "<leader>gHg", "<cmd>Telescope gh gist<cr>", desc = "Gists" },
+              --{ "<leader>gHi", "<cmd>Telescope gh issues<cr>", desc = "Issues" },
+              --{ "<leader>gHp", "<cmd>Telescope gh pull_request<cr>", desc = "Pull Requests" },
+              --{ "<leader>gHr", "<cmd>Telescope gh run<cr>", desc = "Workflow runs" },
 
               { "<leader>h", "<cmd>Telescope help_tags<cr>", desc = "Help tags" },
               { "<leader>m", "<cmd>Telescope marks<cr>", desc = "Marks" },
@@ -613,6 +609,7 @@
               -- Default list of enabled providers defined so that you can extend it
               -- elsewhere in your config, without redefining it, due to `opts_extend`
               sources = {
+                cmdline = {}, -- Disable cmdline completions, I would need to adjust sources for cmdline since I'm missing history of commands
                 default = {
                   'lazydev',
                   'copilot',
@@ -968,7 +965,24 @@
         type = "lua";
         config = # lua
           ''
-            require('gitsigns').setup()
+            require('gitsigns').setup({
+              numhl      = true,
+              -- TODO: problems with colors
+              --word_diff  = true,
+              --diff_opts = {
+              --  internal = true,
+              --},
+              current_line_blame = true,
+            })
+
+            require("which-key").add({
+              { "<leader>g", group = "Git" },
+              { "<leader>gb", "<cmd>Gitsigns blame<cr>", desc = "Blame" },
+              { "<leader>gn", "<cmd>Gitsigns next_hunk<cr>", desc = "Next hunk" },
+              { "<leader>gp", "<cmd>Gitsigns prev_hunk<cr>", desc = "Previous hunk" },
+              { "<leader>gh", "<cmd>Gitsigns preview_hunk<cr>", desc = "Previous hunk" },
+            })
+
           '';
       }
 
@@ -982,7 +996,7 @@
           ''
             local winbar = {
               lualine_a = {'mode'},
-              lualine_b = {'branch', 'diff', 'diagnostics'},
+              lualine_b = {'diff', 'diagnostics'},
               lualine_c = {'filename'},
               lualine_x = {'encoding', 'fileformat', 'filetype'},
               lualine_y = {'progress'},

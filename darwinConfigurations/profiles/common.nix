@@ -28,6 +28,7 @@
   homebrew.casks = [
     "alt-tab"
     "ghostty"
+    "chatgpt"
   ];
   homebrew.onActivation.autoUpdate = true;
   homebrew.onActivation.upgrade = true;
