@@ -24,6 +24,9 @@
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
 
+  # Enable Touch ID for sudo
+  security.pam.enableSudoTouchIdAuth = true;
+
   homebrew.enable = true;
   homebrew.casks = [
     "alt-tab"
