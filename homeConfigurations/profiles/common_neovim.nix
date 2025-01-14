@@ -670,9 +670,18 @@
                 },
                 ghost_text = { enabled = false },
                 list = {
-                  selection = function(ctx)
-                    return ctx.mode == 'cmdline' and 'manual' or 'preselect'
-                  end,
+                  selection = {
+                    preselect = true,
+                    auto_insert = true,
+                    -- function(ctx)
+                    --   return ctx.mode == 'cmdline' and 'manual' or 'preselect'
+                    -- end,
+                    -- or a function
+                    --preselect = function(ctx)
+                    --  return ctx.mode ~= 'cmdline' and not require('blink.cmp').snippet_active({ direction = 1 })
+                    --end,
+                    -- auto_insert = function(ctx) return ctx.mode ~= 'cmdline' end,
+                  },
                 },
                 menu = {
                   draw = {
