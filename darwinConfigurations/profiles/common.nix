@@ -61,12 +61,18 @@
       ;
   };
 
-  services.skhd.enable = true;
-  services.skhd.skhdConfig = ''
-    # Spaces: focus/switch
+  # A lightweight window border system for macOS
+  # https://github.com/FelixKratz/JankyBorders
+  services.jankyborders.enable = true;
+  # services.jankyborders.active_color=“0xff00ff00”;  # green
+  services.jankyborders.active_color = "gradient(top_right=0x9992B3F5,bottom_left=0x9992B3F5)";
+  services.jankyborders.background_color = "0xFFFFFFFF";
+  services.jankyborders.blur_radius = 5.0;
+  services.jankyborders.hidpi = true;
+  services.jankyborders.width = 5.0;
 
-  '';
-
+  # AeroSpace is an i3-like tiling window manager for macOS
+  # https://github.com/nikitabobko/AeroSpace
   services.aerospace.enable = true;
   services.aerospace.settings = {
     # See: https://nikitabobko.github.io/AeroSpace/guide#default-config
