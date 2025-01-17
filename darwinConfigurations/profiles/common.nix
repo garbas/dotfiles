@@ -138,6 +138,32 @@
     gaps.outer.top = 8;
     gaps.outer.right = 8;
 
+    # Assign workspaces to monitors
+    workspace-to-monitor-force-assignment = {
+      "1" = [ "main" ];
+      "2" = [ "main" ];
+      "3" = [ "main" ];
+      "4" = [ "main" ];
+      "5" = [ "main" ];
+      "6" = [ "main" ];
+      "7" = [
+        "secondary"
+        "main"
+      ];
+      "8" = [
+        "secondary"
+        "main"
+      ];
+      "9" = [
+        "secondary"
+        "main"
+      ];
+      "0" = [
+        "secondary"
+        "main"
+      ];
+    };
+
     # 'main' binding mode declaration
     # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
     # 'main' binding mode must be always presented
