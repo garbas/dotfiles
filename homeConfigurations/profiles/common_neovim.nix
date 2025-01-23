@@ -363,8 +363,51 @@
           ''
             local dashboard = require("alpha.themes.dashboard")
             local theta = require("alpha.themes.theta")
+
+            -- Flox logo with gradient
             -- See https://github.com/goolord/alpha-nvim/discussions/16#discussioncomment-10062303
-            theta.header.val = {
+
+            -- helper function for utf8 chars
+            local function getCharLen(s, pos)
+              local byte = string.byte(s, pos)
+              if not byte then
+                return nil
+              end
+              return (byte < 0x80 and 1) or (byte < 0xE0 and 2) or (byte < 0xF0 and 3) or (byte < 0xF8 and 4) or 1
+            end
+
+            local function applyColors(logo, colors, logoColors)
+              theta.header.val = logo
+              theta.header.opts = {}
+
+              for key, color in pairs(colors) do
+                local name = "AlphaFlox" .. key
+                vim.api.nvim_set_hl(0, name, color)
+                colors[key] = name
+              end
+
+              theta.header.opts.hl = {}
+              for i, line in ipairs(logoColors) do
+                local highlights = {}
+                local pos = 0
+
+                for j = 1, #line do
+                  local opos = pos
+                  pos = pos + getCharLen(logo[i], opos + 1)
+
+                  local color_name = colors[line:sub(j, j)]
+                  if color_name then
+                    table.insert(highlights, { color_name, opos, pos })
+                  end
+                end
+
+                table.insert(theta.header.opts.hl, highlights)
+              end
+              --return header
+            end
+
+            -- background: linear-gradient(276.74deg, rgba(255, 212, 60, 0.75) -52.31%, rgba(249, 122, 206, 0.75) 57.25%, rgba(138, 21, 255, 0.75) 164.55%);
+            applyColors({
               [[          ███████████████████████ ]],
               [[       ██████████████████████████ ]],
               [[    █████████████████████████████ ]],
@@ -382,7 +425,43 @@
               [[ ███████████                       ]],
               [[ ███████████                       ]],
               [[                                   ]],
-            }
+            }, {
+              ["0"] = { fg = "#ffd43c" },
+              ["1"] = { fg = "#feca4c" },
+              ["2"] = { fg = "#fec05c" },
+              ["3"] = { fg = "#fdb66d" },
+              ["4"] = { fg = "#fcac7d" },
+              ["5"] = { fg = "#fca28d" },
+              ["6"] = { fg = "#fb989d" },
+              ["7"] = { fg = "#fa8eae" },
+              ["8"] = { fg = "#fa84be" },
+              ["9"] = { fg = "#f97ace" },
+            }, {
+              [[          999999999999999999999999 ]],
+              [[       888888888888888888888888888 ]],
+              [[    777777777777777777777777777777 ]],
+              [[ 777777777777777777777777777777777 ]],
+              [[ 666666666666666666666666666666    ]],
+              [[ 666666666666666666666666          ]],
+              [[ 555555555555555555                ]],
+              [[ 555555555555                      ]],
+              [[            4444444444444444444444 ]],
+              [[            4444444444444444444444 ]],
+              [[            3333333333333333333333 ]],
+              [[            3333333333333333333333 ]],
+              [[ 22222222222                       ]],
+              [[ 22222222222                       ]],
+              [[ 11111111111                       ]],
+              [[ 00000000000                       ]],
+              [[                                   ]],
+            })
+
+            --vim.api.nvim_set_hl(0, "FloxPink",    { fg = "#f97ace" })
+            --vim.api.nvim_set_hl(0, "FloxYellow",  { fg = "#ffd43c" })
+            --theta.header.opts.hl = "FloxPink"
+
+            theta.header.opts.position = "center"
+
             theta.buttons.val = {
               dashboard.button( "e", "  > New file" , ":ene <BAR> startinsert <CR>"),
               -- TODO: Search for repositories in ~/dev and open them with Telescope
