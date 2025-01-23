@@ -218,9 +218,16 @@
       alt-shift-k = "move up";
       alt-shift-l = "move right";
 
+      alt-ctrl-h = "join-with left";
+      alt-ctrl-j = "join-with down";
+      alt-ctrl-k = "join-with up";
+      alt-ctrl-l = "join-with right";
+
       # See: https://nikitabobko.github.io/AeroSpace/commands#resize
-      alt-minus = "resize smart -50";
-      alt-equal = "resize smart +50";
+      alt-ctrl-shift-h = "resize width -50";
+      alt-ctrl-shift-j = "resize height +50";
+      alt-ctrl-shift-k = "resize height -50";
+      alt-ctrl-shift-l = "resize width +50";
 
       # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
       alt-1 = "workspace 1";
@@ -282,23 +289,6 @@
 
       # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
       #s = ["layout sticky tiling", "mode main"];
-
-      alt-shift-h = [
-        "join-with left"
-        "mode main"
-      ];
-      alt-shift-j = [
-        "join-with down"
-        "mode main"
-      ];
-      alt-shift-k = [
-        "join-with up"
-        "mode main"
-      ];
-      alt-shift-l = [
-        "join-with right"
-        "mode main"
-      ];
 
       down = "volume down";
       up = "volume up";
