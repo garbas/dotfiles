@@ -32,8 +32,8 @@
   inputs.catppuccin-lazygit.url = "github:catppuccin/lazygit";
   inputs.catppuccin-lazygit.flake = false;
 
-  inputs.ghostty.url = "github:ghostty-org/ghostty/v1.0.1";
-  inputs.flox.url = "github:flox/flox/v1.3.10";
+  inputs.ghostty.url = "github:ghostty-org/ghostty/v1.1.0";
+  inputs.flox.url = "github:flox/flox/v1.3.11";
   inputs.devenv.url = "github:cachix/devenv/v1.3.1";
 
   # Custom vim/neovim plugins
@@ -93,18 +93,6 @@
           nixpkgs ? nixpkgs-unstable,
           system ? "x86_64-linux",
         }:
-        let
-          homeConfiguration =
-            if
-              builtins.elem system [
-                "x86_64-darwin"
-                "aarch64-darwin"
-              ]
-            then
-              ./homeConfigurations/darwin.nix
-            else
-              ./homeConfigurations/linux.nix;
-        in
         {
           "${name}" = home-manager.lib.homeManagerConfiguration rec {
             pkgs = import nixpkgs { inherit system; };
