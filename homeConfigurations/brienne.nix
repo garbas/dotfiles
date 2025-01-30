@@ -13,8 +13,6 @@
     eval "$(/opt/homebrew/bin/brew shellenv)"
   '';
 
-  programs.kitty.settings.open_url_with = "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome";
-
   xdg.configFile."git/config-bitstamp".text = ''
     [user]
       name = ${user.fullname}

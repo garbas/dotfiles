@@ -32,6 +32,7 @@
     "alt-tab"
     "ghostty"
     "chatgpt"
+    "zen-browser"
   ];
   homebrew.onActivation.autoUpdate = true;
   homebrew.onActivation.upgrade = true;
@@ -64,12 +65,12 @@
   # A lightweight window border system for macOS
   # https://github.com/FelixKratz/JankyBorders
   services.jankyborders.enable = true;
-  # services.jankyborders.active_color=“0xff00ff00”;  # green
-  services.jankyborders.active_color = "gradient(top_right=0x9992B3F5,bottom_left=0x9992B3F5)";
+  services.jankyborders.active_color = "0xff00ff00"; # green
+  #services.jankyborders.active_color = "gradient(top_right=0x9992B3F5,bottom_left=0x9992B3F5)";
   services.jankyborders.background_color = "0xFFFFFFFF";
   services.jankyborders.blur_radius = 5.0;
   services.jankyborders.hidpi = true;
-  services.jankyborders.width = 5.0;
+  services.jankyborders.width = 10.0;
 
   # AeroSpace is an i3-like tiling window manager for macOS
   # https://github.com/nikitabobko/AeroSpace
@@ -86,14 +87,11 @@
     # You can use it to add commands that run after AeroSpace startup.
     # 'after-startup-command' is run after 'after-login-command'
     # Available commands : https://nikitabobko.github.io/AeroSpace/commands
-    after-startup-command = [
-      # https://nikitabobko.github.io/AeroSpace/goodies#highlight-focused-windows-with-colored-borders
-      # JankyBorders has a built-in detection of already running process,
-      # so it won't be run twice on AeroSpace restart
-      "exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0"
-    ];
+    after-startup-command = [ ];
 
     # Start AeroSpace at login
+    # AeroSpace started at login is managed by home-manager and launchd instead
+    # of itself via this option.
     start-at-login = false;
 
     # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
@@ -203,8 +201,8 @@
       # '''
 
       # See: https://nikitabobko.github.io/AeroSpace/commands#layout
-      alt-slash = "layout tiles horizontal vertical";
-      alt-comma = "layout accordion horizontal vertical";
+      alt-c = "layout tiles horizontal vertical";
+      alt-x = "layout accordion horizontal vertical";
 
       # See: https://nikitabobko.github.io/AeroSpace/commands#focus
       alt-h = "focus left";

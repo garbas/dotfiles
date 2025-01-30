@@ -11,7 +11,7 @@
   home.packages = [ ];
 
   programs.zsh.initExtra = ''
-    eval "$(flox activate -d ~ -m run)"
     eval "$(/opt/homebrew/bin/brew shellenv)"
+    eval "$(flox activate -d ~ -m run)"
   '';
 }
