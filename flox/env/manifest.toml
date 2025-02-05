@@ -1,0 +1,44 @@
+version = 1
+
+[install]
+_1password-gui.pkg-path = "_1password-gui"
+_1password-gui.pkg-group = "op-gui"
+_1password-cli.pkg-path = "_1password-cli"
+_1password-cli.pkg-group = "op-cli"
+
+mac-app-util.flake = "github:hraban/mac-app-util"
+
+ripgrep.pkg-path = "ripgrep"
+jq.pkg-path = "jq"
+
+[vars]
+SECRETS_TO_LOAD = "ANTROPIC_API_KEY OPENAI_API_KEY"
+
+[hook]
+on-activate = '''
+
+echo "🔑 Loading secrets from 1Password"
+
+for account in $(op account list | cut -d\  -f1 | rg -v URL); do
+  echo " 󰐊 Signing to $account account"
+  eval $(op signin --account $account)
+done
+
+SECRETS=$(op item get Terminal --format json --account my.1password.com)
+
+for secret in $SECRETS_TO_LOAD; do
+  echo " 󰐊 Exporting $secret secret"
+  export $secret=$(echo $SECRETS| jq -r '.fields[] | select(.label == "ANTROPIC_API_KEY") | .value')
+done
+
+unset SECRETS
+unset SECRETS_TO_LOAD
+
+'''
+
+[options]
+systems = [
+  "aarch64-darwin",
+  #"aarch64-linux",
+  #"x86_64-linux",
+]
