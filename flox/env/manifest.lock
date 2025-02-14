@@ -42,17 +42,17 @@
     {
       "attr_path": "_1password-cli",
       "broken": false,
-      "derivation": "/nix/store/x4baka2lhxz8ljxqmxya7s98bf3khayf-1password-cli-2.30.3.drv",
+      "derivation": "/nix/store/yiqrlpqqnki96j8kh0ydfqk88v0rb42h-1password-cli-2.30.3.drv",
       "description": "1Password command-line tool",
       "install_id": "_1password-cli",
       "license": "Unfree",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=799ba5bffed04ced7067a91798353d360788b30d",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=a79cfe0ebd24952b580b1cf08cd906354996d547",
       "name": "1password-cli-2.30.3",
       "pname": "_1password-cli",
-      "rev": "799ba5bffed04ced7067a91798353d360788b30d",
-      "rev_count": 747653,
-      "rev_date": "2025-02-04T14:46:40Z",
-      "scrape_date": "2025-02-05T00:30:07Z",
+      "rev": "a79cfe0ebd24952b580b1cf08cd906354996d547",
+      "rev_count": 750629,
+      "rev_date": "2025-02-08T13:21:17Z",
+      "scrape_date": "2025-02-09T05:15:18Z",
       "stabilities": [
         "unstable"
       ],
@@ -62,7 +62,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/w73v66msf4agaks802sylgx1175l33g1-1password-cli-2.30.3"
+        "out": "/nix/store/vy8syl3dfsqwqxvdg69lzfyzs79kwi4b-1password-cli-2.30.3"
       },
       "system": "aarch64-darwin",
       "group": "op-cli",
@@ -97,17 +97,17 @@
     {
       "attr_path": "jq",
       "broken": false,
-      "derivation": "/nix/store/0icmkwm3bm0bv72pcl6mfykxlk1z2l78-jq-1.7.1.drv",
+      "derivation": "/nix/store/q7b6j257iy2ay9xv9s6yz56n3i77q1sq-jq-1.7.1.drv",
       "description": "Lightweight and flexible command-line JSON processor",
       "install_id": "jq",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=799ba5bffed04ced7067a91798353d360788b30d",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=a79cfe0ebd24952b580b1cf08cd906354996d547",
       "name": "jq-1.7.1",
       "pname": "jq",
-      "rev": "799ba5bffed04ced7067a91798353d360788b30d",
-      "rev_count": 747653,
-      "rev_date": "2025-02-04T14:46:40Z",
-      "scrape_date": "2025-02-05T00:30:07Z",
+      "rev": "a79cfe0ebd24952b580b1cf08cd906354996d547",
+      "rev_count": 750629,
+      "rev_date": "2025-02-08T13:21:17Z",
+      "scrape_date": "2025-02-09T05:15:18Z",
       "stabilities": [
         "unstable"
       ],
@@ -118,11 +118,11 @@
         "man"
       ],
       "outputs": {
-        "bin": "/nix/store/ri8k487849v9b290iz384pi1lgw7n585-jq-1.7.1-bin",
-        "dev": "/nix/store/n7880d10c16s05bzg4xh4ak9j7fz9440-jq-1.7.1-dev",
-        "doc": "/nix/store/axim640z0z67x48qr8nq79qph5j3vj05-jq-1.7.1-doc",
-        "man": "/nix/store/l9nf6sjs9hyvjfkmm9njw00mmvh88f6n-jq-1.7.1-man",
-        "out": "/nix/store/sj86jzxi9p5pipih6fx7sw9pw6j54qbl-jq-1.7.1"
+        "bin": "/nix/store/lmlmb3a5kzza0si8xfghr7x17vg8bzxb-jq-1.7.1-bin",
+        "dev": "/nix/store/89q76wghz9xj2myglfwpv0n6yc19c8i6-jq-1.7.1-dev",
+        "doc": "/nix/store/dw2717n906kj3xp090fg9cqvcm747jic-jq-1.7.1-doc",
+        "man": "/nix/store/afygplc4dm1ry7ww3702wafvy8bs9sxc-jq-1.7.1-man",
+        "out": "/nix/store/jm1bv0cha32k9967sv0z40kqgn5slz4i-jq-1.7.1"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -131,17 +131,17 @@
     {
       "attr_path": "ripgrep",
       "broken": false,
-      "derivation": "/nix/store/f96a6l8clnx40ga6igpzkahjzmp9cqcp-ripgrep-14.1.1.drv",
+      "derivation": "/nix/store/gkbw3ssqls9f278ggpb8p6hy39m66f6g-ripgrep-14.1.1.drv",
       "description": "Utility that combines the usability of The Silver Searcher with the raw speed of grep",
       "install_id": "ripgrep",
       "license": "[ Unlicense, MIT ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=799ba5bffed04ced7067a91798353d360788b30d",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=a79cfe0ebd24952b580b1cf08cd906354996d547",
       "name": "ripgrep-14.1.1",
       "pname": "ripgrep",
-      "rev": "799ba5bffed04ced7067a91798353d360788b30d",
-      "rev_count": 747653,
-      "rev_date": "2025-02-04T14:46:40Z",
-      "scrape_date": "2025-02-05T00:30:07Z",
+      "rev": "a79cfe0ebd24952b580b1cf08cd906354996d547",
+      "rev_count": 750629,
+      "rev_date": "2025-02-08T13:21:17Z",
+      "scrape_date": "2025-02-09T05:15:18Z",
       "stabilities": [
         "unstable"
       ],
@@ -151,7 +151,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/wpxhqaa5k638f17yiav6mcbsawi5hh6h-ripgrep-14.1.1"
+        "out": "/nix/store/xbwga7p976nr1y258s0wibg1v3lrpj6f-ripgrep-14.1.1"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
