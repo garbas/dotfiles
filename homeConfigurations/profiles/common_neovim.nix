@@ -2,6 +2,8 @@
 {
 
   # TODO:
+  # https://github.com/kndndrj/nvim-dbee
+  # https://github.com/jackMort/tide.nvim
   # https://github.com/samjwill/nvim-unception
   # https://github.com/NeogitOrg/neogit
   # https://github.com/pwntester/octo.nvim
@@ -641,6 +643,19 @@
           '';
       }
 
+      # -- SQL ----------------------------------------------------------------
+      vim-dadbod
+      vim-dadbod-completion
+      {
+        plugin = vim-dadbod-ui;
+        type = "lua";
+        config = # lua
+          ''
+            -- Your DBUI configuration
+            vim.g.db_ui_use_nerd_fonts = 1
+          '';
+      }
+
       # -- COMPLETION / SNIPPETS ----------------------------------------------
 
       # Set of preconfigured snippets for different languages.
@@ -683,6 +698,9 @@
 
               signature = {
                 enabled = true,
+              --   window = {
+              --     border = 'single',
+              --   }
               },
 
               -- Default list of enabled providers defined so that you can extend it
@@ -700,11 +718,18 @@
                   'path',
                   'buffer',
                 },
+                per_filetype = {
+                  sql = { 'copilot', 'dadbod', 'buffer' },
+                },
                 providers = {
                   lazydev = {
                     name = "LazyDev",
                     module = "lazydev.integrations.blink",
                     score_offset = 100,
+                  },
+                  dadbod = {
+                    name = "Dadbod",
+                    module = "vim_dadbod_completion.blink",
                   },
                   -- avante_commands = {
                   --   name = "avante_commands",
@@ -744,6 +769,7 @@
 
               completion = {
                 documentation = {
+                  -- border = 'single',
                   auto_show = true,
                   auto_show_delay_ms = 500,
                 },
@@ -763,6 +789,7 @@
                   },
                 },
                 menu = {
+                  border = 'single',
                   draw = {
                     -- Highlight the label text for the given list of sources.
                     -- This feature is experimental!
