@@ -59,10 +59,6 @@
   xdg.configFile."ghostty/themes/catppuccin-mocha.conf".source =
     "${inputs.catppuccin-ghostty}/themes/catppuccin-mocha.conf";
 
-  nixpkgs.config.allowBroken = false;
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.allowUnfreeRedistributable = true;
-
   programs.bat.enable = true;
 
   programs.direnv.enable = true;

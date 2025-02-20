@@ -46,18 +46,18 @@
       "description": "1Password command-line tool",
       "install_id": "_1password-cli",
       "license": "Unfree",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=a79cfe0ebd24952b580b1cf08cd906354996d547",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d74a2335ac9c133d6bbec9fc98d91a77f1604c1f",
       "name": "1password-cli-2.30.3",
       "pname": "_1password-cli",
-      "rev": "a79cfe0ebd24952b580b1cf08cd906354996d547",
-      "rev_count": 750629,
-      "rev_date": "2025-02-08T13:21:17Z",
-      "scrape_date": "2025-02-09T05:15:18Z",
+      "rev": "d74a2335ac9c133d6bbec9fc98d91a77f1604c1f",
+      "rev_count": 754461,
+      "rev_date": "2025-02-16T20:11:36Z",
+      "scrape_date": "2025-02-18T01:16:02Z",
       "stabilities": [
         "unstable"
       ],
       "unfree": true,
-      "version": "1password-cli-2.30.3",
+      "version": "2.30.3",
       "outputs_to_install": [
         "out"
       ],
@@ -83,7 +83,7 @@
       "rev_date": "2024-07-27T06:49:29Z",
       "scrape_date": "2024-07-28T01:13:17Z",
       "unfree": true,
-      "version": "1password-8.10.36",
+      "version": "8.10.36",
       "outputs_to_install": [
         "out"
       ],
@@ -101,13 +101,13 @@
       "description": "Lightweight and flexible command-line JSON processor",
       "install_id": "jq",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=a79cfe0ebd24952b580b1cf08cd906354996d547",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d74a2335ac9c133d6bbec9fc98d91a77f1604c1f",
       "name": "jq-1.7.1",
       "pname": "jq",
-      "rev": "a79cfe0ebd24952b580b1cf08cd906354996d547",
-      "rev_count": 750629,
-      "rev_date": "2025-02-08T13:21:17Z",
-      "scrape_date": "2025-02-09T05:15:18Z",
+      "rev": "d74a2335ac9c133d6bbec9fc98d91a77f1604c1f",
+      "rev_count": 754461,
+      "rev_date": "2025-02-16T20:11:36Z",
+      "scrape_date": "2025-02-18T01:16:02Z",
       "stabilities": [
         "unstable"
       ],
@@ -131,17 +131,17 @@
     {
       "attr_path": "ripgrep",
       "broken": false,
-      "derivation": "/nix/store/gkbw3ssqls9f278ggpb8p6hy39m66f6g-ripgrep-14.1.1.drv",
+      "derivation": "/nix/store/pn3d3jhv11fg4mris45qhjcj7l7cf25p-ripgrep-14.1.1.drv",
       "description": "Utility that combines the usability of The Silver Searcher with the raw speed of grep",
       "install_id": "ripgrep",
       "license": "[ Unlicense, MIT ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=a79cfe0ebd24952b580b1cf08cd906354996d547",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d74a2335ac9c133d6bbec9fc98d91a77f1604c1f",
       "name": "ripgrep-14.1.1",
       "pname": "ripgrep",
-      "rev": "a79cfe0ebd24952b580b1cf08cd906354996d547",
-      "rev_count": 750629,
-      "rev_date": "2025-02-08T13:21:17Z",
-      "scrape_date": "2025-02-09T05:15:18Z",
+      "rev": "d74a2335ac9c133d6bbec9fc98d91a77f1604c1f",
+      "rev_count": 754461,
+      "rev_date": "2025-02-16T20:11:36Z",
+      "scrape_date": "2025-02-18T01:16:02Z",
       "stabilities": [
         "unstable"
       ],
@@ -159,11 +159,11 @@
     },
     {
       "install_id": "mac-app-util",
-      "locked-url": "github:hraban/mac-app-util/548672d0cb661ce11d08ee8bde92b87d2a75c872?narHash=sha256-1fxvJZUznwrmEtYqpPuWi2tPcL9kj6v7p1J7ZZncAPE%3D",
+      "locked-url": "github:hraban/mac-app-util/c00d5b21ca1fdab8acef65e696795f0f15ec1158?narHash=sha256-QlVtMzAhECs9Esq3txqVW7/vM78ipB5IcI8uyCbTP7A%3D",
       "locked-flake-attr-path": "packages.aarch64-darwin.default",
-      "derivation": "/nix/store/p32yhqvs2982jlphpgh71kbfgdn447mv-mac-app-util.drv",
+      "derivation": "/nix/store/5zfrr4cr2km9hqqic09kvmbnkwljwisn-mac-app-util.drv",
       "outputs": {
-        "out": "/nix/store/jlf5di3w191wicrpqx0jh13k6z6d1430-mac-app-util"
+        "out": "/nix/store/ybhh74m2sigfbckkainpjrxl2qwx89ww-mac-app-util"
       },
       "output-names": [
         "out"
