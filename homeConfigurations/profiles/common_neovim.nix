@@ -704,10 +704,15 @@
               --   }
               },
 
+              -- Disable cmdline completions, I would need to adjust sources
+              -- for cmdline since I'm missing history of commands
+              cmdline = {
+                enabled = false,
+              },
+
               -- Default list of enabled providers defined so that you can extend it
               -- elsewhere in your config, without redefining it, due to `opts_extend`
               sources = {
-                cmdline = {}, -- Disable cmdline completions, I would need to adjust sources for cmdline since I'm missing history of commands
                 default = {
                   'lazydev',
                   'copilot',
