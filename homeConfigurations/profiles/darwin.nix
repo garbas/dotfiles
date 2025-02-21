@@ -1,4 +1,4 @@
-{ user, ... }:
+{ user, pkgs, ... }:
 {
 
   imports = [
@@ -8,7 +8,9 @@
   home.homeDirectory = "/Users/${user.username}";
 
   # darwin specific packages
-  home.packages = [ ];
+  home.packages = with pkgs; [
+    tart
+  ];
 
   programs.zsh.initExtra = ''
     eval "$(/opt/homebrew/bin/brew shellenv)"
