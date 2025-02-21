@@ -28,8 +28,9 @@ load_flox_op () {
   __SECRETS="$(op item get $OP_SECRETS_ITEM --format json)"
   for secret in $OP_SECRETS; do
     echo "  󰐊 Exporting $secret secret";
-    export $secret=$(echo $__SECRETS| jq -r '.fields[] | select(.label == "$secret") | .value');
+    export $secret=$(echo $__SECRETS | jq -r ".fields[] | select(.label == \"$secret\") | .value");
   done
+  unset secret;
   unset __SECRETS;
 }
 
