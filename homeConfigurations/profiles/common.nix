@@ -108,7 +108,7 @@
   programs.git.enable = true;
   programs.git.package = pkgs.git.override {
     svnSupport = false;
-    guiSupport = true;
+    guiSupport = false;
     sendEmailSupport = true;
     withSsh = true;
     withLibsecret = !pkgs.stdenv.isDarwin;
