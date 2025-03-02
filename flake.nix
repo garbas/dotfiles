@@ -33,7 +33,8 @@
   inputs.catppuccin-lazygit.flake = false;
 
   inputs.ghostty.url = "github:ghostty-org/ghostty/v1.1.2";
-  inputs.flox.url = "github:flox/flox/v1.3.15";
+  #inputs.flox.url = "github:flox/flox/v1.3.15";
+  inputs.flox.url = "github:flox/flox/release-1.3.16";
   inputs.devenv.url = "github:cachix/devenv/v1.4.1";
 
   # Custom vim/neovim plugins

@@ -609,15 +609,15 @@
             require('avante').setup({
               -- See https://github.com/yetone/avante.nvim/blob/main/lua/avante/config.lua
 
-              provider = 'claude',
-              claude = {
-                api_key_name = "cmd:echo $ANTROPIC_API_KEY",
-              },
-              auto_suggestions_provider = 'claude',
-              --provider = 'openai',
-              --auto_suggestions_provider = 'openai',
-              --provider = 'copilot',
-              --auto_suggestions_provider = 'copilot',
+              -- provider = 'claude',
+              -- claude = {
+              --   api_key_name = "cmd:echo $ANTROPIC_API_KEY",
+              -- },
+              -- auto_suggestions_provider = 'claude',
+              -- provider = 'openai',
+              -- auto_suggestions_provider = 'openai',
+              provider = 'copilot',
+              auto_suggestions_provider = 'copilot',
 
               file_selector = {
                 provider = "telescope",
