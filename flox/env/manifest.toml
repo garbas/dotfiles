@@ -24,8 +24,8 @@ on-activate = '''
 
 load_flox_op () {
   echo "🔑 Loading secrets from 1Password";
-  eval $(op signin);
-  __SECRETS="$(op item get $OP_SECRETS_ITEM --format json)"
+  eval $(op --account $OP_ACCOUNT signin)
+  __SECRETS="$(op --account $OP_ACCOUNT item get $OP_SECRETS_ITEM --format json)"
   for secret in $OP_SECRETS; do
     echo "  󰐊 Exporting $secret secret";
     export $secret=$(echo $__SECRETS | jq -r ".fields[] | select(.label == \"$secret\") | .value");

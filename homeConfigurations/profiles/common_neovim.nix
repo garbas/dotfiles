@@ -487,35 +487,37 @@
 
       # Syntax highlighting (via treesitter)
       # https://github.com/nvim-treesitter/nvim-treesitter
-      {
-        plugin = pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
-        type = "lua";
-        config = # lua
-          ''
-            require('nvim-treesitter.configs').setup {
-              ensure_installed = {},
-              sync_install = false,
-              auto_install = false,
-              highlight = {
-                enable = true,
-                -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-                additional_vim_regex_highlighting = false,
-              },
-              incremental_selection = {
-                enable = true,
-                keymaps = {
-                  init_selection = "vv",
-                  node_incremental = "v",
-                  scope_incremental = "b",
-                  node_decremental = "V",
-                },
-              },
-              indent = {
-                enable = true
-              },
-            }
-          '';
-      }
+      #{
+      #  plugin = let ppp = filter (
+      #    p: builtins.abort "${p.language}"
+      #  ) pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
+      #  type = "lua";
+      #  config = # lua
+      #    ''
+      #      require('nvim-treesitter.configs').setup {
+      #        ensure_installed = {},
+      #        sync_install = false,
+      #        auto_install = false,
+      #        highlight = {
+      #          enable = true,
+      #          -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+      #          additional_vim_regex_highlighting = false,
+      #        },
+      #        incremental_selection = {
+      #          enable = true,
+      #          keymaps = {
+      #            init_selection = "vv",
+      #            node_incremental = "v",
+      #            scope_incremental = "b",
+      #            node_decremental = "V",
+      #          },
+      #        },
+      #        indent = {
+      #          enable = true
+      #        },
+      #      }
+      #    '';
+      #}
 
       # Navigation using Telescope
       # https://github.com/nvim-telescope/telescope.nvim/

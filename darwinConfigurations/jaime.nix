@@ -12,7 +12,7 @@
     ./profiles/common.nix
   ];
 
-  homebrew.brews = [
-    "create-dmg"
-  ];
+  #homebrew.brews = [
+  #  "create-dmg"
+  #];
 }

@@ -5,7 +5,10 @@
   ...
 }:
 {
-  imports = [ (import ./common_neovim.nix) ];
+  imports = [
+    inputs.flox.homeModules.flox
+    (import ./common_neovim.nix)
+  ];
 
   home.username = user.username;
   home.stateVersion = "22.11";
@@ -16,7 +19,6 @@
   home.sessionVariables.GIT_EDITOR = "nvim";
 
   home.packages = with pkgs; [
-    inputs.flox.packages.${pkgs.system}.default
     inputs.devenv.packages.${pkgs.system}.default
     asciinema
     devbox

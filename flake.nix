@@ -32,9 +32,8 @@
   inputs.catppuccin-lazygit.url = "github:catppuccin/lazygit";
   inputs.catppuccin-lazygit.flake = false;
 
-  inputs.ghostty.url = "github:ghostty-org/ghostty/v1.1.2";
-  #inputs.flox.url = "github:flox/flox/v1.3.15";
-  inputs.flox.url = "github:flox/flox/release-1.3.16";
+  inputs.ghostty.url = "github:ghostty-org/ghostty/v1.1.3";
+  inputs.flox.url = "github:flox/flox/v1.3.17";
   inputs.devenv.url = "github:cachix/devenv/v1.4.1";
 
   # Custom vim/neovim plugins
@@ -99,7 +98,7 @@
             pkgs = import nixpkgs { inherit system; };
             modules = [ (import (self + "/homeConfigurations/${name}.nix")) ];
             extraSpecialArgs = {
-              inherit inputs;
+              inherit inputs system;
               customVimPlugins = mkCustomVimPlugins { inherit pkgs; };
               user = user // user.machines.${name};
               hostname = name;
@@ -120,7 +119,7 @@
           "${name}" = nix-darwin.lib.darwinSystem {
             inherit system;
             specialArgs = {
-              inherit inputs;
+              inherit inputs system;
               customVimPlugins = mkCustomVimPlugins { inherit pkgs; };
               user = user // user.machines.${name};
               hostname = name;
@@ -137,7 +136,6 @@
 
               (import (self + "/darwinConfigurations/${name}.nix"))
             ];
-            inputs = { inherit nixpkgs home-manager; };
           };
         };
 
@@ -154,7 +152,7 @@
           "${name}" = nixpkgs.lib.nixosSystem {
             inherit system;
             specialArgs = {
-              inherit inputs;
+              inherit inputs system;
               customVimPlugins = mkCustomVimPlugins { inherit pkgs; };
               user = user // user.machines.${name};
               hostname = name;

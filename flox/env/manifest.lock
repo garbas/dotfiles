@@ -30,7 +30,7 @@
       "TMUX_SESSION_NAME": "flox-session"
     },
     "hook": {
-      "on-activate": "\nload_flox_op () {\n  echo \"🔑 Loading secrets from 1Password\";\n  eval $(op signin);\n  __SECRETS=\"$(op item get $OP_SECRETS_ITEM --format json)\"\n  for secret in $OP_SECRETS; do\n    echo \"  󰐊 Exporting $secret secret\";\n    export $secret=$(echo $__SECRETS | jq -r \".fields[] | select(.label == \\\"$secret\\\") | .value\");\n  done\n  unset secret;\n  unset __SECRETS;\n}\n\nload_flox_macos () {\n  __ENV_NAME=$(echo $_FLOX_ACTIVE_ENVIRONMENTS | jq -r '.[0].pointer.name')\n  __ENV_APPS=\"$HOME/Applications/Flox ($__ENV_NAME) Apps\"\n  if [[ -d $__ENV_APPS ]]; then\n    rm -rf \"$__ENV_APPS\"\n  fi\n  if [ -d $FLOX_ENV/Applications ]; then \n    mac-app-util sync-trampolines \\\n      \"$FLOX_ENV/Applications\" \\\n      \"$__ENV_APPS\"\n  fi\n}\n\nload_flox_op\n\nif command -v mac-app-util 2>&1 >/dev/null; then\n  load_flox_macos\nfi\n"
+      "on-activate": "\nload_flox_op () {\n  echo \"🔑 Loading secrets from 1Password\";\n  eval $(op --account $OP_ACCOUNT signin)\n  __SECRETS=\"$(op --account $OP_ACCOUNT item get $OP_SECRETS_ITEM --format json)\"\n  for secret in $OP_SECRETS; do\n    echo \"  󰐊 Exporting $secret secret\";\n    export $secret=$(echo $__SECRETS | jq -r \".fields[] | select(.label == \\\"$secret\\\") | .value\");\n  done\n  unset secret;\n  unset __SECRETS;\n}\n\nload_flox_macos () {\n  __ENV_NAME=$(echo $_FLOX_ACTIVE_ENVIRONMENTS | jq -r '.[0].pointer.name')\n  __ENV_APPS=\"$HOME/Applications/Flox ($__ENV_NAME) Apps\"\n  if [[ -d $__ENV_APPS ]]; then\n    rm -rf \"$__ENV_APPS\"\n  fi\n  if [ -d $FLOX_ENV/Applications ]; then \n    mac-app-util sync-trampolines \\\n      \"$FLOX_ENV/Applications\" \\\n      \"$__ENV_APPS\"\n  fi\n}\n\nload_flox_op\n\nif command -v mac-app-util 2>&1 >/dev/null; then\n  load_flox_macos\nfi\n"
     },
     "profile": {
       "common": "## Starting/Attaching to TMUX session\"\n##\n## 1. Check if the session already exists\n#tmux has-session -t $TMUX_SESSION_NAME 2>/dev/null\n##\n## 2. If the session doesn't exist, start a new one\n#if [ $? -ne 0 ]; then\n# echo \"Creating new session $TMUX_SESSION_NAME\"\n# tmux new-session -s $TMUX_SESSION_NAME -d\n#fi\n##\n## 3. If the session exists, reattach to it\n#if [ ! -n \"$NVIM_LISTEN_ADDRESS\" ] ; then\n#if [ \"$TERM_PROGRAM\" = tmux ]; then\n#  echo 'In tmux'\n#else\n#  echo 'Not in tmux'\n#fi\n##  echo \"Not inside neovim terminal\"\n##  if [ -n \"$TMUX\" ]; then\n##    tmux switch-client -t $TMUX_SESSION_NAME\n##  else\n##    tmux attach-session -t $TMUX_SESSION_NAME\n##  fi\n#fi\n"
@@ -41,28 +41,24 @@
         "aarch64-linux",
         "x86_64-darwin",
         "x86_64-linux"
-      ],
-      "allow": {
-        "licenses": []
-      },
-      "semver": {}
+      ]
     }
   },
   "packages": [
     {
       "attr_path": "_1password-cli",
       "broken": false,
-      "derivation": "/nix/store/8wgka04ws5943gc5aa517jm5jq2lk3aw-1password-cli-2.30.3.drv",
+      "derivation": "/nix/store/lxz4409c9xjj0cghqx828h4d0hfn7k2d-1password-cli-2.30.3.drv",
       "description": "1Password command-line tool",
       "install_id": "_1password-cli",
       "license": "Unfree",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "1password-cli-2.30.3",
       "pname": "_1password-cli",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:12:05.205724Z",
       "stabilities": [
         "unstable"
       ],
@@ -72,7 +68,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/dd7ya52ykxhkr6a2nc5820k3wl0c4yql-1password-cli-2.30.3"
+        "out": "/nix/store/7xh0y6mhxdj6cqfwzh2s9y85z47a21ij-1password-cli-2.30.3"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -81,17 +77,17 @@
     {
       "attr_path": "_1password-cli",
       "broken": false,
-      "derivation": "/nix/store/wyixvwhv3bazfkg54lbr063hr90sz5z5-1password-cli-2.30.3.drv",
+      "derivation": "/nix/store/dk8vsi0c6z2j18y5mm2m5k44gasknll8-1password-cli-2.30.3.drv",
       "description": "1Password command-line tool",
       "install_id": "_1password-cli",
       "license": "Unfree",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "1password-cli-2.30.3",
       "pname": "_1password-cli",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:30:42.930882Z",
       "stabilities": [
         "unstable"
       ],
@@ -101,7 +97,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/fsj213896l8qbqy8ppwl4pf3jbfdmz8f-1password-cli-2.30.3"
+        "out": "/nix/store/y21gpd5yh2brz18xn50lfmalywj86iz0-1password-cli-2.30.3"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -110,17 +106,17 @@
     {
       "attr_path": "_1password-cli",
       "broken": false,
-      "derivation": "/nix/store/cp6ifwhpi52jw99kljfdn9dsrflzbgwk-1password-cli-2.30.3.drv",
+      "derivation": "/nix/store/ilvli3qy44n8bw512jiwnxp23hyad09q-1password-cli-2.30.3.drv",
       "description": "1Password command-line tool",
       "install_id": "_1password-cli",
       "license": "Unfree",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "1password-cli-2.30.3",
       "pname": "_1password-cli",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:47:14.165692Z",
       "stabilities": [
         "unstable"
       ],
@@ -130,7 +126,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/wkz5hpnm56afdn23m7xrfgxfsyjp9pi4-1password-cli-2.30.3"
+        "out": "/nix/store/f8d0pmar7s3dkq7n5g4icp9sv7d78rzw-1password-cli-2.30.3"
       },
       "system": "x86_64-darwin",
       "group": "toplevel",
@@ -139,17 +135,17 @@
     {
       "attr_path": "_1password-cli",
       "broken": false,
-      "derivation": "/nix/store/g03lz7p8l5hrhx5xs4lya2z4xb5nvgbm-1password-cli-2.30.3.drv",
+      "derivation": "/nix/store/8g1yrsd6r9ngc9d1sbphrz3dg8ihql9v-1password-cli-2.30.3.drv",
       "description": "1Password command-line tool",
       "install_id": "_1password-cli",
       "license": "Unfree",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "1password-cli-2.30.3",
       "pname": "_1password-cli",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T02:06:54.169909Z",
       "stabilities": [
         "unstable"
       ],
@@ -159,7 +155,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/nbs29izxl7z0p2l3slk586g2nmmd6j3f-1password-cli-2.30.3"
+        "out": "/nix/store/w67k6df9s68q7cx1hyz95n472qw6qyx6-1password-cli-2.30.3"
       },
       "system": "x86_64-linux",
       "group": "toplevel",
@@ -168,17 +164,17 @@
     {
       "attr_path": "jq",
       "broken": false,
-      "derivation": "/nix/store/zdh5n30ndj9nysvfvg640jrgny5rm40q-jq-1.7.1.drv",
+      "derivation": "/nix/store/l557my1sj6nigqqg1wivvf7j0sl9bs9y-jq-1.7.1.drv",
       "description": "Lightweight and flexible command-line JSON processor",
       "install_id": "jq",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "jq-1.7.1",
       "pname": "jq",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:12:06.641062Z",
       "stabilities": [
         "unstable"
       ],
@@ -189,11 +185,11 @@
         "man"
       ],
       "outputs": {
-        "bin": "/nix/store/h67qb8yrnfja706ch9f2yfq1i0bz4mn1-jq-1.7.1-bin",
-        "dev": "/nix/store/v8anx27z4ib0gf7p1bh27j2g8zl37npb-jq-1.7.1-dev",
-        "doc": "/nix/store/6pnnni79b8018j88i2ynn1630qlwaphp-jq-1.7.1-doc",
-        "man": "/nix/store/dq242j6q44xlqlp7y6fjg7bmpd82m6li-jq-1.7.1-man",
-        "out": "/nix/store/p73la466zw37g7z5d2qy3zz9mamf3gsv-jq-1.7.1"
+        "bin": "/nix/store/6njxc4ma96r9qc88scwsmnh64a086yrn-jq-1.7.1-bin",
+        "dev": "/nix/store/haxb6i05p1ganzinkzk3xib7d8zg2zzd-jq-1.7.1-dev",
+        "doc": "/nix/store/d1ij699i2mbwix1my3b8k7ckfykhrp1m-jq-1.7.1-doc",
+        "man": "/nix/store/806zwhmy9qkp695x9y4c373fpcz8ql7i-jq-1.7.1-man",
+        "out": "/nix/store/7h4z72g5bpfwcnmc0a77x3aqp8vg0h0f-jq-1.7.1"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -202,17 +198,17 @@
     {
       "attr_path": "jq",
       "broken": false,
-      "derivation": "/nix/store/7mhmr1kya51g9037zbbihcbnm32nxpp1-jq-1.7.1.drv",
+      "derivation": "/nix/store/lg45vvzj46z0hiccdlmklmlrdsdrsvyz-jq-1.7.1.drv",
       "description": "Lightweight and flexible command-line JSON processor",
       "install_id": "jq",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "jq-1.7.1",
       "pname": "jq",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:30:45.889036Z",
       "stabilities": [
         "unstable"
       ],
@@ -223,11 +219,11 @@
         "man"
       ],
       "outputs": {
-        "bin": "/nix/store/iqyxj9kb5g5w347svfwskiyahrplwxgb-jq-1.7.1-bin",
-        "dev": "/nix/store/a3n8r9jn9g78yhb8xamgml3vlsv4qc3w-jq-1.7.1-dev",
-        "doc": "/nix/store/z96h0lbll50v9m5fly0mvrqxibiv07gj-jq-1.7.1-doc",
-        "man": "/nix/store/ikr9p51fkdc932kmbmnq4wji81cyaw7m-jq-1.7.1-man",
-        "out": "/nix/store/lnzkzs9zlpap9vizx5ds11a2kkpcfm5a-jq-1.7.1"
+        "bin": "/nix/store/xv6l5qpmjm1cm1v519d3zzx72givc912-jq-1.7.1-bin",
+        "dev": "/nix/store/79rh194hlm4y033ry74mhm5c1gzhicxh-jq-1.7.1-dev",
+        "doc": "/nix/store/58k6ajhi376snpa2qx9nmismqwr23fi6-jq-1.7.1-doc",
+        "man": "/nix/store/pbq5gvwvgbfx0njjvx7zaijhn9jxgv9j-jq-1.7.1-man",
+        "out": "/nix/store/dr03sim3pqyxh2aakwzmp19l54alic6c-jq-1.7.1"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -236,17 +232,17 @@
     {
       "attr_path": "jq",
       "broken": false,
-      "derivation": "/nix/store/vgxirlhjl9qv3ki52xiz5g5fv07csfam-jq-1.7.1.drv",
+      "derivation": "/nix/store/mz5mi2la3cwigadhmn039l9l7mcygmjp-jq-1.7.1.drv",
       "description": "Lightweight and flexible command-line JSON processor",
       "install_id": "jq",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "jq-1.7.1",
       "pname": "jq",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:47:15.553019Z",
       "stabilities": [
         "unstable"
       ],
@@ -257,11 +253,11 @@
         "man"
       ],
       "outputs": {
-        "bin": "/nix/store/kvdl82szh102c3bmqfcymfhhdgmmpiqw-jq-1.7.1-bin",
-        "dev": "/nix/store/bpdizbcr45r3m1k75sxcmdbqi8i2khmd-jq-1.7.1-dev",
-        "doc": "/nix/store/yh6klqhz2sxa8y3yfsxy828mhbkcdy34-jq-1.7.1-doc",
-        "man": "/nix/store/66hkk82yqg7dnjx8dj32kxhp4mna06ry-jq-1.7.1-man",
-        "out": "/nix/store/q3cn39yz907p3h8ndqf9ljcakh2pzsrv-jq-1.7.1"
+        "bin": "/nix/store/8xh7an43y0xkawgf0pb7mxvcr20l17qh-jq-1.7.1-bin",
+        "dev": "/nix/store/x1rvxbvad0bkmrb849likb36kp44p6k3-jq-1.7.1-dev",
+        "doc": "/nix/store/y7riwf6jr799jvd9v8aj5626ix6w4s6v-jq-1.7.1-doc",
+        "man": "/nix/store/72iz7d48dslq7dlba92f72gcqiwy1bnv-jq-1.7.1-man",
+        "out": "/nix/store/yv3i7vxi014xhly4dv8lkgh05p2n5wsy-jq-1.7.1"
       },
       "system": "x86_64-darwin",
       "group": "toplevel",
@@ -270,17 +266,17 @@
     {
       "attr_path": "jq",
       "broken": false,
-      "derivation": "/nix/store/pl6n5r6cjj0szvnfmm77yslf89nm5ash-jq-1.7.1.drv",
+      "derivation": "/nix/store/kkw5pkfm08wlv1558pgbca73rlgc78kx-jq-1.7.1.drv",
       "description": "Lightweight and flexible command-line JSON processor",
       "install_id": "jq",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "jq-1.7.1",
       "pname": "jq",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T02:06:57.494074Z",
       "stabilities": [
         "unstable"
       ],
@@ -291,11 +287,11 @@
         "man"
       ],
       "outputs": {
-        "bin": "/nix/store/xqh11ih3h2y85sgjjighlskp2llhswmz-jq-1.7.1-bin",
-        "dev": "/nix/store/bsa64w792v82bx2nanmygc4fg690f4a0-jq-1.7.1-dev",
-        "doc": "/nix/store/gskl3sys6n7r8rg768smngn1n52w09ag-jq-1.7.1-doc",
-        "man": "/nix/store/v14f5in0m2yx4561dbs2mbplsgi0hx26-jq-1.7.1-man",
-        "out": "/nix/store/75lxfnxl0wsifkqs6pb7rdmanrdd6qjp-jq-1.7.1"
+        "bin": "/nix/store/gpxsdrrd4x93fs75395vr2dfys1ki9mq-jq-1.7.1-bin",
+        "dev": "/nix/store/ld8ys81ch5fj94j0jrwbkgwwjxmbwdxh-jq-1.7.1-dev",
+        "doc": "/nix/store/nhg3x57268kb3q1021w3m002xxqpj50w-jq-1.7.1-doc",
+        "man": "/nix/store/0h33kdarki6bp6pwf7xc5rzjnx8ky4j4-jq-1.7.1-man",
+        "out": "/nix/store/ma6hybrgazb471pd53mwnvh1vsv87cxb-jq-1.7.1"
       },
       "system": "x86_64-linux",
       "group": "toplevel",
@@ -304,17 +300,17 @@
     {
       "attr_path": "ripgrep",
       "broken": false,
-      "derivation": "/nix/store/xh5k77jjm7hvl6s7nl0v217si5lrx8ny-ripgrep-14.1.1.drv",
+      "derivation": "/nix/store/cf54ipxm78915k0lwzgc3gpq9ivhj5p4-ripgrep-14.1.1.drv",
       "description": "Utility that combines the usability of The Silver Searcher with the raw speed of grep",
       "install_id": "ripgrep",
       "license": "[ Unlicense, MIT ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "ripgrep-14.1.1",
       "pname": "ripgrep",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:12:34.066260Z",
       "stabilities": [
         "unstable"
       ],
@@ -324,7 +320,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/y470kg919bsrzl28b3g0qlf5grv04xyx-ripgrep-14.1.1"
+        "out": "/nix/store/zqhlsfg3n47hlq95wwwf4jgp6b4kmkw1-ripgrep-14.1.1"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -333,17 +329,17 @@
     {
       "attr_path": "ripgrep",
       "broken": false,
-      "derivation": "/nix/store/9szbngapi2chyphkcnkj27i1j3dxkh8v-ripgrep-14.1.1.drv",
+      "derivation": "/nix/store/mrjwj0vs2gazx6bvlgxjhglimgzw9hx7-ripgrep-14.1.1.drv",
       "description": "Utility that combines the usability of The Silver Searcher with the raw speed of grep",
       "install_id": "ripgrep",
       "license": "[ Unlicense, MIT ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "ripgrep-14.1.1",
       "pname": "ripgrep",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:31:33.641373Z",
       "stabilities": [
         "unstable"
       ],
@@ -353,7 +349,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/zcl9pm442i981ngj2ksc6vfkxah4zkkv-ripgrep-14.1.1"
+        "out": "/nix/store/hf38216d036k3qb2a7mhdjnm9b3cw67l-ripgrep-14.1.1"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -362,17 +358,17 @@
     {
       "attr_path": "ripgrep",
       "broken": false,
-      "derivation": "/nix/store/18rpxza6hb2l8b4x8fnryqszm3kws8hc-ripgrep-14.1.1.drv",
+      "derivation": "/nix/store/ffrvz8503dilsr4cqr85w8kd620mla7s-ripgrep-14.1.1.drv",
       "description": "Utility that combines the usability of The Silver Searcher with the raw speed of grep",
       "install_id": "ripgrep",
       "license": "[ Unlicense, MIT ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "ripgrep-14.1.1",
       "pname": "ripgrep",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:47:43.014410Z",
       "stabilities": [
         "unstable"
       ],
@@ -382,7 +378,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/8qbj83qx6sm66i3rhbicmxzmdrih5csj-ripgrep-14.1.1"
+        "out": "/nix/store/38dfkpikydr5yai23ns7j1c07k42ddkf-ripgrep-14.1.1"
       },
       "system": "x86_64-darwin",
       "group": "toplevel",
@@ -391,17 +387,17 @@
     {
       "attr_path": "ripgrep",
       "broken": false,
-      "derivation": "/nix/store/51w4qk9kmvf8f207dnai5islwmzvipkk-ripgrep-14.1.1.drv",
+      "derivation": "/nix/store/li38a43l4njx3mlmm0wjwrlgryxgjg68-ripgrep-14.1.1.drv",
       "description": "Utility that combines the usability of The Silver Searcher with the raw speed of grep",
       "install_id": "ripgrep",
       "license": "[ Unlicense, MIT ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "ripgrep-14.1.1",
       "pname": "ripgrep",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T02:07:49.977011Z",
       "stabilities": [
         "unstable"
       ],
@@ -411,7 +407,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/i407i79g1ch5pl1lq4s3l31jsr1g46ds-ripgrep-14.1.1"
+        "out": "/nix/store/sbn6iya0mr3z14xvrz8s4ink4mi6w7in-ripgrep-14.1.1"
       },
       "system": "x86_64-linux",
       "group": "toplevel",
@@ -420,17 +416,17 @@
     {
       "attr_path": "tmux",
       "broken": false,
-      "derivation": "/nix/store/8bxrcpx7gg0f22qx89fmzjzqdlhzjh19-tmux-3.5a.drv",
+      "derivation": "/nix/store/vh81sdb1bzy0gx6h226abgx7kaa2bq58-tmux-3.5a.drv",
       "description": "Terminal multiplexer",
       "install_id": "tmux",
       "license": "BSD-3-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "tmux-3.5a",
       "pname": "tmux",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:12:55.001868Z",
       "stabilities": [
         "unstable"
       ],
@@ -441,8 +437,8 @@
         "out"
       ],
       "outputs": {
-        "man": "/nix/store/dhcnhq0vwl4xkadaiplcf2ngmy18s1vs-tmux-3.5a-man",
-        "out": "/nix/store/a7q4392pdg3w4vinfjwpzq2hdkr5p42q-tmux-3.5a"
+        "man": "/nix/store/8dj4w15fj1zscna5xvxpfcww0w32jdxb-tmux-3.5a-man",
+        "out": "/nix/store/6yqpppllgskavinzwgkllpnqpq2dm5gr-tmux-3.5a"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -451,17 +447,17 @@
     {
       "attr_path": "tmux",
       "broken": false,
-      "derivation": "/nix/store/jc11y3m12kdy364p2adl33zxc32r4xxh-tmux-3.5a.drv",
+      "derivation": "/nix/store/cggkzih5hgmir5887x8h11b9ypfbmdnr-tmux-3.5a.drv",
       "description": "Terminal multiplexer",
       "install_id": "tmux",
       "license": "BSD-3-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "tmux-3.5a",
       "pname": "tmux",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:32:02.533673Z",
       "stabilities": [
         "unstable"
       ],
@@ -472,8 +468,8 @@
         "out"
       ],
       "outputs": {
-        "man": "/nix/store/jn8w07mnz4aamamnkyghm2ddb33ja82j-tmux-3.5a-man",
-        "out": "/nix/store/x99n67fnw6v60p2x8nf5yvj3xzk1lpwk-tmux-3.5a"
+        "man": "/nix/store/hgy9yn5acpra79mhbbks9r9qqz36yjx8-tmux-3.5a-man",
+        "out": "/nix/store/3rrzfv0vw4hpbiw374bflmw3y0kixfp3-tmux-3.5a"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -482,17 +478,17 @@
     {
       "attr_path": "tmux",
       "broken": false,
-      "derivation": "/nix/store/rphqiaqxn78h6q0ncx6xp29z3rzblrx5-tmux-3.5a.drv",
+      "derivation": "/nix/store/jpwp2yx0sa54bzqkb1n4w1z0ps4i1y0d-tmux-3.5a.drv",
       "description": "Terminal multiplexer",
       "install_id": "tmux",
       "license": "BSD-3-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "tmux-3.5a",
       "pname": "tmux",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T01:48:03.932008Z",
       "stabilities": [
         "unstable"
       ],
@@ -503,8 +499,8 @@
         "out"
       ],
       "outputs": {
-        "man": "/nix/store/0lx9dh20jwpjcn6k8aydxhb19ziq5wa0-tmux-3.5a-man",
-        "out": "/nix/store/32zdv6xm371kj02faikpivl1xfrmjk4x-tmux-3.5a"
+        "man": "/nix/store/2qlj25gxyx9c1nnj6vbw3g9wsz763kwv-tmux-3.5a-man",
+        "out": "/nix/store/ii6q2wyip6pnrih893cbyp1dw7xypiwz-tmux-3.5a"
       },
       "system": "x86_64-darwin",
       "group": "toplevel",
@@ -513,17 +509,17 @@
     {
       "attr_path": "tmux",
       "broken": false,
-      "derivation": "/nix/store/knzpxc0iy3wwda51d6s9lkr6fb44jpd7-tmux-3.5a.drv",
+      "derivation": "/nix/store/yqqwicvaq57lsjap2hagdrqx00qngapp-tmux-3.5a.drv",
       "description": "Terminal multiplexer",
       "install_id": "tmux",
       "license": "BSD-3-Clause",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=5135c59491985879812717f4c9fea69604e7f26f",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=42a1c966be226125b48c384171c44c651c236c22",
       "name": "tmux-3.5a",
       "pname": "tmux",
-      "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-      "rev_count": 759373,
-      "rev_date": "2025-02-26T09:09:39Z",
-      "scrape_date": "2025-02-28T05:09:33Z",
+      "rev": "42a1c966be226125b48c384171c44c651c236c22",
+      "rev_count": 779115,
+      "rev_date": "2025-04-05T04:29:29Z",
+      "scrape_date": "2025-04-07T02:08:20.737745Z",
       "stabilities": [
         "unstable"
       ],
@@ -534,8 +530,8 @@
         "out"
       ],
       "outputs": {
-        "man": "/nix/store/11pv23d65i46ws3wmd90h439fj0c9srv-tmux-3.5a-man",
-        "out": "/nix/store/394nyk2jx1iigq7x367zai2qg4i1mk27-tmux-3.5a"
+        "man": "/nix/store/clanz8aam1qna8akzs9gv25y4i1vr048-tmux-3.5a-man",
+        "out": "/nix/store/4ykx2470j3cirjn9gwkk6swk2d8ndrwd-tmux-3.5a"
       },
       "system": "x86_64-linux",
       "group": "toplevel",
@@ -543,11 +539,11 @@
     },
     {
       "install_id": "mac-app-util",
-      "locked-url": "github:hraban/mac-app-util/c00d5b21ca1fdab8acef65e696795f0f15ec1158?narHash=sha256-QlVtMzAhECs9Esq3txqVW7/vM78ipB5IcI8uyCbTP7A%3D",
+      "locked-url": "github:hraban/mac-app-util/341ede93f290df7957047682482c298e47291b4d?narHash=sha256-aTM/2CrNN5utdVEQGsOA%2Bkl4UozgH7VPLBQL5OXtBrg%3D",
       "locked-flake-attr-path": "packages.x86_64-darwin.default",
-      "derivation": "/nix/store/k9dl2xcsk8fmrfskc5qm6rfz6cf3af98-mac-app-util.drv",
+      "derivation": "/nix/store/rf79rpcp65ylabbcik7pasz3x76yh721-mac-app-util.drv",
       "outputs": {
-        "out": "/nix/store/k8p4nm9r7v3lwzhva5lkklxha9x88ygf-mac-app-util"
+        "out": "/nix/store/fzi14gz2k2njp4y097bpp6ggwvhs9c2d-mac-app-util"
       },
       "output-names": [
         "out"
@@ -568,11 +564,11 @@
     },
     {
       "install_id": "mac-app-util",
-      "locked-url": "github:hraban/mac-app-util/c00d5b21ca1fdab8acef65e696795f0f15ec1158?narHash=sha256-QlVtMzAhECs9Esq3txqVW7/vM78ipB5IcI8uyCbTP7A%3D",
+      "locked-url": "github:hraban/mac-app-util/341ede93f290df7957047682482c298e47291b4d?narHash=sha256-aTM/2CrNN5utdVEQGsOA%2Bkl4UozgH7VPLBQL5OXtBrg%3D",
       "locked-flake-attr-path": "packages.aarch64-darwin.default",
-      "derivation": "/nix/store/5zfrr4cr2km9hqqic09kvmbnkwljwisn-mac-app-util.drv",
+      "derivation": "/nix/store/kfjrl52wga87qr8n97f4rpsf0njxrnyx-mac-app-util.drv",
       "outputs": {
-        "out": "/nix/store/ybhh74m2sigfbckkainpjrxl2qwx89ww-mac-app-util"
+        "out": "/nix/store/fwgfpqmb7q7psa2wk5mxgiwk5qmqnywq-mac-app-util"
       },
       "output-names": [
         "out"
