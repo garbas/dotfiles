@@ -12,7 +12,7 @@
     tart
   ];
 
-  programs.zsh.initExtra = ''
+  programs.zsh.initContent = ''
     eval "$(/opt/homebrew/bin/brew shellenv)"
     eval "$(flox activate -d ~ -m run)"
   '';

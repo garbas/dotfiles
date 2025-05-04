@@ -108,13 +108,13 @@
   programs.git.userEmail = user.email;
 
   programs.git.enable = true;
-  programs.git.package = pkgs.git.override {
-    svnSupport = false;
-    guiSupport = false;
-    sendEmailSupport = true;
-    withSsh = true;
-    withLibsecret = !pkgs.stdenv.isDarwin;
-  };
+  #programs.git.package = pkgs.git.override {
+  #  svnSupport = false;
+  #  guiSupport = false;
+  #  sendEmailSupport = true;
+  #  withSsh = true;
+  #  withLibsecret = !pkgs.stdenv.isDarwin;
+  #};
   programs.git.aliases.s = "status";
   programs.git.aliases.d = "diff";
   programs.git.aliases.ci = "commit -v";
@@ -262,14 +262,6 @@
   programs.zsh.syntaxHighlighting.enable = true;
   programs.zsh.defaultKeymap = "viins";
   programs.zsh.history.expireDuplicatesFirst = true;
-  programs.zsh.initExtraBeforeCompInit = ''
-    # for Docker Labs Debug Tools
-    fpath=(~/.local/share/zsh/functions $fpath)
-  '';
-  programs.zsh.initExtra = ''
-    # for Docker Labs Debug Tools
-    export PATH="$PATH:/Users/${user.username}/.local/bin"
-  '';
   programs.zsh.plugins = [
     {
       file = "powerlevel10k.zsh-theme";

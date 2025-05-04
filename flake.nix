@@ -2,10 +2,12 @@
   description = "Garbas's dotfiles";
 
   nixConfig.extra-substituters = [
+    "https://cache.nixos.org"
     "https://cache.flox.dev"
     "https://devenv.cachix.org"
   ];
   nixConfig.extra-trusted-public-keys = [
+    "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
     "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
     "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
   ];
@@ -33,8 +35,8 @@
   inputs.catppuccin-lazygit.flake = false;
 
   inputs.ghostty.url = "github:ghostty-org/ghostty/v1.1.3";
-  inputs.flox.url = "github:flox/flox/v1.3.17";
-  inputs.devenv.url = "github:cachix/devenv/v1.4.1";
+  inputs.flox.url = "github:flox/flox/v1.4.1";
+  inputs.devenv.url = "github:cachix/devenv/v1.6";
 
   # Custom vim/neovim plugins
   inputs.vimPlugin-auto-dark-mode.url = "github:f-person/auto-dark-mode.nvim";
