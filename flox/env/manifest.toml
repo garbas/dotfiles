@@ -12,9 +12,6 @@ mac-app-util.systems = ["x86_64-darwin", "aarch64-darwin"]
 
 # TODO: load_flox_tmux
 tmux.pkg-path = "tmux"
-"garbas/hola".pkg-path = "garbas/hola"
-"garbas/hola".systems = ["aarch64-darwin"]
-"garbas/hola".pkg-group = "garbas/hola"
 
 [vars]
 OP_ACCOUNT="my.1password.com"

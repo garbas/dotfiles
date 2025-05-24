@@ -6,13 +6,6 @@
       "_1password-cli": {
         "pkg-path": "_1password-cli"
       },
-      "garbas/hola": {
-        "pkg-path": "garbas/hola",
-        "pkg-group": "garbas/hola",
-        "systems": [
-          "aarch64-darwin"
-        ]
-      },
       "jq": {
         "pkg-path": "jq"
       },
@@ -52,34 +45,6 @@
     }
   },
   "packages": [
-    {
-      "attr_path": "hola",
-      "broken": false,
-      "derivation": "/nix/store/330d2zpaj2q5caj68p9ds8cvv2anrfia-hola-0.0.1.drv",
-      "description": "Not Provided",
-      "install_id": "garbas/hola",
-      "locked_url": "../hola.git?rev=c3a1f9502b7489fb15ec6d84024005ab34da5783",
-      "name": "hola-0.0.1",
-      "pname": "hola",
-      "rev": "c3a1f9502b7489fb15ec6d84024005ab34da5783",
-      "rev_count": 4,
-      "rev_date": "2025-05-08T22:05:28Z",
-      "scrape_date": "2025-05-24T07:49:11.914723Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "version": "0.0.1",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/jgbfiyhcgfy0sj8czcv13hm3iil3n1gw-hola-0.0.1"
-      },
-      "system": "aarch64-darwin",
-      "group": "garbas/hola",
-      "priority": 5
-    },
     {
       "attr_path": "_1password-cli",
       "broken": false,
