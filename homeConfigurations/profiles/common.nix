@@ -6,7 +6,6 @@
 }:
 {
   imports = [
-    inputs.flox.homeModules.flox
     (import ./common_neovim.nix)
   ];
 

@@ -23,6 +23,7 @@
 
     system = aarch64-darwin
     extra-platforms = aarch64-darwin x86_64-darwin
+    extra-trusted-public-keys = cache.example.org-1:bzydnpbBKrW1AbjWPAb6sttpcIC4ji+Ahib6u0E1OlI=
   '';
 
   nixpkgs.config.allowBroken = false;
@@ -48,6 +49,8 @@
 
   # this does the trick to load the nix-darwin environment
   programs.zsh.enable = true;
+
+  system.primaryUser = user.username;
 
   users.users.${user.username} = {
     home = "/Users/${user.username}";
@@ -149,20 +152,20 @@
 
     # Assign workspaces to monitors
     workspace-to-monitor-force-assignment = {
-      "1" = [ "main" ];
-      "2" = [ "main" ];
+      "1" = [
+        "built-in"
+        "main"
+      ];
+      "2" = [
+        "built-in"
+        "main"
+      ];
       "3" = [ "main" ];
       "4" = [ "main" ];
       "5" = [ "main" ];
       "6" = [ "main" ];
-      "7" = [
-        "secondary"
-        "main"
-      ];
-      "8" = [
-        "secondary"
-        "main"
-      ];
+      "7" = [ "main" ];
+      "8" = [ "main" ];
       "9" = [
         "secondary"
         "main"
