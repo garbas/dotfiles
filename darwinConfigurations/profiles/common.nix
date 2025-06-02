@@ -23,7 +23,7 @@
 
     system = aarch64-darwin
     extra-platforms = aarch64-darwin x86_64-darwin
-    extra-trusted-public-keys = cache.example.org-1:bzydnpbBKrW1AbjWPAb6sttpcIC4ji+Ahib6u0E1OlI=
+    extra-trusted-public-keys = floxhub-1:0QOAlcobcEvq1mqEf4qAYCaWnTTOXpyoRv/PmqfSixM=
   '';
 
   nixpkgs.config.allowBroken = false;
