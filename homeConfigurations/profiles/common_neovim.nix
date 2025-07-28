@@ -2,6 +2,13 @@
 {
 
   # TODO:
+  # AI:
+  # - https://github.com/olimorris/codecompanion.nvim?tab=readme-ov-file
+  # - https://github.com/dlants/magenta.nvim
+  # - https://github.com/rakotomandimby/code-ai.nvim
+  # - https://github.com/yacineMTB/dingllm.nvim
+  # - https://github.com/charmbracelet/mods
+  # - https://github.com/yetone/avante.nvim/blob/main/cursor-planning-mode.md
   # https://github.com/kndndrj/nvim-dbee
   # https://github.com/jackMort/tide.nvim
   # https://github.com/samjwill/nvim-unception

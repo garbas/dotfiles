@@ -143,7 +143,7 @@
 
   programs.keychain.enable = true;
   programs.keychain.enableZshIntegration = true;
-  programs.keychain.agents = [ "ssh" ];
+  #programs.keychain.agents = [ "ssh" ];
   programs.keychain.extraFlags = [
     "--quiet"
     "--nogui"
