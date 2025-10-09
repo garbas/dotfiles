@@ -18,7 +18,6 @@
   home.sessionVariables.GIT_EDITOR = "nvim";
 
   home.packages = with pkgs; [
-    inputs.devenv.packages.${pkgs.system}.default
     asciinema
     devbox
     asdf
@@ -39,6 +38,14 @@
     wget
     which
     _1password-cli
+    claude-code
+    claude-monitor
+
+    nix-tree
+    pngpaste
+    nixd
+    bash-language-server
+
   ];
 
   # So happy when home manager is almost having Ghostty support hours after release:
@@ -49,7 +56,7 @@
     macos-titlebar-style = hidden
     window-padding-x = 10
     window-padding-y = 10
-    theme = dark:catppuccin-mocha,light:catppuccin-latte
+    theme = dark:catppuccin-mocha.conf,light:catppuccin-latte.conf
   '';
   xdg.configFile."ghostty/themes/catppuccin-latte.conf".source =
     "${inputs.catppuccin-ghostty}/themes/catppuccin-latte.conf";
@@ -191,10 +198,11 @@
   #programs.nix-index.enableZshIntegration = true;
 
   programs.ssh.enable = true;
-  programs.ssh.controlMaster = "auto";
-  programs.ssh.controlPath = "~/.ssh/%r@%h:%p";
-  programs.ssh.controlPersist = "60m";
-  programs.ssh.serverAliveInterval = 120;
+  programs.ssh.enableDefaultConfig = false;
+  programs.ssh.matchBlocks."*".controlMaster = "auto";
+  programs.ssh.matchBlocks."*".controlPath = "~/.ssh/%r@%h:%p";
+  programs.ssh.matchBlocks."*".controlPersist = "60m";
+  programs.ssh.matchBlocks."*".serverAliveInterval = 120;
   programs.ssh.extraConfig = ''
     TCPKeepAlive yes
     HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com,ssh-rsa-cert-v01@openssh.com,ssh-ed25519,ssh-rsa,ecdsa-sha2-nistp256-cert-v01@openssh.com,ecdsa-sha2-nistp521-cert-v01@openssh.com,ecdsa-sha2-nistp384-cert-v01@openssh.com,ecdsa-sha2-nistp521,ecdsa-sha2-nistp384,ecdsa-sha2-nistp256
@@ -249,7 +257,7 @@
 
   programs.vscode.enable = true;
 
-  programs.zed-editor.enable = true;
+  #programs.zed-editor.enable = true;
 
   programs.zoxide.enable = true;
   programs.zoxide.enableZshIntegration = true;

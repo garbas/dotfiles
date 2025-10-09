@@ -12,11 +12,14 @@ mac-app-util.systems = ["x86_64-darwin", "aarch64-darwin"]
 
 # TODO: load_flox_tmux
 tmux.pkg-path = "tmux"
+cargo.pkg-path = "cargo"
+rustc.pkg-path = "rustc"
+nodejs.pkg-path = "nodejs"
 
 [vars]
 OP_ACCOUNT="my.1password.com"
 OP_SECRETS_ITEM="Terminal"
-OP_SECRETS = "ANTROPIC_API_KEY OPENAI_API_KEY"
+OP_SECRETS = "ANTROPIC_API_KEY OPENAI_API_KEY HF_TOKEN"
 TMUX_SESSION_NAME = "flox-session"
 
 [hook]

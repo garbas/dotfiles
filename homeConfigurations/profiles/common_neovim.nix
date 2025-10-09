@@ -618,15 +618,19 @@
             require('avante').setup({
               -- See https://github.com/yetone/avante.nvim/blob/main/lua/avante/config.lua
 
-              -- provider = 'claude',
-              -- claude = {
-              --   api_key_name = "cmd:echo $ANTROPIC_API_KEY",
-              -- },
-              -- auto_suggestions_provider = 'claude',
-              -- provider = 'openai',
-              -- auto_suggestions_provider = 'openai',
-              provider = 'copilot',
-              auto_suggestions_provider = 'copilot',
+              provider = 'claude',
+              providers = {
+                claude = {
+                  endpoint = "https://api.anthropic.com",
+                  model = "claude-sonnet-4-20250514",
+                  api_key_name = "cmd:echo $ANTROPIC_API_KEY",
+                  timeout = 30000, -- Timeout in milliseconds
+                    extra_request_body = {
+                      temperature = 0.75,
+                      max_tokens = 20480,
+                    },
+                },
+              },
 
               file_selector = {
                 provider = "telescope",
@@ -961,6 +965,8 @@
         type = "lua";
         config = # lua
           ''
+            local lspconfig = require('lspconfig')
+
             local capabilities = vim.lsp.protocol.make_client_capabilities()
             -- Tell the server the capability of foldingRange,
             -- Neovim hasn't added foldingRange to default capabilities, users must add it manually
@@ -970,8 +976,27 @@
                 lineFoldingOnly = true
             }
 
-            local lc = require('lspconfig')
-            for _, item in ipairs({
+            -- Get enhanced capabilities from blink.cmp
+            capabilities = require('blink.cmp').get_lsp_capabilities(capabilities)
+
+            -- Setup LSP servers using lspconfig
+            local function setup_lsp(server_name, executable, custom_opts)
+              if vim.fn.executable(executable) == 1 then
+                -- Basic configuration with capabilities
+                local config = vim.tbl_deep_extend('force', {
+                  capabilities = capabilities,
+                }, custom_opts or {})
+
+                -- Use lspconfig to setup the server
+                lspconfig[server_name].setup(config)
+                print("LSP server " .. server_name .. " setup with executable: " .. executable)
+              else
+                print("LSP server " .. server_name .. " not setup - executable not found: " .. executable)
+              end
+            end
+
+            -- Setup LSP servers
+            local servers = {
               -- Web
               { name="ts_ls", executable="typescript-language-server", opts={} },
               { name="html", executable="vscode-html-language-server", opts={} },
@@ -992,14 +1017,10 @@
 
               -- Tools
               { name="dockerls", executable="dockerls", opts={} },              -- Docker
+            }
 
-            }) do
-              -- Only setup LSP if the executable is available
-              if vim.fn.executable(item.executable) == 1 then
-                local opts = item.opts
-                opts.capabilities = require('blink.cmp').get_lsp_capabilities(capabilities)
-                lc[item.name].setup(opts)
-              end
+            for _, server in ipairs(servers) do
+              setup_lsp(server.name, server.executable, server.opts)
             end
 
             -- https://github.com/nvim-telescope/telescope.nvim#neovim-lsp-pickers

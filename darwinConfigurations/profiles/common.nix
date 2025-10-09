@@ -22,7 +22,7 @@
     {
       protocol = "ssh-ng";
       sshUser = "nixbld";
-      hostName = "fd7a:115c:a1e0::2";
+      hostName = "[fd7a:115c:a1e0::2]";
       systems = [ "x86_64-linux" ];
       sshKey = "/Users/${user.username}/.ssh/id_ed25519";
       maxJobs = 8;
@@ -40,7 +40,7 @@
     {
       protocol = "ssh-ng";
       sshUser = "nixbld";
-      hostName = "fd7a:115c:a1e0::6";
+      hostName = "[fd7a:115c:a1e0::6]";
       systems = [ "x86_64-linux" ];
       sshKey = "/Users/${user.username}/.ssh/id_ed25519";
       maxJobs = 8;
@@ -58,7 +58,7 @@
     {
       protocol = "ssh-ng";
       sshUser = "nixbld";
-      hostName = "fd7a:115c:a1e0::1a";
+      hostName = "[fd7a:115c:a1e0::1a]";
       systems = [ "aarch64-linux" ];
       sshKey = "/Users/${user.username}/.ssh/id_ed25519";
       maxJobs = 20;
@@ -95,15 +95,16 @@
   # Enable Touch ID for sudo
   security.pam.services.sudo_local.touchIdAuth = true;
 
-  homebrew.enable = true;
-  homebrew.casks = [
-    "alt-tab"
-    "ghostty"
-    "chatgpt"
-    "zen-browser"
-  ];
-  homebrew.onActivation.autoUpdate = true;
-  homebrew.onActivation.upgrade = true;
+  #homebrew.enable = true;
+  #homebrew.casks = [
+  #  "alt-tab"
+  #  "chatgpt"
+  #  "ghostty"
+  #  "jordanbaird-ice"
+  #  "zen-browser"
+  #];
+  #homebrew.onActivation.autoUpdate = true;
+  #homebrew.onActivation.upgrade = true;
 
   fonts.packages = with pkgs; [
     nerd-fonts.iosevka
@@ -135,7 +136,7 @@
   # A lightweight window border system for macOS
   # https://github.com/FelixKratz/JankyBorders
   services.jankyborders.enable = true;
-  services.jankyborders.active_color = "0xff00ff00"; # green
+  #services.jankyborders.active_color = "0xff00ff00"; # green
   #services.jankyborders.active_color = "gradient(top_right=0x9992B3F5,bottom_left=0x9992B3F5)";
   services.jankyborders.background_color = "0xFFFFFFFF";
   services.jankyborders.blur_radius = 5.0;
@@ -327,7 +328,7 @@
       alt-shift-tab = "move-workspace-to-monitor --wrap-around next";
 
       # See: https://nikitabobko.github.io/AeroSpace/commands#mode
-      alt-shift-semicolon = "mode service";
+      alt-semicolon = "mode service";
 
       # Disable annoying and useless "hide application" shortcut
       # https://nikitabobko.github.io/AeroSpace/goodies#disable-hide-app
