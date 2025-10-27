@@ -3,11 +3,19 @@
     "catppuccin-ghostty": {
       "flake": false,
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1758219529,
         "narHash": "sha256-4seUhPr6nv0ld9XMrQS4Ko9QnC1ZOEiRjENSfgHIvR0=",
         "owner": "catppuccin",
         "repo": "ghostty",
         "rev": "10b3c5f56f2aa519b0e12255346a97d71a8bfeaf",
+=======
+        "lastModified": 1761059674,
+        "narHash": "sha256-j0HCakM9R/xxEjWd5A0j8VVlg0vQivjlAYHRW/4OpGU=",
+        "owner": "catppuccin",
+        "repo": "ghostty",
+        "rev": "0eeefa637affe0b5f29d7005cfe4e143c244a781",
+>>>>>>> d1fe084 (flox/flake bump and have adding indigo homeConfiguration)
         "type": "github"
       },
       "original": {
@@ -71,11 +79,11 @@
         "rust-analyzer-src": "rust-analyzer-src"
       },
       "locked": {
-        "lastModified": 1748587207,
-        "narHash": "sha256-ireNibZ5B68LplUCEWQ2bxXXOTTGBv5CB5bZdvLu80c=",
+        "lastModified": 1757313768,
+        "narHash": "sha256-HWd3/TgXubNWsGB9EgDocxSy2VR7k1kh97c3eAw/GDw=",
         "owner": "nix-community",
         "repo": "fenix",
-        "rev": "6fbc8563ec11da26890520ea69b7aabc4548ee04",
+        "rev": "7a988bb002e235030492c94666f46737d583fad1",
         "type": "github"
       },
       "original": {
@@ -200,16 +208,28 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1756853808,
         "narHash": "sha256-ZlE4oAPgBvekj8YzNSU5O3IOAKO01Eu98q/3ZVvzZFA=",
         "owner": "flox",
         "repo": "flox",
         "rev": "bc0dec6763bb0e5914769fc957811c848ba8c773",
+=======
+        "lastModified": 1761314784,
+        "narHash": "sha256-4aBajNhILnCHCYTbhG8lYjYPMV04S65pf3JGiIGkcIs=",
+        "owner": "flox",
+        "repo": "flox",
+        "rev": "fa41b0d48c4622574f695082845c4ffd46350a51",
+>>>>>>> d1fe084 (flox/flake bump and have adding indigo homeConfiguration)
         "type": "github"
       },
       "original": {
         "owner": "flox",
+<<<<<<< HEAD
         "ref": "v1.7.2",
+=======
+        "ref": "main",
+>>>>>>> d1fe084 (flox/flake bump and have adding indigo homeConfiguration)
         "repo": "flox",
         "type": "github"
       }
@@ -267,11 +287,19 @@
         ]
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1759853171,
         "narHash": "sha256-uqbhyXtqMbYIiMqVqUhNdSuh9AEEkiasoK3mIPIVRhk=",
         "owner": "nix-community",
         "repo": "home-manager",
         "rev": "1a09eb84fa9e33748432a5253102d01251f72d6d",
+=======
+        "lastModified": 1761584077,
+        "narHash": "sha256-dISPEZahlfs5K6d58zR4akRRyogfE9P4WSyPPNT7HiE=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "e82585308aef3d4cc2c36c7b6946051c8cdf24ef",
+>>>>>>> d1fe084 (flox/flake bump and have adding indigo homeConfiguration)
         "type": "github"
       },
       "original": {
@@ -314,11 +342,19 @@
         ]
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1758805352,
         "narHash": "sha256-BHdc43Lkayd+72W/NXRKHzX5AZ+28F3xaUs3a88/Uew=",
         "owner": "lnl7",
         "repo": "nix-darwin",
         "rev": "c48e963a5558eb1c3827d59d21c5193622a1477c",
+=======
+        "lastModified": 1761339987,
+        "narHash": "sha256-IUaawVwItZKi64IA6kF6wQCLCzpXbk2R46dHn8sHkig=",
+        "owner": "lnl7",
+        "repo": "nix-darwin",
+        "rev": "7cd9aac79ee2924a85c211d21fafd394b06a38de",
+>>>>>>> d1fe084 (flox/flake bump and have adding indigo homeConfiguration)
         "type": "github"
       },
       "original": {
@@ -376,11 +412,19 @@
     },
     "nixos-hardware": {
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1759582739,
         "narHash": "sha256-spZegilADH0q5OngM86u6NmXxduCNv5eX9vCiUPhOYc=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
         "rev": "3441b5242af7577230a78ffb03542add264179ab",
+=======
+        "lastModified": 1760958188,
+        "narHash": "sha256-2m1S4jl+GEDtlt2QqeHil8Ny456dcGSKJAM7q3j/BFU=",
+        "owner": "NixOS",
+        "repo": "nixos-hardware",
+        "rev": "d6645c340ef7d821602fd2cd199e8d1eed10afbc",
+>>>>>>> d1fe084 (flox/flake bump and have adding indigo homeConfiguration)
         "type": "github"
       },
       "original": {
@@ -440,11 +484,19 @@
     },
     "nixpkgs-unstable_2": {
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1759831965,
         "narHash": "sha256-vgPm2xjOmKdZ0xKA6yLXPJpjOtQPHfaZDRtH+47XEBo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
         "rev": "c9b6fb798541223bbb396d287d16f43520250518",
+=======
+        "lastModified": 1761373498,
+        "narHash": "sha256-Q/uhWNvd7V7k1H1ZPMy/vkx3F8C13ZcdrKjO7Jv7v0c=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "6a08e6bb4e46ff7fcbb53d409b253f6bad8a28ce",
+>>>>>>> d1fe084 (flox/flake bump and have adding indigo homeConfiguration)
         "type": "github"
       },
       "original": {
@@ -455,6 +507,30 @@
       }
     },
     "nixpkgs_2": {
+      "locked": {
+<<<<<<< HEAD
+        "lastModified": 1754340878,
+        "narHash": "sha256-lgmUyVQL9tSnvvIvBp7x1euhkkCho7n3TMzgjdvgPoU=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "cab778239e705082fe97bb4990e0d24c50924c04",
+=======
+        "lastModified": 1756266583,
+        "narHash": "sha256-cr748nSmpfvnhqSXPiCfUPxRz2FJnvf/RjJGvFfaCsM=",
+        "owner": "flox",
+        "repo": "nixpkgs",
+        "rev": "8a6d5427d99ec71c64f0b93d45778c889005d9c2",
+>>>>>>> d1fe084 (flox/flake bump and have adding indigo homeConfiguration)
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
       "locked": {
         "lastModified": 1754340878,
         "narHash": "sha256-lgmUyVQL9tSnvvIvBp7x1euhkkCho7n3TMzgjdvgPoU=",
@@ -511,11 +587,11 @@
     "rust-analyzer-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1748523972,
-        "narHash": "sha256-ZRWF8koebp13bUUWoOylKouL0iuRs8V9rU5D00NL9QU=",
+        "lastModified": 1757042294,
+        "narHash": "sha256-JMLa0ZsbEd3+3E0/PQj/igVi9+pb98TgxaOEEw+t1bo=",
         "owner": "rust-lang",
         "repo": "rust-analyzer",
-        "rev": "6feb662a525bf4329157f0474638299c9b85de8c",
+        "rev": "a53b44412d4643cdec41005129735b38737eb296",
         "type": "github"
       },
       "original": {
@@ -594,7 +670,11 @@
     },
     "treefmt-nix_2": {
       "inputs": {
+<<<<<<< HEAD
         "nixpkgs": "nixpkgs_2"
+=======
+        "nixpkgs": "nixpkgs_3"
+>>>>>>> d1fe084 (flox/flake bump and have adding indigo homeConfiguration)
       },
       "locked": {
         "lastModified": 1755934250,

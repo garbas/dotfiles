@@ -9,6 +9,19 @@
     (import ./common_neovim.nix)
   ];
 
+  nix.settings.substituters = [
+    "https://cache.nixos.org"
+    "https://cache.flox.dev"
+    "https://devenv.cachix.org"
+  ];
+  nix.settings.trusted-public-keys = [
+    "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
+    "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+  ];
+
+  nixpkgs.config.allowUnfree = true;
+
   home.username = user.username;
   home.stateVersion = "22.11";
 
@@ -255,7 +268,8 @@
 
   '';
 
-  programs.vscode.enable = true;
+  # XXX: this are UI programs
+  #programs.vscode.enable = true;
 
   #programs.zed-editor.enable = true;
 

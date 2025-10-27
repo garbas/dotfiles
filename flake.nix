@@ -35,7 +35,8 @@
   inputs.catppuccin-lazygit.flake = false;
 
   inputs.ghostty.url = "github:ghostty-org/ghostty/v1.1.3";
-  inputs.flox.url = "github:flox/flox/v1.7.2";
+  inputs.devenv.url = "github:cachix/devenv/v1.8.1";
+  inputs.flox.url = "github:flox/flox/v1.7.5";
 
   # Custom vim/neovim plugins
   inputs.vimPlugin-auto-dark-mode.url = "github:f-person/auto-dark-mode.nvim";
@@ -193,8 +194,8 @@
                   with pkgs;
                   [
                     nixd
-                    #nixfmt-classic
                     nixfmt-rfc-style
+                    home-manager.packages.${system}.default
                   ]
                   ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [ nix-darwin.packages.${system}.default ];
               };
@@ -212,6 +213,9 @@
           };
           solo = {
             sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwOFnH4EHVCV/8/aaNg4n/zywH7IlSWur92iN9eeHGX";
+          };
+          indigo = {
+            sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC9o57frs04674Hft50/95ZrKDlOuFgWAVJIlzPoPEul";
           };
           jaime = {
             sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKex8HTaW5y1IrhxVKU4r9XfLNWl6kvzpBF74VXovfPu";
@@ -241,6 +245,10 @@
         // mkHomeConfiguration {
           system = "aarch64-linux";
           name = "solo";
+        }
+        // mkHomeConfiguration {
+          system = "aarch64-linux";
+          name = "indigo";
         };
       darwinConfigurations =
         { }
