@@ -22,7 +22,7 @@
     {
       protocol = "ssh-ng";
       sshUser = "nixbld";
-      hostName = "[fd7a:115c:a1e0::2]";
+      hostName = "hetzner-x86-64-indigo-01";
       systems = [ "x86_64-linux" ];
       sshKey = "/Users/${user.username}/.ssh/id_ed25519";
       maxJobs = 8;
@@ -40,7 +40,7 @@
     {
       protocol = "ssh-ng";
       sshUser = "nixbld";
-      hostName = "[fd7a:115c:a1e0::6]";
+      hostName = "hetzner-x86-64-indigo-02";
       systems = [ "x86_64-linux" ];
       sshKey = "/Users/${user.username}/.ssh/id_ed25519";
       maxJobs = 8;
@@ -58,7 +58,7 @@
     {
       protocol = "ssh-ng";
       sshUser = "nixbld";
-      hostName = "[fd7a:115c:a1e0::1a]";
+      hostName = "hetzner-aarch64-indigo-03";
       systems = [ "aarch64-linux" ];
       sshKey = "/Users/${user.username}/.ssh/id_ed25519";
       maxJobs = 20;
@@ -74,10 +74,8 @@
       mandatoryFeatures = [ ];
       publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUhpQkQ3QlhkZ05MZy8vMmh0cDB3S2hsaFpkSzVZL3R3ajJYcGdEdVh0ZkEgcm9vdEBoZXR6bmVyLWFhcmNoNjQtaW5kaWdvLTAzCg==";
     }
-    # ssh-ng://nixbld@fd7a:115c:a1e0::11 x86_64-darwin /root/.ssh/id_ed25519 1 1 benchmark,big-parallel,nixos-test - c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUoxM1lNajNsMjl2YXVyM0pQVlJGanRGNzg0clk3aEw5SnB3QXMzZWp5VU4gCg==
-    # ssh-ng://nixbld@fd7a:115c:a1e0::1 x86_64-darwin /root/.ssh/id_ed25519 1 1 benchmark,big-parallel,nixos-test - c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUU2SW5ISytZWVRvZ0tHTHBmVmFHWE9VQkIxa2pWMVFydlZzU21xbHNyb0ggCg==
-    # ssh-ng://nixbld@fd7a:115c:a1e0::1c aarch64-darwin,x86_64-darwin /root/.ssh/id_ed25519 1 1 apple-virt,benchmark,big-parallel,nixos-test - c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUVCeFJIT2V3MHpNNFpLeXcrTDRienJSdkk4WTF0TytSRDlBd0x3WFBsYXMgCg==
-    # ssh-ng://nixbld@fd7a:115c:a1e0::c aarch64-darwin,x86_64-darwin /root/.ssh/id_ed25519 1 1 apple-virt,benchmark,big-parallel,nixos-test - c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSVBrNllDd2VnOTRrK2pYNTd4djhSY0lrd24xS0RVbXViTGFNOHljY1lZaFAgCg==
+    # lhr-aarch64-darwin-02 aarch64-darwin,x86_64-darwin  /root/.ssh/id_ed25519 c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSVBrNllDd2VnOTRrK2pYNTd4djhSY0lrd24xS0RVbXViTGFNOHljY1lZaFAK
+    # lhr-aarch64-darwin-01 aarch64-darwin,x86_64-darwin  /root/.ssh/id_ed25519 c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUVCeFJIT2V3MHpNNFpLeXcrTDRienJSdkk4WTF0TytSRDlBd0x3WFBsYXMgCg==
   ];
   nix.extraOptions = ''
     experimental-features = nix-command flakes

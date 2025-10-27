@@ -989,9 +989,6 @@
 
                 -- Use lspconfig to setup the server
                 lspconfig[server_name].setup(config)
-                print("LSP server " .. server_name .. " setup with executable: " .. executable)
-              else
-                print("LSP server " .. server_name .. " not setup - executable not found: " .. executable)
               end
             end
 
