@@ -1,4 +1,9 @@
-{ pkgs, user, inputs, ... }:
+{
+  pkgs,
+  user,
+  inputs,
+  ...
+}:
 {
   imports = [
     ./profiles/linux.nix
@@ -9,7 +14,7 @@
   programs.flox.enable = true;
 
   programs.zsh.initContent = ''
-    eval "$(flox activate -d ~ -m run)"
+    #eval "$(flox activate -d ~ -m run)"
   '';
 
   home.packages = with pkgs; [

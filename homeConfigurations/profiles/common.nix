@@ -55,7 +55,7 @@
     claude-monitor
 
     nix-tree
-    pngpaste
+    #pngpaste
     nixd
     bash-language-server
 
@@ -123,8 +123,8 @@
       condition = "hasconfig:remote.*.url:git@github.com:garbas/**";
     }
   ];
-  programs.git.userName = user.fullname;
-  programs.git.userEmail = user.email;
+  programs.git.settings.user.name = user.fullname;
+  programs.git.settings.user.email = user.email;
 
   programs.git.enable = true;
   #programs.git.package = pkgs.git.override {
@@ -134,28 +134,28 @@
   #  withSsh = true;
   #  withLibsecret = !pkgs.stdenv.isDarwin;
   #};
-  programs.git.aliases.s = "status";
-  programs.git.aliases.d = "diff";
-  programs.git.aliases.ci = "commit -v";
-  programs.git.aliases.cia = "commit -v -a";
-  programs.git.aliases.co = "checkout";
-  programs.git.aliases.l = "log --graph --oneline --decorate --all";
-  programs.git.aliases.b = "branch";
+  programs.git.settings.alias.s = "status";
+  programs.git.settings.alias.d = "diff";
+  programs.git.settings.alias.ci = "commit -v";
+  programs.git.settings.alias.cia = "commit -v -a";
+  programs.git.settings.alias.co = "checkout";
+  programs.git.settings.alias.l = "log --graph --oneline --decorate --all";
+  programs.git.settings.alias.b = "branch";
   # list branches sorted by last modified
-  programs.git.aliases.bb = "!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'";
-  programs.git.aliases.entr = "!git ls-files -cdmo --exclude-standard | entr -d";
+  programs.git.settings.alias.bb = "!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'";
+  programs.git.settings.alias.entr = "!git ls-files -cdmo --exclude-standard | entr -d";
   programs.git.lfs.enable = true;
-  programs.git.delta.enable = true;
-  programs.git.extraConfig = {
-    gpg.format = "ssh";
-    user.signingKey = user.sshKey;
-    commit.gpgsign = true;
-    tag.gpgsign = true;
-    status.submodulesummary = true;
-    push.default = "simple";
-    push.autoSetupRemote = true;
-    init.defaultBranch = "main";
-  };
+  programs.git.settings.gpg.format = "ssh";
+  programs.git.settings.user.signingKey = user.sshKey;
+  programs.git.settings.commit.gpgsign = true;
+  programs.git.settings.tag.gpgsign = true;
+  programs.git.settings.status.submodulesummary = true;
+  programs.git.settings.push.default = "simple";
+  programs.git.settings.push.autoSetupRemote = true;
+  programs.git.settings.init.defaultBranch = "main";
+
+  programs.delta.enable = true;
+  programs.delta.enableGitIntegration = true;
 
   programs.htop.enable = true;
 
