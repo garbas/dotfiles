@@ -25,8 +25,8 @@
   inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
   inputs.mac-app-util.url = "github:hraban/mac-app-util";
-  inputs.mac-app-util.inputs.nixpkgs.follows = "nixpkgs-unstable";
-  inputs.mac-app-util.inputs.flake-utils.follows = "flake-utils";
+  #inputs.mac-app-util.inputs.nixpkgs.follows = "nixpkgs-unstable";
+  #inputs.mac-app-util.inputs.flake-utils.follows = "flake-utils";
 
   # Catppuccin olorscheme
   inputs.catppuccin-ghostty.url = "github:catppuccin/ghostty";

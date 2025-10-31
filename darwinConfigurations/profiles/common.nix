@@ -22,42 +22,6 @@
     {
       protocol = "ssh-ng";
       sshUser = "nixbld";
-      hostName = "hetzner-x86-64-indigo-01";
-      systems = [ "x86_64-linux" ];
-      sshKey = "/Users/${user.username}/.ssh/id_ed25519";
-      maxJobs = 8;
-      speedFactor = 1;
-      supportedFeatures = [
-        "kvm"
-        "benchmark"
-        "big-parallel"
-        "nixos-test"
-        "docker"
-      ];
-      mandatoryFeatures = [ ];
-      publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUdxT01MZElvZGR6MUppQ1dmbGppcGF1U1ZFMVpVRldCcUk0Rkh0MEdHc1Ugcm9vdEBoZXR6bmVyLXg4Ni02NC1pbmRpZ28tMDEK";
-    }
-    {
-      protocol = "ssh-ng";
-      sshUser = "nixbld";
-      hostName = "hetzner-x86-64-indigo-02";
-      systems = [ "x86_64-linux" ];
-      sshKey = "/Users/${user.username}/.ssh/id_ed25519";
-      maxJobs = 8;
-      speedFactor = 1;
-      supportedFeatures = [
-        "kvm"
-        "benchmark"
-        "big-parallel"
-        "nixos-test"
-        "docker"
-      ];
-      mandatoryFeatures = [ ];
-      publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUFHYmlKejZKWEd4MFlBSDZLS050Y1FrVUxnLzYrVDBjN0RjVkp4bWJ6dTYgcm9vdEBoZXR6bmVyLXg4Ni02NC1pbmRpZ28tMDIK";
-    }
-    {
-      protocol = "ssh-ng";
-      sshUser = "nixbld";
       hostName = "hetzner-aarch64-indigo-03";
       systems = [ "aarch64-linux" ];
       sshKey = "/Users/${user.username}/.ssh/id_ed25519";
@@ -74,8 +38,42 @@
       mandatoryFeatures = [ ];
       publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUhpQkQ3QlhkZ05MZy8vMmh0cDB3S2hsaFpkSzVZL3R3ajJYcGdEdVh0ZkEgcm9vdEBoZXR6bmVyLWFhcmNoNjQtaW5kaWdvLTAzCg==";
     }
-    # lhr-aarch64-darwin-02 aarch64-darwin,x86_64-darwin  /root/.ssh/id_ed25519 c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSVBrNllDd2VnOTRrK2pYNTd4djhSY0lrd24xS0RVbXViTGFNOHljY1lZaFAK
-    # lhr-aarch64-darwin-01 aarch64-darwin,x86_64-darwin  /root/.ssh/id_ed25519 c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUVCeFJIT2V3MHpNNFpLeXcrTDRienJSdkk4WTF0TytSRDlBd0x3WFBsYXMgCg==
+    {
+      protocol = "ssh-ng";
+      sshUser = "nixbld";
+      hostName = "hetzner-x86-64-indigo-04";
+      systems = [ "x86_64-linux" ];
+      sshKey = "/Users/${user.username}/.ssh/id_ed25519";
+      maxJobs = 8;
+      speedFactor = 1;
+      supportedFeatures = [
+        "kvm"
+        "benchmark"
+        "big-parallel"
+        "nixos-test"
+        "docker"
+      ];
+      mandatoryFeatures = [ ];
+      publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSVB0NlA4eGdlMkhpYS84WHRaN2FqNU42Q2FvZWdmQjIwQ252SnlRTG93Q2kgcm9vdEBoZXR6bmVyLXg4Ni02NC1pbmRpZ28tMDQK";
+    }
+    {
+      protocol = "ssh-ng";
+      sshUser = "nixbld";
+      hostName = "hetzner-x86-64-indigo-05";
+      systems = [ "x86_64-linux" ];
+      sshKey = "/Users/${user.username}/.ssh/id_ed25519";
+      maxJobs = 8;
+      speedFactor = 1;
+      supportedFeatures = [
+        "kvm"
+        "benchmark"
+        "big-parallel"
+        "nixos-test"
+        "docker"
+      ];
+      mandatoryFeatures = [ ];
+      publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSVBYNzc4Qkl1VXlTNHdDd1JOM0hOQU5NeWowZEp3d1lXYzlGTlNFaTJIZW0gcm9vdEBoZXR6bmVyLXg4Ni02NC1pbmRpZ28tMDUK";
+    }
   ];
   nix.extraOptions = ''
     experimental-features = nix-command flakes
