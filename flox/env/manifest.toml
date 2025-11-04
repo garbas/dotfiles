@@ -15,6 +15,9 @@ tmux.pkg-path = "tmux"
 cargo.pkg-path = "cargo"
 rustc.pkg-path = "rustc"
 nodejs.pkg-path = "nodejs"
+"flox/flox-mcp-server".pkg-path = "flox/flox-mcp-server"
+"flox/flox-mcp-server".systems = ["aarch64-darwin", "x86_64-linux"]
+"flox/flox-mcp-server".pkg-group = "flox/flox-mcp-server"
 
 [vars]
 OP_ACCOUNT="my.1password.com"
