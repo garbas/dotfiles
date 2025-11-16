@@ -18,6 +18,13 @@ nodejs.pkg-path = "nodejs"
 "flox/flox-mcp-server".pkg-path = "flox/flox-mcp-server"
 "flox/flox-mcp-server".systems = ["aarch64-darwin", "x86_64-linux"]
 "flox/flox-mcp-server".pkg-group = "flox/flox-mcp-server"
+github-mcp-server.pkg-path = "github-mcp-server"
+claude-code.pkg-path = "claude-code"
+codex.pkg-path = "codex"
+gemini-cli.pkg-path = "gemini-cli"
+opencode.pkg-path = "opencode"
+amazon-q-cli.pkg-path = "amazon-q-cli"
+playwright-mcp.pkg-path = "playwright-mcp"
 
 [vars]
 OP_ACCOUNT="my.1password.com"

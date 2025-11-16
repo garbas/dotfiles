@@ -1,0 +1,211 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Overview
+
+This is a Nix flake-based dotfiles repository that manages multiple machines (macOS via nix-darwin and Linux via NixOS) with integrated Flox environment for development tools. The repository uses a three-tier configuration architecture: machine-specific configs, shared profiles, and platform-specific overrides.
+
+## Architecture
+
+### Configuration Hierarchy
+
+1. **flake.nix** - Central orchestrator defining all inputs, outputs, and machine configurations
+2. **Machine configs** - Minimal files importing appropriate profiles (e.g., `darwinConfigurations/jaime.nix`)
+3. **Profile layer** - Shared configurations:
+   - `profiles/common.nix` - Core settings across all systems
+   - `profiles/darwin.nix` - macOS-specific home-manager config
+   - `profiles/linux.nix` - Linux-specific home-manager config
+   - `profiles/common_neovim.nix` - Neovim configuration (54KB)
+   - `profiles/wayland.nix` - GUI/Wayland settings for Linux
+
+### Machine Naming
+
+Machines are named after Game of Thrones characters:
+- **jaime** - macOS work machine (aarch64-darwin)
+- **brienne** - macOS personal machine (aarch64-darwin)
+- **cercei** - Linux VM (aarch64-linux)
+- **floki** - Linux workstation (x86_64-linux)
+- **pono** - Linux server (x86_64-linux)
+- **solo**, **indigo** - Other systems
+
+User credentials, SSH keys, and per-machine settings are centralized in flake.nix (lines 205-231).
+
+### Flox Integration
+
+The repository integrates Flox for development tools and AI assistants:
+- **Manifest location**: `flox/env/manifest.toml`
+- **Custom packages**: `flox/pkgs/` (e.g., `claude-code.nix`)
+- **Auto-activation**: Shell initialization runs `flox activate` on Darwin systems (see `homeConfigurations/profiles/darwin.nix:17`)
+
+Key Flox packages include:
+- AI tools: claude-code, codex, gemini-cli, amazon-q-cli, opencode
+- MCP servers: flox-mcp-server, github-mcp-server, playwright-mcp
+- CLI utilities: ripgrep, jq, tmux, 1password-cli
+- Language runtimes: nodejs, cargo, rustc
+
+### Flox Hooks
+
+On activation (`flox activate`), the environment:
+1. Authenticates with 1Password and loads secrets (ANTROPIC_API_KEY, OPENAI_API_KEY, HF_TOKEN)
+2. On macOS: Syncs applications to `~/Applications/Flox (default) Apps` using mac-app-util
+
+## Common Commands
+
+### System Management
+
+```bash
+# macOS: Rebuild and switch system configuration
+darwin-rebuild switch --flake .#jaime
+
+# Linux: Rebuild and switch NixOS configuration
+sudo nixos-rebuild switch --flake .#floki
+
+# Home Manager: Update user environment independently
+home-manager switch --flake .#jaime
+```
+
+### Flake Operations
+
+```bash
+# Update all flake inputs
+nix flake update
+
+# Update specific input
+nix flake lock --update-input nixpkgs-unstable
+
+# Check flake for errors
+nix flake check
+
+# Enter development shell (provides nixd, nixfmt, home-manager, darwin tools)
+nix develop
+```
+
+### Flox Environment
+
+```bash
+# Activate Flox environment (done automatically via .envrc and shell init)
+flox activate
+
+# Install package
+flox install <package>
+
+# Search for packages
+flox search <term>
+
+# List installed packages
+flox list
+
+# Edit manifest directly
+vim flox/env/manifest.toml
+```
+
+### Testing Configuration Changes
+
+```bash
+# Test Darwin config without switching (build only)
+nix build .#darwinConfigurations.jaime.system
+
+# Test NixOS config without switching
+nix build .#nixosConfigurations.floki.config.system.build.toplevel
+
+# Test home-manager config
+nix build .#homeConfigurations.jaime.activationPackage
+```
+
+## Git Configuration Strategy
+
+The repository uses conditional git includes based on repository remotes:
+- **Personal repos** (git@github.com:garbas/**): Uses personal email
+- **Work repos** (git@github.com:flox/**): Uses work email (Flox)
+
+Commits are signed using SSH-based GPG signing.
+
+## Custom Vim Plugins
+
+The flake includes a custom vim plugin builder (`mkCustomVimPlugins`) that:
+- Scans flake inputs prefixed with `vimPlugin-`
+- Builds them as vim plugins with version metadata
+- Makes them available to Neovim configuration
+
+To add a new vim plugin:
+1. Add input to flake.nix: `inputs.vimPlugin-<name>.url = "github:..."`
+2. Set `inputs.vimPlugin-<name>.flake = false`
+3. Reference as `custom-<name>` in Neovim config
+
+## Remote Builders
+
+Darwin machines are configured with Hetzner remote builders for Linux builds:
+- hetzner-aarch64-indigo-03 (aarch64-linux, 20 max jobs)
+- hetzner-x86-64-indigo-04 (x86_64-linux, 8 max jobs)
+- hetzner-x86-64-indigo-05 (x86_64-linux, 8 max jobs)
+
+This enables cross-compilation without native Linux machines.
+
+## Binary Caches
+
+The flake is configured to use multiple substituters:
+- cache.nixos.org - Official NixOS cache
+- cache.flox.dev - Flox package cache
+- devenv.cachix.org - Devenv cache
+
+These significantly speed up builds by downloading pre-built binaries.
+
+## Adding Packages
+
+### For System-Wide Nix Packages
+Edit `homeConfigurations/profiles/common.nix` and add to `home.packages`.
+
+### For Flox Packages
+Edit `flox/env/manifest.toml` under `[install]` section.
+
+### For Custom Nix Packages
+1. Create package file in `flox/pkgs/<name>.nix`
+2. Reference in `flox/env/manifest.toml`
+3. Example: See `flox/pkgs/claude-code.nix`
+
+## Platform-Specific Notes
+
+### macOS (Darwin)
+- Uses AeroSpace for i3-like tiling window management
+- JankyBorders provides visual window borders
+- Ghostty terminal with Catppuccin theme
+- Homebrew integration via nix-darwin (see `darwinConfigurations/profiles/common.nix`)
+
+### Linux (NixOS)
+- Wayland-based systems use Hyprland or Sway
+- Console-only systems use `profiles/console.nix`
+- GUI systems additionally import `profiles/wayland.nix`
+
+## Key Technologies
+
+- **Shell**: Zsh with Powerlevel10k theme (config: `homeConfigurations/profiles/p10k.zsh`)
+- **Editor**: Neovim with extensive LSP/plugin configuration
+- **Terminal**: Ghostty
+- **Multiplexer**: tmux with Catppuccin theme
+- **Git UI**: lazygit with Catppuccin theme
+- **Modern CLI**: bat, eza, ripgrep, fd, fzf, zoxide
+
+## Direnv Integration
+
+The `.envrc` file enables automatic environment loading via `use flake`. This:
+- Creates `.direnv/` cache with development tools
+- Provides nixd (Nix LSP), nixfmt (formatter), and build tools
+- Activates automatically when entering the directory
+
+## Troubleshooting
+
+### Flox activation fails
+Check 1Password authentication: `op signin --account my.1password.com`
+
+### Darwin rebuild fails with "activation would overwrite"
+Use `darwin-rebuild switch --flake .#<hostname> --impure` to allow overwrites, or investigate conflicts.
+
+### Home-manager conflicts
+Clear old generations: `home-manager expire-generations "-7 days"`
+
+### Build errors with remote builders
+Check SSH access: `ssh hetzner-aarch64-indigo-03` and verify nix-daemon is running on remote.
+
+### Nix store issues
+Run garbage collection: `nix-collect-garbage -d` (add `sudo` for system-wide on NixOS)
