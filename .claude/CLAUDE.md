@@ -1,17 +1,24 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with code in
+this repository.
 
 ## Overview
 
-This is a Nix flake-based dotfiles repository that manages multiple machines (macOS via nix-darwin and Linux via NixOS) with integrated Flox environment for development tools. The repository uses a three-tier configuration architecture: machine-specific configs, shared profiles, and platform-specific overrides.
+This is a Nix flake-based dotfiles repository that manages multiple
+machines (macOS via nix-darwin and Linux via NixOS) with integrated
+Flox environment for development tools. The repository uses a
+three-tier configuration architecture: machine-specific configs, shared
+profiles, and platform-specific overrides.
 
 ## Architecture
 
 ### Configuration Hierarchy
 
-1. **flake.nix** - Central orchestrator defining all inputs, outputs, and machine configurations
-2. **Machine configs** - Minimal files importing appropriate profiles (e.g., `darwinConfigurations/jaime.nix`)
+1. **flake.nix** - Central orchestrator defining all inputs, outputs,
+   and machine configurations
+2. **Machine configs** - Minimal files importing appropriate profiles
+   (e.g., `darwinConfigurations/jaime.nix`)
 3. **Profile layer** - Shared configurations:
    - `profiles/common.nix` - Core settings across all systems
    - `profiles/darwin.nix` - macOS-specific home-manager config
@@ -22,6 +29,7 @@ This is a Nix flake-based dotfiles repository that manages multiple machines (ma
 ### Machine Naming
 
 Machines are named after Game of Thrones characters:
+
 - **jaime** - macOS work machine (aarch64-darwin)
 - **brienne** - macOS personal machine (aarch64-darwin)
 - **cercei** - Linux VM (aarch64-linux)
@@ -29,16 +37,20 @@ Machines are named after Game of Thrones characters:
 - **pono** - Linux server (x86_64-linux)
 - **solo**, **indigo** - Other systems
 
-User credentials, SSH keys, and per-machine settings are centralized in flake.nix (lines 205-231).
+User credentials, SSH keys, and per-machine settings are centralized
+in flake.nix (lines 205-231).
 
 ### Flox Integration
 
 The repository integrates Flox for development tools and AI assistants:
+
 - **Manifest location**: `flox/env/manifest.toml`
 - **Custom packages**: `flox/pkgs/` (e.g., `claude-code.nix`)
-- **Auto-activation**: Shell initialization runs `flox activate` on Darwin systems (see `homeConfigurations/profiles/darwin.nix:17`)
+- **Auto-activation**: Shell initialization runs `flox activate` on
+  Darwin systems (see `homeConfigurations/profiles/darwin.nix:17`)
 
 Key Flox packages include:
+
 - AI tools: claude-code, codex, gemini-cli, amazon-q-cli, opencode
 - MCP servers: flox-mcp-server, github-mcp-server, playwright-mcp
 - CLI utilities: ripgrep, jq, tmux, 1password-cli
@@ -47,8 +59,11 @@ Key Flox packages include:
 ### Flox Hooks
 
 On activation (`flox activate`), the environment:
-1. Authenticates with 1Password and loads secrets (ANTROPIC_API_KEY, OPENAI_API_KEY, HF_TOKEN)
-2. On macOS: Syncs applications to `~/Applications/Flox (default) Apps` using mac-app-util
+
+1. Authenticates with 1Password and loads secrets (ANTROPIC_API_KEY,
+   OPENAI_API_KEY, HF_TOKEN)
+2. On macOS: Syncs applications to `~/Applications/Flox (default) Apps`
+   using mac-app-util
 
 ## Common Commands
 
@@ -77,7 +92,8 @@ nix flake lock --update-input nixpkgs-unstable
 # Check flake for errors
 nix flake check
 
-# Enter development shell (provides nixd, nixfmt, home-manager, darwin tools)
+# Enter development shell
+# Provides: nixd, nixfmt, opentofu, home-manager, darwin tools
 nix develop
 ```
 
@@ -115,27 +131,40 @@ nix build .#homeConfigurations.jaime.activationPackage
 
 ## Git Configuration Strategy
 
-The repository uses conditional git includes based on repository remotes:
-- **Personal repos** (git@github.com:garbas/**): Uses personal email
-- **Work repos** (git@github.com:flox/**): Uses work email (Flox)
+The repository uses conditional git includes based on repository
+remotes:
+
+- **Personal repos** (`git@github.com:garbas/**`): Uses personal email
+- **Work repos** (`git@github.com:flox/**`): Uses work email (Flox)
 
 Commits are signed using SSH-based GPG signing.
 
+### Commit Message Convention
+
+When Claude Code creates commits, **do not** include attribution
+messages like "Generated with Claude Code" or "Co-Authored-By: Claude".
+Commits should appear as regular user commits without AI attribution.
+
 ## Custom Vim Plugins
 
-The flake includes a custom vim plugin builder (`mkCustomVimPlugins`) that:
+The flake includes a custom vim plugin builder (`mkCustomVimPlugins`)
+that:
+
 - Scans flake inputs prefixed with `vimPlugin-`
 - Builds them as vim plugins with version metadata
 - Makes them available to Neovim configuration
 
 To add a new vim plugin:
+
 1. Add input to flake.nix: `inputs.vimPlugin-<name>.url = "github:..."`
 2. Set `inputs.vimPlugin-<name>.flake = false`
 3. Reference as `custom-<name>` in Neovim config
 
 ## Remote Builders
 
-Darwin machines are configured with Hetzner remote builders for Linux builds:
+Darwin machines are configured with Hetzner remote builders for Linux
+builds:
+
 - hetzner-aarch64-indigo-03 (aarch64-linux, 20 max jobs)
 - hetzner-x86-64-indigo-04 (x86_64-linux, 8 max jobs)
 - hetzner-x86-64-indigo-05 (x86_64-linux, 8 max jobs)
@@ -145,21 +174,45 @@ This enables cross-compilation without native Linux machines.
 ## Binary Caches
 
 The flake is configured to use multiple substituters:
+
 - cache.nixos.org - Official NixOS cache
 - cache.flox.dev - Flox package cache
 - devenv.cachix.org - Devenv cache
 
 These significantly speed up builds by downloading pre-built binaries.
 
+### Cloudflare R2 Nix Binary Cache
+
+The repository includes Terraform/OpenTofu infrastructure for a
+personal Nix binary cache using Cloudflare R2:
+
+- **Location**: `terraform/` directory
+- **Bucket**: `garbas-dotfiles-nix-cache`
+- **Cost**: Free tier (10GB storage + unlimited egress)
+- **Infrastructure as Code**: Managed via OpenTofu/Terraform
+
+**Resources Created**:
+
+- R2 bucket with auto location
+- Read-write API token for GitHub Actions (uploading builds)
+- Read-only API token for consumer machines (downloading builds)
+
+**Setup Documentation**: See `terraform/README.md` for complete setup
+instructions.
+
 ## Adding Packages
 
 ### For System-Wide Nix Packages
-Edit `homeConfigurations/profiles/common.nix` and add to `home.packages`.
+
+Edit `homeConfigurations/profiles/common.nix` and add to
+`home.packages`.
 
 ### For Flox Packages
+
 Edit `flox/env/manifest.toml` under `[install]` section.
 
 ### For Custom Nix Packages
+
 1. Create package file in `flox/pkgs/<name>.nix`
 2. Reference in `flox/env/manifest.toml`
 3. Example: See `flox/pkgs/claude-code.nix`
@@ -167,19 +220,23 @@ Edit `flox/env/manifest.toml` under `[install]` section.
 ## Platform-Specific Notes
 
 ### macOS (Darwin)
+
 - Uses AeroSpace for i3-like tiling window management
 - JankyBorders provides visual window borders
 - Ghostty terminal with Catppuccin theme
-- Homebrew integration via nix-darwin (see `darwinConfigurations/profiles/common.nix`)
+- Homebrew integration via nix-darwin (see
+  `darwinConfigurations/profiles/common.nix`)
 
 ### Linux (NixOS)
+
 - Wayland-based systems use Hyprland or Sway
 - Console-only systems use `profiles/console.nix`
 - GUI systems additionally import `profiles/wayland.nix`
 
 ## Key Technologies
 
-- **Shell**: Zsh with Powerlevel10k theme (config: `homeConfigurations/profiles/p10k.zsh`)
+- **Shell**: Zsh with Powerlevel10k theme (config:
+  `homeConfigurations/profiles/p10k.zsh`)
 - **Editor**: Neovim with extensive LSP/plugin configuration
 - **Terminal**: Ghostty
 - **Multiplexer**: tmux with Catppuccin theme
@@ -188,24 +245,86 @@ Edit `flox/env/manifest.toml` under `[install]` section.
 
 ## Direnv Integration
 
-The `.envrc` file enables automatic environment loading via `use flake`. This:
+The `.envrc` file enables automatic environment loading via `use flake`.
+This:
+
 - Creates `.direnv/` cache with development tools
-- Provides nixd (Nix LSP), nixfmt (formatter), and build tools
+- Provides nixd (Nix LSP), nixfmt (formatter), OpenTofu, and build
+  tools
 - Activates automatically when entering the directory
+
+## Terraform/OpenTofu Conventions
+
+The repository uses OpenTofu (Terraform fork) for infrastructure
+management with strict naming conventions:
+
+### File Naming
+
+- Files are named after the service they configure (e.g.,
+  `cloudflare_r2.tf`)
+- No hardcoded variables - use `variables.tf` for all inputs
+- Outputs are included at the end of each service file, not in separate
+  `outputs.tf`
+
+### Resource Naming Pattern
+
+All resource names must be **highly descriptive** and follow this
+pattern:
+
+```text
+<filename_prefix>_<project>_<resource_type>_<purpose>_<specifics>
+```
+
+**Rules:**
+
+1. **Always prefix with the filename** (without `.tf`): If the resource
+   is in `cloudflare_r2.tf`, it starts with `cloudflare_r2_`
+2. **Include project context**: Add `garbas_dotfiles` when the resource
+   relates to this repository
+3. **Be descriptive**: Names should be self-documenting - anyone reading
+   the name should know what it does
+4. **Longer names are okay**: Clarity > brevity
+
+**Examples:**
+
+- `cloudflare_r2_garbas_dotfiles_nix_binary_cache_bucket`
+- `cloudflare_r2_garbas_dotfiles_nix_cache_readwrite_token_github_actions`
+- `cloudflare_r2_garbas_dotfiles_nix_cache_readonly_token_consumers`
+
+### Pre-commit Hooks
+
+The development environment includes automatic formatting for Terraform
+files:
+
+- Hook: `terraform-format`
+- Command: `tofu fmt`
+- Files: All `.tf` files
+- Auto-fix: Yes, files are automatically formatted on commit
+
+See `terraform/README.md` for complete Terraform conventions and setup
+documentation.
 
 ## Troubleshooting
 
 ### Flox activation fails
+
 Check 1Password authentication: `op signin --account my.1password.com`
 
 ### Darwin rebuild fails with "activation would overwrite"
-Use `darwin-rebuild switch --flake .#<hostname> --impure` to allow overwrites, or investigate conflicts.
+
+Use `darwin-rebuild switch --flake .#<hostname> --impure` to allow
+overwrites, or investigate conflicts.
 
 ### Home-manager conflicts
+
 Clear old generations: `home-manager expire-generations "-7 days"`
 
 ### Build errors with remote builders
-Check SSH access: `ssh hetzner-aarch64-indigo-03` and verify nix-daemon is running on remote.
+
+Check SSH access: `ssh hetzner-aarch64-indigo-03` and verify
+nix-daemon is running on remote.
 
 ### Nix store issues
-Run garbage collection: `nix-collect-garbage -d` (add `sudo` for system-wide on NixOS)
+
+Run garbage collection: `nix-collect-garbage -d` (add `sudo` for
+system-wide on NixOS)

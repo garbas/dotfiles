@@ -442,6 +442,14 @@ All Nix files are automatically formatted using the RFC 166 style standard:
 - **Auto-fix**: Yes, files are automatically formatted on commit
 - **Standard**: RFC 166 (will become the official Nixpkgs standard)
 
+#### Terraform Formatting
+
+All Terraform files are automatically formatted using OpenTofu:
+
+- **Formatter**: tofu fmt (OpenTofu)
+- **Auto-fix**: Yes, files are automatically formatted on commit
+- **Files**: All `.tf` files
+
 ### Testing Locally
 
 Run linters manually on specific files:
@@ -453,9 +461,13 @@ markdownlint --config markdownlint.json <file.md>
 # nixfmt-rfc-style
 nixfmt <file.nix>
 
+# Terraform formatting
+cd terraform && tofu fmt
+
 # Or from outside the dev shell
 nix develop --command markdownlint --config markdownlint.json <file.md>
 nix develop --command nixfmt <file.nix>
+nix develop --command bash -c "cd terraform && tofu fmt"
 ```
 
 ### Configuration Details
@@ -472,6 +484,62 @@ The following rules are configured in `markdownlint.json`:
 #### nixfmt-rfc-style
 
 Uses default RFC 166 formatting rules with no additional configuration needed.
+
+## Binary Cache (Cloudflare R2)
+
+This repository uses Cloudflare R2 for storing Nix build artifacts as a
+binary cache. This speeds up builds by downloading pre-built packages
+instead of building from source.
+
+### Infrastructure
+
+The R2 bucket and API tokens are managed using OpenTofu (Terraform) in the
+`terraform/` directory.
+
+**Bucket**: `garbas-dotfiles-nix-cache`
+
+**Cost**: Free tier includes 10GB storage + unlimited egress ($0/month for
+typical personal use)
+
+### Setup
+
+See [`terraform/README.md`](terraform/README.md) for complete setup
+instructions including:
+
+- Terraform/OpenTofu installation and configuration
+- Creating the R2 bucket and API tokens
+- Generating Nix signing keys
+- Configuring GitHub Actions secrets
+- Adding the cache to your local machines
+- Terraform naming conventions
+
+### Quick Start (Consumers)
+
+To use the cache on your machines, add to your `flake.nix` or configuration:
+
+```nix
+{
+  nix.settings = {
+    substituters = [
+      "https://cache.nixos.org"
+      "s3://garbas-dotfiles-nix-cache?endpoint=<account-id>.r2.cloudflarestorage.com&region=auto"
+    ];
+
+    trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "garbas-dotfiles-nix-cache-1:<your-public-key>"
+    ];
+  };
+}
+```
+
+### Uploading to Cache
+
+Primary uploads come from GitHub Actions. Manual uploads can be done with:
+
+```bash
+nix copy --to 's3://garbas-dotfiles-nix-cache?endpoint=<account-id>.r2.cloudflarestorage.com&region=auto' ./result
+```
 
 ## References
 

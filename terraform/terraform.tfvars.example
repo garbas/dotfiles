@@ -1,0 +1,8 @@
+# Cloudflare API token with R2 permissions
+# Create at: https://dash.cloudflare.com/profile/api-tokens
+# Required permissions: Account.Cloudflare R2 (Edit)
+cloudflare_api_token = "your-cloudflare-api-token-here"
+
+# Cloudflare Account ID
+# Find at: https://dash.cloudflare.com/ (in the URL or account settings)
+cloudflare_account_id = "your-account-id-here"
