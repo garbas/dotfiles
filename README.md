@@ -434,19 +434,33 @@ All Markdown files are checked for style consistency and line length:
 **will not** automatically fix them. This is intentional because line breaks
 in Markdown affect readability and should be done manually.
 
+#### nixfmt-rfc-style
+
+All Nix files are automatically formatted using the RFC 166 style standard:
+
+- **Formatter**: nixfmt-rfc-style
+- **Auto-fix**: Yes, files are automatically formatted on commit
+- **Standard**: RFC 166 (will become the official Nixpkgs standard)
+
 ### Testing Locally
 
-Run markdownlint manually on specific files:
+Run linters manually on specific files:
 
 ```bash
-# Inside nix develop shell
+# Markdownlint
 markdownlint --config markdownlint.json <file.md>
 
-# Or from outside
+# nixfmt-rfc-style
+nixfmt <file.nix>
+
+# Or from outside the dev shell
 nix develop --command markdownlint --config markdownlint.json <file.md>
+nix develop --command nixfmt <file.nix>
 ```
 
-### Markdownlint Rules
+### Configuration Details
+
+#### Markdownlint Rules
 
 The following rules are configured in `markdownlint.json`:
 
@@ -454,6 +468,10 @@ The following rules are configured in `markdownlint.json`:
 - MD024: Duplicate heading names allowed if siblings only
 - MD033: HTML allowed in Markdown
 - MD041: First line doesn't need to be a heading
+
+#### nixfmt-rfc-style
+
+Uses default RFC 166 formatting rules with no additional configuration needed.
 
 ## References
 
