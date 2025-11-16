@@ -197,6 +197,11 @@
                     entry = "${pkgs.markdownlint-cli}/bin/markdownlint --config ${./markdownlint.json}";
                     files = "\\.(md|markdown)$";
                   };
+                  # Nix formatting with RFC 166 style
+                  nixfmt = {
+                    enable = true;
+                    package = pkgs.nixfmt-rfc-style;
+                  };
                 };
               };
             in
