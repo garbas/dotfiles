@@ -210,6 +210,10 @@
                     entry = "${pkgs.opentofu}/bin/tofu fmt";
                     files = "\\.tf$";
                   };
+                  # Commit message linting (Conventional Commits)
+                  commitizen = {
+                    enable = true;
+                  };
                 };
               };
             in

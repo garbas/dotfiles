@@ -161,9 +161,45 @@ Commits are signed using SSH-based GPG signing.
 
 ### Commit Message Convention
 
-When Claude Code creates commits, **do not** include attribution
-messages like "Generated with Claude Code" or "Co-Authored-By: Claude".
-Commits should appear as regular user commits without AI attribution.
+**Format**: This repository follows the Conventional Commits specification.
+
+All commit messages must follow this format:
+
+```text
+type(scope): subject
+
+[optional body]
+
+[optional footer]
+```
+
+**Commit Types:**
+
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Formatting, missing semi-colons, etc (not CSS)
+- `refactor`: Code change that neither fixes a bug nor adds a feature
+- `perf`: Performance improvement
+- `test`: Adding or correcting tests
+- `build`: Build system or dependency changes (Nix, Terraform, etc)
+- `ci`: CI configuration changes
+- `chore`: Other changes that don't modify src or test files
+- `revert`: Reverts a previous commit
+
+**Scope** is optional but recommended (e.g., `api`, `ui`, `terraform`,
+`nix`, `flox`).
+
+**Examples:**
+
+- `feat(terraform): add Cloudflare R2 binary cache infrastructure`
+- `fix(nix): resolve deprecated lspconfig usage`
+- `docs: update installation instructions`
+- `chore: bump flake dependencies`
+
+**AI Attribution:** Do not include attribution messages like "Generated
+with Claude Code" or "Co-Authored-By: Claude". Commits should appear as
+regular user commits without AI attribution.
 
 ## Custom Vim Plugins
 

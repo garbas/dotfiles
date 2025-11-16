@@ -450,6 +450,36 @@ All Terraform files are automatically formatted using OpenTofu:
 - **Auto-fix**: Yes, files are automatically formatted on commit
 - **Files**: All `.tf` files
 
+#### Commit Message Linting
+
+All commit messages must follow the Conventional Commits specification:
+
+- **Standard**: Conventional Commits
+- **Format**: `type(scope): subject`
+- **Configuration file**: `.czrc`
+- **Hook**: commitizen
+
+**Commit Types:**
+
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Formatting, missing semi-colons, etc.
+- `refactor`: Code change that neither fixes a bug nor adds a feature
+- `perf`: Performance improvement
+- `test`: Adding or correcting tests
+- `build`: Build system or dependency changes
+- `ci`: CI configuration changes
+- `chore`: Other changes that don't modify src or test files
+- `revert`: Reverts a previous commit
+
+**Examples:**
+
+- `feat(api): add user authentication endpoint`
+- `fix(ui): resolve button alignment issue`
+- `docs: update installation instructions`
+- `chore: bump dependencies`
+
 ### Testing Locally
 
 Run linters manually on specific files:
