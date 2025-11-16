@@ -37,6 +37,8 @@
   inputs.ghostty.url = "github:ghostty-org/ghostty/v1.1.3";
   inputs.devenv.url = "github:cachix/devenv/v1.8.1";
   inputs.flox.url = "github:flox/flox/v1.7.5";
+  inputs.git-hooks.url = "github:cachix/git-hooks.nix";
+  inputs.git-hooks.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
   # Custom vim/neovim plugins
   inputs.vimPlugin-auto-dark-mode.url = "github:f-person/auto-dark-mode.nvim";
@@ -184,10 +186,24 @@
             system:
             let
               pkgs = import nixpkgs-unstable { inherit system; };
+              pre-commit-check = inputs.git-hooks.lib.${system}.run {
+                src = ./.;
+                hooks = {
+                  # Markdown linting to enforce 80 column width
+                  markdownlint = {
+                    enable = true;
+                    name = "markdownlint";
+                    description = "Lint Markdown files for 80 column width and style";
+                    entry = "${pkgs.markdownlint-cli}/bin/markdownlint --config ${./markdownlint.json}";
+                    files = "\\.(md|markdown)$";
+                  };
+                };
+              };
             in
             {
               inherit inputs;
               packages.customVimPlugins = mkCustomVimPlugins { inherit pkgs; };
+              checks.pre-commit = pre-commit-check;
               devShells.default = pkgs.mkShell {
                 inherit system;
                 packages =
@@ -196,8 +212,12 @@
                     nixd
                     nixfmt-rfc-style
                     home-manager.packages.${system}.default
+                    markdownlint-cli
                   ]
                   ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [ nix-darwin.packages.${system}.default ];
+                shellHook = ''
+                  ${pre-commit-check.shellHook}
+                '';
               };
             }
           );

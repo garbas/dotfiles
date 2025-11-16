@@ -1,21 +1,27 @@
-# All the Nix I have, enjoy!
+# All the Nix I have, enjoy
 
-A Nix flake-based dotfiles repository managing multiple machines (macOS via nix-darwin and Linux via NixOS) with integrated Flox environment for development tools.
+A Nix flake-based dotfiles repository managing multiple machines (macOS via
+nix-darwin and Linux via NixOS) with integrated Flox environment for
+development tools.
 
 ## Features
 
 - **Multi-platform support**: macOS (nix-darwin) and Linux (NixOS)
 - **Unified configuration**: Shared profiles with platform-specific overrides
-- **Flox integration**: Development tools and AI assistants in reproducible environments
+- **Flox integration**: Development tools and AI assistants in reproducible
+  environments
 - **Remote builders**: Hetzner cloud builders for cross-platform compilation
-- **Modern tooling**: Neovim, Ghostty terminal, tmux, and extensive CLI utilities
+- **Modern tooling**: Neovim, Ghostty terminal, tmux, and extensive CLI
+  utilities
 
 ## Architecture
 
 ### Configuration Hierarchy
 
-1. **flake.nix** - Central orchestrator defining all inputs, outputs, and machine configurations
-2. **Machine configs** - Minimal files in `darwinConfigurations/` and `nixosConfigurations/`
+1. **flake.nix** - Central orchestrator defining all inputs, outputs, and
+   machine configurations
+2. **Machine configs** - Minimal files in `darwinConfigurations/` and
+   `nixosConfigurations/`
 3. **Profile layer** - Shared configurations in `profiles/`:
    - `common.nix` - Core settings across all systems
    - `darwin.nix` - macOS-specific home-manager config
@@ -26,6 +32,7 @@ A Nix flake-based dotfiles repository managing multiple machines (macOS via nix-
 ### Machine Naming
 
 Machines are named after Game of Thrones characters:
+
 - **jaime** - macOS work machine (aarch64-darwin)
 - **brienne** - macOS personal machine (aarch64-darwin)
 - **cercei** - Linux VM (aarch64-linux)
@@ -36,19 +43,24 @@ Machines are named after Game of Thrones characters:
 
 ### For macOS
 
-1. Install Nix with the Determinate Systems installer (supports macOS with Flakes enabled):
+1. Install Nix with the Determinate Systems installer (supports macOS with
+   Flakes enabled):
+
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
    ```
 
 2. Install nix-darwin:
+
    ```bash
    nix run nix-darwin -- switch --flake .#<hostname>
    ```
 
 ### For Linux (NixOS)
 
-NixOS should already have Nix installed. Ensure Flakes are enabled in `/etc/nixos/configuration.nix`:
+NixOS should already have Nix installed. Ensure Flakes are enabled in
+`/etc/nixos/configuration.nix`:
+
 ```nix
 nix.settings.experimental-features = [ "nix-command" "flakes" ];
 ```
@@ -56,6 +68,7 @@ nix.settings.experimental-features = [ "nix-command" "flakes" ];
 ### For Flox
 
 Install Flox:
+
 ```bash
 curl -fsSL https://downloads.flox.dev/by-env/stable/install.sh | bash
 ```
@@ -63,12 +76,14 @@ curl -fsSL https://downloads.flox.dev/by-env/stable/install.sh | bash
 ## Installation
 
 1. Clone this repository:
+
    ```bash
    git clone git@github.com:garbas/dotfiles.git ~/dotfiles
    cd ~/dotfiles
    ```
 
 2. Install direnv (optional but recommended):
+
    ```bash
    # macOS
    brew install direnv
@@ -77,6 +92,7 @@ curl -fsSL https://downloads.flox.dev/by-env/stable/install.sh | bash
    ```
 
 3. Allow direnv to load the development environment:
+
    ```bash
    direnv allow
    ```
@@ -84,18 +100,22 @@ curl -fsSL https://downloads.flox.dev/by-env/stable/install.sh | bash
 4. Build and activate configuration:
 
    **For macOS:**
+
    ```bash
    darwin-rebuild switch --flake .#<hostname>
    # Example: darwin-rebuild switch --flake .#jaime
    ```
 
    **For Linux (NixOS):**
+
    ```bash
    sudo nixos-rebuild switch --flake .#<hostname>
    # Example: sudo nixos-rebuild switch --flake .#floki
    ```
 
-5. Activate the Flox environment (done automatically via shell init on Darwin):
+5. Activate the Flox environment (done automatically via shell init on
+   Darwin):
+
    ```bash
    flox activate
    ```
@@ -173,7 +193,9 @@ vim flox/env/manifest.toml
 
 ## Adding New Machines
 
-1. Create machine-specific config in `darwinConfigurations/` or `nixosConfigurations/`:
+1. Create machine-specific config in `darwinConfigurations/` or
+   `nixosConfigurations/`:
+
    ```nix
    # darwinConfigurations/newmachine.nix
    { pkgs, lib, inputs, ... }:
@@ -188,6 +210,7 @@ vim flox/env/manifest.toml
    ```
 
 2. Add entry to `flake.nix` outputs:
+
    ```nix
    darwinConfigurations.newmachine = nix-darwin.lib.darwinSystem {
      system = "aarch64-darwin";
@@ -196,12 +219,15 @@ vim flox/env/manifest.toml
    };
    ```
 
-3. Add machine metadata to `machineSettings` in `flake.nix` (lines 205-231).
+3. Add machine metadata to `machineSettings` in `flake.nix`
+   (lines 205-231).
 
 ## Adding Packages
 
 ### System-Wide Nix Packages
+
 Edit `homeConfigurations/profiles/common.nix` and add to `home.packages`:
+
 ```nix
 home.packages = with pkgs; [
   ripgrep
@@ -211,7 +237,9 @@ home.packages = with pkgs; [
 ```
 
 ### Flox Packages
+
 Edit `flox/env/manifest.toml` under the `[install]` section:
+
 ```toml
 [install]
 ripgrep.pkg-path = "ripgrep"
@@ -219,6 +247,7 @@ your-package.pkg-path = "your-package"
 ```
 
 ### Custom Nix Packages
+
 1. Create package file in `flox/pkgs/<name>.nix`
 2. Reference in `flox/env/manifest.toml`
 3. Example: See `flox/pkgs/claude-code.nix`
@@ -234,6 +263,7 @@ your-package.pkg-path = "your-package"
 - **Modern CLI**: bat, eza, ripgrep, fd, fzf, zoxide
 
 ### AI Tools (via Flox)
+
 - claude-code - Anthropic's Claude Code CLI
 - codex - OpenAI Codex CLI
 - gemini-cli - Google Gemini CLI
@@ -241,6 +271,7 @@ your-package.pkg-path = "your-package"
 - opencode - Open source code assistant
 
 ### MCP Servers (via Flox)
+
 - flox-mcp-server - Flox environment management
 - github-mcp-server - GitHub integration
 - playwright-mcp - Browser automation
@@ -250,14 +281,17 @@ your-package.pkg-path = "your-package"
 ### Git Configuration
 
 The repository uses conditional git includes based on repository remotes:
-- **Personal repos** (git@github.com:garbas/**): Uses personal email
-- **Work repos** (git@github.com:flox/**): Uses work email
 
-Configuration is in `homeConfigurations/profiles/common.nix` (lines with `programs.git`).
+- **Personal repos** (garbas repositories): Uses personal email
+- **Work repos** (flox repositories): Uses work email
+
+Configuration is in `homeConfigurations/profiles/common.nix`
+(lines with `programs.git`).
 
 ### Neovim
 
 Neovim configuration is in `profiles/common_neovim.nix`. It includes:
+
 - LSP support for multiple languages
 - Extensive plugin system
 - Custom keybindings
@@ -268,6 +302,7 @@ Neovim configuration is in `profiles/common_neovim.nix`. It includes:
 To add a new vim plugin from a Git repository:
 
 1. Add input to `flake.nix`:
+
    ```nix
    inputs.vimPlugin-pluginname = {
      url = "github:author/plugin";
@@ -280,6 +315,7 @@ To add a new vim plugin from a Git repository:
 ## Remote Builders
 
 Darwin machines are configured with Hetzner remote builders for Linux builds:
+
 - hetzner-aarch64-indigo-03 (aarch64-linux, 20 max jobs)
 - hetzner-x86-64-indigo-04 (x86_64-linux, 8 max jobs)
 - hetzner-x86-64-indigo-05 (x86_64-linux, 8 max jobs)
@@ -289,38 +325,50 @@ This enables cross-compilation without native Linux machines.
 ## Troubleshooting
 
 ### Flox activation fails
+
 Check 1Password authentication:
+
 ```bash
 op signin --account my.1password.com
 ```
 
 ### Darwin rebuild fails with "activation would overwrite"
+
 Use the `--impure` flag:
+
 ```bash
 darwin-rebuild switch --flake .#<hostname> --impure
 ```
 
 ### Home-manager conflicts
+
 Clear old generations:
+
 ```bash
 home-manager expire-generations "-7 days"
 ```
 
 ### Build errors with remote builders
+
 Check SSH access:
+
 ```bash
 ssh hetzner-aarch64-indigo-03
 ```
+
 Verify nix-daemon is running on remote.
 
 ### Nix store issues
+
 Run garbage collection:
+
 ```bash
 nix-collect-garbage -d           # User profile
 sudo nix-collect-garbage -d      # System-wide (NixOS)
 ```
 
 ### Full system rebuild (nuclear option)
+
 ```bash
 # Collect garbage
 nix-collect-garbage -d
@@ -338,17 +386,74 @@ sudo nixos-rebuild switch --flake .#<hostname>  # Linux
 ## Binary Caches
 
 The flake is configured to use multiple substituters for faster builds:
+
 - cache.nixos.org - Official NixOS cache
 - cache.flox.dev - Flox package cache
 - devenv.cachix.org - Devenv cache
 
 ## Contributing
 
-This is a personal dotfiles repository, but feel free to fork and adapt for your own use. See `CLAUDE.md` for detailed architecture documentation.
+This is a personal dotfiles repository, but feel free to fork and adapt for
+your own use. See `CLAUDE.md` for detailed architecture documentation.
 
 ## License
 
 MIT License - See LICENSE file for details.
+
+## Development & Pre-commit Hooks
+
+This repository uses [git-hooks.nix](https://github.com/cachix/git-hooks.nix)
+to manage pre-commit hooks that ensure code quality and consistency.
+
+### Automatic Setup
+
+Pre-commit hooks are automatically installed when you enter the development
+shell:
+
+```bash
+nix develop
+```
+
+Or if using direnv (automatically loads when entering the directory):
+
+```bash
+direnv allow
+```
+
+### Configured Hooks
+
+#### Markdownlint
+
+All Markdown files are checked for style consistency and line length:
+
+- **Maximum line length**: 80 characters (MD013)
+- **Code blocks and tables**: Excluded from line length checks
+- **Configuration file**: `markdownlint.json`
+
+**Important**: Markdownlint will report lines longer than 80 characters but
+**will not** automatically fix them. This is intentional because line breaks
+in Markdown affect readability and should be done manually.
+
+### Testing Locally
+
+Run markdownlint manually on specific files:
+
+```bash
+# Inside nix develop shell
+markdownlint --config markdownlint.json <file.md>
+
+# Or from outside
+nix develop --command markdownlint --config markdownlint.json <file.md>
+```
+
+### Markdownlint Rules
+
+The following rules are configured in `markdownlint.json`:
+
+- MD013: Line length limited to 80 characters
+- MD024: Duplicate heading names allowed if siblings only
+- MD033: HTML allowed in Markdown
+- MD041: First line doesn't need to be a heading
 
 ## References
 
@@ -357,3 +462,4 @@ MIT License - See LICENSE file for details.
 - [Home Manager](https://github.com/nix-community/home-manager)
 - [Flox](https://flox.dev/)
 - [Determinate Systems Nix Installer](https://github.com/DeterminateSystems/nix-installer)
+- [git-hooks.nix](https://github.com/cachix/git-hooks.nix)
