@@ -3,6 +3,26 @@
 This file provides guidance to Claude Code when working with code in
 this repository.
 
+## Working with the Repository Owner
+
+### Documentation Organization
+
+- **Claude-specific guidance**: Goes in `.claude/CLAUDE.md` (this file)
+- **Project documentation**: Goes in root `README.md`
+- **Subsystem documentation**: Goes in subdirectory READMEs (e.g.,
+  `terraform/README.md`)
+
+### Workflow Style
+
+The repository owner prefers iterative refinement:
+
+- Provide initial implementations based on requirements
+- Expect multiple rounds of feedback to refine outputs
+- Be prepared to adjust based on additional requirements that emerge
+  during review
+- Don't assume all requirements will be provided upfront - iterate and
+  improve based on feedback
+
 ## Overview
 
 This is a Nix flake-based dotfiles repository that manages multiple
