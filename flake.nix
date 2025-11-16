@@ -202,6 +202,14 @@
                     enable = true;
                     package = pkgs.nixfmt-rfc-style;
                   };
+                  # Terraform formatting
+                  terraform-format = {
+                    enable = true;
+                    name = "terraform-format";
+                    description = "Format Terraform files with tofu fmt";
+                    entry = "${pkgs.opentofu}/bin/tofu fmt";
+                    files = "\\.tf$";
+                  };
                 };
               };
             in
@@ -218,6 +226,7 @@
                     nixfmt-rfc-style
                     home-manager.packages.${system}.default
                     markdownlint-cli
+                    opentofu
                   ]
                   ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [ nix-darwin.packages.${system}.default ];
                 shellHook = ''
