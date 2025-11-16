@@ -965,8 +965,6 @@
         type = "lua";
         config = # lua
           ''
-            local lspconfig = require('lspconfig')
-
             local capabilities = vim.lsp.protocol.make_client_capabilities()
             -- Tell the server the capability of foldingRange,
             -- Neovim hasn't added foldingRange to default capabilities, users must add it manually
@@ -979,45 +977,47 @@
             -- Get enhanced capabilities from blink.cmp
             capabilities = require('blink.cmp').get_lsp_capabilities(capabilities)
 
-            -- Setup LSP servers using lspconfig
-            local function setup_lsp(server_name, executable, custom_opts)
+            -- Setup LSP servers using vim.lsp.config (new API in Neovim 0.11+)
+            local function setup_lsp(server_name, executable, cmd, custom_opts)
               if vim.fn.executable(executable) == 1 then
                 -- Basic configuration with capabilities
                 local config = vim.tbl_deep_extend('force', {
+                  cmd = cmd,
+                  root_markers = { '.git' },
                   capabilities = capabilities,
                 }, custom_opts or {})
 
-                -- Use lspconfig to setup the server
-                lspconfig[server_name].setup(config)
+                -- Use vim.lsp.config to setup the server (new API)
+                vim.lsp.config(server_name, config)
               end
             end
 
             -- Setup LSP servers
             local servers = {
               -- Web
-              { name="ts_ls", executable="typescript-language-server", opts={} },
-              { name="html", executable="vscode-html-language-server", opts={} },
-              { name="htmx", executable="htmx-lsp", opts={} },
-              { name="cssls", executable="vscode-css-language-server", opts={} },
+              { name="ts_ls", executable="typescript-language-server", cmd={"typescript-language-server", "--stdio"}, opts={} },
+              { name="html", executable="vscode-html-language-server", cmd={"vscode-html-language-server", "--stdio"}, opts={} },
+              { name="htmx", executable="htmx-lsp", cmd={"htmx-lsp"}, opts={} },
+              { name="cssls", executable="vscode-css-language-server", cmd={"vscode-css-language-server", "--stdio"}, opts={} },
 
               -- Config
-              { name="nixd", executable="nixd", opts={} },
-              { name="jsonls", executable="vscode-json-language-server", opts={} },
-              { name="yamlls", executable="yaml-language-server", opts={} },
+              { name="nixd", executable="nixd", cmd={"nixd"}, opts={} },
+              { name="jsonls", executable="vscode-json-language-server", cmd={"vscode-json-language-server", "--stdio"}, opts={} },
+              { name="yamlls", executable="yaml-language-server", cmd={"yaml-language-server", "--stdio"}, opts={} },
 
               -- Languages
-              { name="bashls", executable="bash-language-server", opts={} },    -- Bash
-              { name="gopls", executable="gopls", opts={} },                    -- Go
-              { name="ruff_lsp", executable="ruff", opts={} },                  -- Python
-              { name="rust_analyzer", executable="rust-analyzer", opts={} },    -- Rust
-              { name="zls", executable="zls", opts={} },                        -- Zig
+              { name="bashls", executable="bash-language-server", cmd={"bash-language-server", "start"}, opts={} },    -- Bash
+              { name="gopls", executable="gopls", cmd={"gopls"}, opts={} },                    -- Go
+              { name="ruff_lsp", executable="ruff", cmd={"ruff", "server"}, opts={} },                  -- Python
+              { name="rust_analyzer", executable="rust-analyzer", cmd={"rust-analyzer"}, opts={} },    -- Rust
+              { name="zls", executable="zls", cmd={"zls"}, opts={} },                        -- Zig
 
               -- Tools
-              { name="dockerls", executable="dockerls", opts={} },              -- Docker
+              { name="dockerls", executable="docker-langserver", cmd={"docker-langserver", "--stdio"}, opts={} },              -- Docker
             }
 
             for _, server in ipairs(servers) do
-              setup_lsp(server.name, server.executable, server.opts)
+              setup_lsp(server.name, server.executable, server.cmd, server.opts)
             end
 
             -- https://github.com/nvim-telescope/telescope.nvim#neovim-lsp-pickers
