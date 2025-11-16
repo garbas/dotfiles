@@ -1,47 +1,56 @@
-# All the Nix I have, enjoy
+# ❄️ All the Nix I have, enjoy! 🎉
 
-A Nix flake-based dotfiles repository managing multiple machines (macOS via
-nix-darwin and Linux via NixOS) with integrated Flox environment for
-development tools.
+> ✨ A magical Nix flake-based dotfiles repository managing multiple machines
+> with integrated Flox environment for development tools
 
-## Features
+<div align="center">
 
-- **Multi-platform support**: macOS (nix-darwin) and Linux (NixOS)
-- **Unified configuration**: Shared profiles with platform-specific overrides
-- **Flox integration**: Development tools and AI assistants in reproducible
+**🍎 macOS** · **🐧 Linux** · **🚀 Cross-platform** · **⚡ Fast**
+
+</div>
+
+---
+
+## ✨ Features
+
+- 🌍 **Multi-platform support**: macOS (nix-darwin) and Linux (NixOS)
+- 🔗 **Unified configuration**: Shared profiles with platform-specific
+  overrides
+- 📦 **Flox integration**: Development tools and AI assistants in reproducible
   environments
-- **Remote builders**: Hetzner cloud builders for cross-platform compilation
-- **Modern tooling**: Neovim, Ghostty terminal, tmux, and extensive CLI
+- ☁️ **Remote builders**: Hetzner cloud builders for cross-platform
+  compilation
+- 🛠️ **Modern tooling**: Neovim, Ghostty terminal, tmux, and extensive CLI
   utilities
 
-## Architecture
+## 🏗️ Architecture
 
-### Configuration Hierarchy
+### 📋 Configuration Hierarchy
 
-1. **flake.nix** - Central orchestrator defining all inputs, outputs, and
+1. **flake.nix** 🎯 - Central orchestrator defining all inputs, outputs, and
    machine configurations
-2. **Machine configs** - Minimal files in `darwinConfigurations/` and
+2. **Machine configs** 💻 - Minimal files in `darwinConfigurations/` and
    `nixosConfigurations/`
-3. **Profile layer** - Shared configurations in `profiles/`:
+3. **Profile layer** 📁 - Shared configurations in `profiles/`:
    - `common.nix` - Core settings across all systems
    - `darwin.nix` - macOS-specific home-manager config
    - `linux.nix` - Linux-specific home-manager config
    - `common_neovim.nix` - Neovim configuration
    - `wayland.nix` - GUI/Wayland settings for Linux
 
-### Machine Naming
+### 🐉 Machine Naming
 
 Machines are named after Game of Thrones characters:
 
-- **jaime** - macOS work machine (aarch64-darwin)
-- **brienne** - macOS personal machine (aarch64-darwin)
-- **cercei** - Linux VM (aarch64-linux)
-- **floki** - Linux workstation (x86_64-linux)
-- **pono** - Linux server (x86_64-linux)
+- **jaime** ⚔️ - macOS work machine (aarch64-darwin)
+- **brienne** 🛡️ - macOS personal machine (aarch64-darwin)
+- **cercei** 👑 - Linux VM (aarch64-linux)
+- **floki** ⚓ - Linux workstation (x86_64-linux)
+- **pono** 🏰 - Linux server (x86_64-linux)
 
-## Prerequisites
+## 📋 Prerequisites
 
-### For macOS
+### 🍎 For macOS
 
 1. Install Nix with the Determinate Systems installer (supports macOS with
    Flakes enabled):
@@ -56,7 +65,7 @@ Machines are named after Game of Thrones characters:
    nix run nix-darwin -- switch --flake .#<hostname>
    ```
 
-### For Linux (NixOS)
+### 🐧 For Linux (NixOS)
 
 NixOS should already have Nix installed. Ensure Flakes are enabled in
 `/etc/nixos/configuration.nix`:
@@ -65,7 +74,7 @@ NixOS should already have Nix installed. Ensure Flakes are enabled in
 nix.settings.experimental-features = [ "nix-command" "flakes" ];
 ```
 
-### For Flox
+### 📦 For Flox
 
 Install Flox:
 
@@ -73,7 +82,7 @@ Install Flox:
 curl -fsSL https://downloads.flox.dev/by-env/stable/install.sh | bash
 ```
 
-## Installation
+## 🚀 Installation
 
 1. Clone this repository:
 
@@ -120,9 +129,9 @@ curl -fsSL https://downloads.flox.dev/by-env/stable/install.sh | bash
    flox activate
    ```
 
-## Usage
+## 💻 Usage
 
-### System Management
+### 🔧 System Management
 
 ```bash
 # macOS: Rebuild and switch system configuration
@@ -135,7 +144,7 @@ sudo nixos-rebuild switch --flake .#<hostname>
 home-manager switch --flake .#<hostname>
 ```
 
-### Testing Configuration Changes
+### 🧪 Testing Configuration Changes
 
 Before applying changes system-wide, test your configuration:
 
@@ -150,7 +159,7 @@ nix build .#nixosConfigurations.<hostname>.config.system.build.toplevel
 nix build .#homeConfigurations.<hostname>.activationPackage
 ```
 
-### Flake Operations
+### ❄️ Flake Operations
 
 ```bash
 # Update all flake inputs
@@ -169,7 +178,7 @@ nix flake show
 nix develop
 ```
 
-### Flox Environment
+### 📦 Flox Environment
 
 ```bash
 # Activate Flox environment (done automatically via shell init)
@@ -191,7 +200,7 @@ flox show <package>
 vim flox/env/manifest.toml
 ```
 
-## Adding New Machines
+## ➕ Adding New Machines
 
 1. Create machine-specific config in `darwinConfigurations/` or
    `nixosConfigurations/`:
@@ -222,9 +231,9 @@ vim flox/env/manifest.toml
 3. Add machine metadata to `machineSettings` in `flake.nix`
    (lines 205-231).
 
-## Adding Packages
+## 📦 Adding Packages
 
-### System-Wide Nix Packages
+### ❄️ System-Wide Nix Packages
 
 Edit `homeConfigurations/profiles/common.nix` and add to `home.packages`:
 
@@ -236,7 +245,7 @@ home.packages = with pkgs; [
 ];
 ```
 
-### Flox Packages
+### 📦 Flox Packages
 
 Edit `flox/env/manifest.toml` under the `[install]` section:
 
@@ -246,39 +255,39 @@ ripgrep.pkg-path = "ripgrep"
 your-package.pkg-path = "your-package"
 ```
 
-### Custom Nix Packages
+### 🛠️ Custom Nix Packages
 
 1. Create package file in `flox/pkgs/<name>.nix`
 2. Reference in `flox/env/manifest.toml`
 3. Example: See `flox/pkgs/claude-code.nix`
 
-## Key Technologies
+## 🎨 Key Technologies
 
-- **Shell**: Zsh with Powerlevel10k theme
-- **Editor**: Neovim with extensive LSP/plugin configuration
-- **Terminal**: Ghostty with Catppuccin theme
-- **Multiplexer**: tmux with Catppuccin theme
-- **Window Manager**: AeroSpace (macOS), Hyprland/Sway (Linux)
-- **Git UI**: lazygit with Catppuccin theme
-- **Modern CLI**: bat, eza, ripgrep, fd, fzf, zoxide
+- 🐚 **Shell**: Zsh with Powerlevel10k theme
+- ✏️ **Editor**: Neovim with extensive LSP/plugin configuration
+- 👻 **Terminal**: Ghostty with Catppuccin theme
+- 🖥️ **Multiplexer**: tmux with Catppuccin theme
+- 🪟 **Window Manager**: AeroSpace (macOS), Hyprland/Sway (Linux)
+- 🌳 **Git UI**: lazygit with Catppuccin theme
+- 🚀 **Modern CLI**: bat, eza, ripgrep, fd, fzf, zoxide
 
-### AI Tools (via Flox)
+### 🤖 AI Tools (via Flox)
 
-- claude-code - Anthropic's Claude Code CLI
-- codex - OpenAI Codex CLI
-- gemini-cli - Google Gemini CLI
-- amazon-q-cli - Amazon Q CLI
-- opencode - Open source code assistant
+- 🧠 claude-code - Anthropic's Claude Code CLI
+- 💬 codex - OpenAI Codex CLI
+- 💎 gemini-cli - Google Gemini CLI
+- 🛠️ amazon-q-cli - Amazon Q CLI
+- 🔓 opencode - Open source code assistant
 
-### MCP Servers (via Flox)
+### 🔌 MCP Servers (via Flox)
 
-- flox-mcp-server - Flox environment management
-- github-mcp-server - GitHub integration
-- playwright-mcp - Browser automation
+- 📦 flox-mcp-server - Flox environment management
+- 🐙 github-mcp-server - GitHub integration
+- 🎭 playwright-mcp - Browser automation
 
-## Customization
+## ⚙️ Customization
 
-### Git Configuration
+### 🌳 Git Configuration
 
 The repository uses conditional git includes based on repository remotes:
 
@@ -288,16 +297,16 @@ The repository uses conditional git includes based on repository remotes:
 Configuration is in `homeConfigurations/profiles/common.nix`
 (lines with `programs.git`).
 
-### Neovim
+### ✏️ Neovim
 
 Neovim configuration is in `profiles/common_neovim.nix`. It includes:
 
-- LSP support for multiple languages
-- Extensive plugin system
-- Custom keybindings
-- Catppuccin theme
+- 🔌 LSP support for multiple languages
+- 🧩 Extensive plugin system
+- ⌨️ Custom keybindings
+- 🎨 Catppuccin theme
 
-### Adding Custom Vim Plugins
+### 🔌 Adding Custom Vim Plugins
 
 To add a new vim plugin from a Git repository:
 
@@ -312,17 +321,17 @@ To add a new vim plugin from a Git repository:
 
 2. Reference as `custom-pluginname` in Neovim config
 
-## Remote Builders
+## ☁️ Remote Builders
 
 Darwin machines are configured with Hetzner remote builders for Linux builds:
 
-- hetzner-aarch64-indigo-03 (aarch64-linux, 20 max jobs)
-- hetzner-x86-64-indigo-04 (x86_64-linux, 8 max jobs)
-- hetzner-x86-64-indigo-05 (x86_64-linux, 8 max jobs)
+- 🖥️ hetzner-aarch64-indigo-03 (aarch64-linux, 20 max jobs)
+- 🖥️ hetzner-x86-64-indigo-04 (x86_64-linux, 8 max jobs)
+- 🖥️ hetzner-x86-64-indigo-05 (x86_64-linux, 8 max jobs)
 
 This enables cross-compilation without native Linux machines.
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
 ### Flox activation fails
 
@@ -383,24 +392,24 @@ darwin-rebuild switch --flake .#<hostname>  # macOS
 sudo nixos-rebuild switch --flake .#<hostname>  # Linux
 ```
 
-## Binary Caches
+## 📦 Binary Caches
 
 The flake is configured to use multiple substituters for faster builds:
 
-- cache.nixos.org - Official NixOS cache
-- cache.flox.dev - Flox package cache
-- devenv.cachix.org - Devenv cache
+- ❄️ cache.nixos.org - Official NixOS cache
+- 📦 cache.flox.dev - Flox package cache
+- 🔧 devenv.cachix.org - Devenv cache
 
-## Contributing
+## 🤝 Contributing
 
 This is a personal dotfiles repository, but feel free to fork and adapt for
-your own use. See `CLAUDE.md` for detailed architecture documentation.
+your own use. See `.claude/CLAUDE.md` for detailed architecture documentation.
 
-## License
+## 📄 License
 
 MIT License - See LICENSE file for details.
 
-## Development & Pre-commit Hooks
+## 🎯 Development & Pre-commit Hooks
 
 This repository uses [git-hooks.nix](https://github.com/cachix/git-hooks.nix)
 to manage pre-commit hooks that ensure code quality and consistency.
@@ -515,35 +524,35 @@ The following rules are configured in `markdownlint.json`:
 
 Uses default RFC 166 formatting rules with no additional configuration needed.
 
-## Binary Cache (Cloudflare R2)
+## ☁️ Binary Cache (Cloudflare R2)
 
 This repository uses Cloudflare R2 for storing Nix build artifacts as a
 binary cache. This speeds up builds by downloading pre-built packages
-instead of building from source.
+instead of building from source. 🚀
 
-### Infrastructure
+### 🏗️ Infrastructure
 
 The R2 bucket and API tokens are managed using OpenTofu (Terraform) in the
 `terraform/` directory.
 
-**Bucket**: `garbas-dotfiles-nix-cache`
+**Bucket**: `garbas-dotfiles-nix-cache` 🪣
 
 **Cost**: Free tier includes 10GB storage + unlimited egress ($0/month for
-typical personal use)
+typical personal use) 💰✨
 
-### Setup
+### 📖 Setup
 
 See [`terraform/README.md`](terraform/README.md) for complete setup
 instructions including:
 
-- Terraform/OpenTofu installation and configuration
-- Creating the R2 bucket and API tokens
-- Generating Nix signing keys
-- Configuring GitHub Actions secrets
-- Adding the cache to your local machines
-- Terraform naming conventions
+- 🔧 Terraform/OpenTofu installation and configuration
+- 🪣 Creating the R2 bucket and API tokens
+- 🔐 Generating Nix signing keys
+- 🤖 Configuring GitHub Actions secrets
+- 💻 Adding the cache to your local machines
+- 📝 Terraform naming conventions
 
-### Quick Start (Consumers)
+### 🚀 Quick Start (Consumers)
 
 To use the cache on your machines, add to your `flake.nix` or configuration:
 
@@ -563,7 +572,7 @@ To use the cache on your machines, add to your `flake.nix` or configuration:
 }
 ```
 
-### Uploading to Cache
+### 📤 Uploading to Cache
 
 Primary uploads come from GitHub Actions. Manual uploads can be done with:
 
@@ -571,11 +580,19 @@ Primary uploads come from GitHub Actions. Manual uploads can be done with:
 nix copy --to 's3://garbas-dotfiles-nix-cache?endpoint=<account-id>.r2.cloudflarestorage.com&region=auto' ./result
 ```
 
-## References
+## 📚 References
 
-- [Nix](https://nixos.org/)
-- [nix-darwin](https://github.com/LnL7/nix-darwin)
-- [Home Manager](https://github.com/nix-community/home-manager)
-- [Flox](https://flox.dev/)
-- [Determinate Systems Nix Installer](https://github.com/DeterminateSystems/nix-installer)
-- [git-hooks.nix](https://github.com/cachix/git-hooks.nix)
+- ❄️ [Nix](https://nixos.org/)
+- 🍎 [nix-darwin](https://github.com/LnL7/nix-darwin)
+- 🏠 [Home Manager](https://github.com/nix-community/home-manager)
+- 📦 [Flox](https://flox.dev/)
+- 🔧 [Determinate Systems Nix Installer](https://github.com/DeterminateSystems/nix-installer)
+- 🪝 [git-hooks.nix](https://github.com/cachix/git-hooks.nix)
+
+---
+
+<div align="center">
+
+✨ **Made with ❤️ and Nix** ❄️
+
+</div>
