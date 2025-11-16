@@ -512,7 +512,8 @@ in
     #{ command = "foot"; }
     #{ command = "element-desktop --no-update --hidden"; }
     #{ command = "nm-applet --indicator"; }
-  ] ++ (lib.optional bluetooth { command = "blueman-applet"; });
+  ]
+  ++ (lib.optional bluetooth { command = "blueman-applet"; });
 
   wayland.windowManager.sway.config.seat = {
     seat0 = {
