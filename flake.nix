@@ -244,7 +244,7 @@
                   # Load Cloudflare credentials from 1Password
                   echo "🔑 Loading Cloudflare credentials from 1Password"
                   eval $(op --account my.1password.com signin)
-                  __DOTFILES_SECRETS="$(op --account my.1password.com item get .files --format json)"
+                  __DOTFILES_SECRETS="$(op --account my.1password.com item get dotfiles --format json)"
 
                   export TF_VAR_cloudflare_account_id=$(echo $__DOTFILES_SECRETS | jq -r '.fields[] | select(.label == "CLOUDFLARE_ACCOUNT_ID") | .value')
                   export TF_VAR_cloudflare_api_token=$(echo $__DOTFILES_SECRETS | jq -r '.fields[] | select(.label == "CLOUDFLARE_R2_ACCESS_KEY_ID") | .value')
