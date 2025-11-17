@@ -1,16 +1,18 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
+# and in the NixOS manual (accessible by running 'nixos-help').
 
-inputs:
 {
   config,
   lib,
   pkgs,
   modulesPath,
+  user,
+  hostname,
+  inputs,
+  customVimPlugins,
   ...
 }:
-
 {
   imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
@@ -61,7 +63,15 @@ inputs:
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.rok = import ./../homeConfigurations/cercei.nix;
+  home-manager.extraSpecialArgs = {
+    inherit
+      user
+      inputs
+      hostname
+      customVimPlugins
+      ;
+  };
+  home-manager.users.${user.username} = import ./../homeConfigurations/profiles/linux.nix;
 
   # ---------------------------------------------------------------------------
 
