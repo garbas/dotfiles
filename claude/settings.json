@@ -1,0 +1,26 @@
+{
+  "alwaysThinkingEnabled": true,
+  "editorMode": "vim",
+  "mcpServers": {
+    "flox": {
+      "type": "stdio",
+      "command": "flox-mcp",
+      "args": [],
+      "env": {}
+    },
+    "github": {
+      "type": "stdio",
+      "command": "github-mcp-server",
+      "args": ["stdio"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${CLAUDE_GITHUB_MCP_TOKEN}"
+      }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "mcp-server-playwright",
+      "args": [],
+      "env": {}
+    }
+  }
+}
