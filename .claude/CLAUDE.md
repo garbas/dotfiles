@@ -23,6 +23,20 @@ The repository owner prefers iterative refinement:
 - Don't assume all requirements will be provided upfront - iterate and
   improve based on feedback
 
+### TODO.md Management
+
+The repository maintains a `TODO.md` file (all caps) for task tracking:
+
+- **Location**: `/TODO.md` in repository root
+- **Not tracked in Git**: This file is for local use only, do not commit it
+- **Structure**: Three sections: Planning, In Progress, Done
+- **Item Format**: Each item has a unique identifier:
+  `- [ ] **#N** - Description`
+- **Numbering**: Numbers are permanent - when items move to Done, their
+  numbers stay with them
+- **Moving items**: When completing a task, move from Planning/In Progress
+  to Done and change `[ ]` to `[x]`
+
 ## Overview
 
 This is a Nix flake-based dotfiles repository that manages multiple
@@ -30,6 +44,16 @@ machines (macOS via nix-darwin and Linux via NixOS) with integrated
 Flox environment for development tools. The repository uses a
 three-tier configuration architecture: machine-specific configs, shared
 profiles, and platform-specific overrides.
+
+## File Naming Conventions
+
+The repository follows specific naming conventions for key files:
+
+- **TODO.md** - All caps, not "Todo.md" or "to-do.md"
+- **README.md** - Standard capitalization for documentation
+- **CLAUDE.md** - All caps for Claude Code instructions
+
+When referencing these files, use the exact capitalization as shown above.
 
 ## Architecture
 
@@ -76,14 +100,30 @@ Key Flox packages include:
 - CLI utilities: ripgrep, jq, tmux, 1password-cli
 - Language runtimes: nodejs, cargo, rustc
 
-### Flox Hooks
+### Flox Hooks and Profile
 
-On activation (`flox activate`), the environment:
+The Flox environment has two initialization phases:
+
+**Phase 1: `on-activate` hooks** (runs first):
 
 1. Authenticates with 1Password and loads secrets (ANTROPIC_API_KEY,
    OPENAI_API_KEY, HF_TOKEN)
 2. On macOS: Syncs applications to `~/Applications/Flox (default) Apps`
    using mac-app-util
+
+**Phase 2: `[profile]` section** (runs after hooks):
+
+- **Automatic tmux session management**: When activating the Flox
+  environment, a tmux session is automatically created or attached
+- **Session name**: Controlled by `TMUX_SESSION_NAME` variable in `[vars]` section
+  (default: "flox-session")
+- **Smart behavior**: Skips tmux management when already in tmux, inside a
+  Neovim terminal, or in a non-interactive shell
+- **Consistent sessions**: Always uses the same session name across activations,
+  allowing you to detach and reattach to the same session
+
+To customize the tmux session name, edit the `TMUX_SESSION_NAME` variable in
+`flox/env/manifest.toml`
 
 ## Common Commands
 
@@ -200,6 +240,18 @@ type(scope): subject
 **AI Attribution:** Do not include attribution messages like "Generated
 with Claude Code" or "Co-Authored-By: Claude". Commits should appear as
 regular user commits without AI attribution.
+
+**Pre-commit Hooks:** The repository uses pre-commit hooks that run
+automatically on commit:
+
+- `markdownlint` - Markdown linting
+- `nixfmt` - Nix code formatting
+- `terraform-format` - Terraform/OpenTofu formatting (runs `tofu fmt`)
+- `commitizen check` - Validates commit message format
+
+These hooks auto-fix issues when possible (nixfmt, terraform-format) and
+will block commits if validation fails (commitizen). You'll see the hook
+results after each commit.
 
 ## Custom Vim Plugins
 
