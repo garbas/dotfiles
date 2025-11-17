@@ -23,7 +23,7 @@ let
 in
 {
   imports = [
-    (import ./console.nix inputs)
+    ./console.nix
   ];
 
   console.keyMap = "us";
@@ -104,7 +104,7 @@ in
     source-serif-pro
 
     # Fonts use for icons in i3 and powerlevel10k
-    nerdfonts
+    nerd-fonts.meslo-lg
 
     # Fonts use for icons in i3status-rs
     font-awesome_5

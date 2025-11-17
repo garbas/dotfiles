@@ -6,6 +6,7 @@
   user,
   hostname,
   inputs,
+  customVimPlugins,
   ...
 }:
 {
@@ -59,7 +60,14 @@
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.extraSpecialArgs = { inherit user inputs hostname; };
+  home-manager.extraSpecialArgs = {
+    inherit
+      user
+      inputs
+      hostname
+      customVimPlugins
+      ;
+  };
   home-manager.backupFileExtension = "backup";
   home-manager.users.${user.username} = import ./../homeConfigurations/profiles/linux.nix;
 

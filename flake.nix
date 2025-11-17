@@ -222,7 +222,6 @@
             in
             {
               inherit inputs;
-              packages.customVimPlugins = mkCustomVimPlugins { inherit pkgs; };
               checks.pre-commit = pre-commit-check;
               devShells.default = pkgs.mkShell {
                 inherit system;
@@ -282,6 +281,9 @@
           brienne = {
             username = "rok.garbas";
             sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE6EoPJOTe245KXcxpXb1qwHH26Bi1C77+qQLXsOUnBS";
+          };
+          pono = {
+            sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICut/WcUHHbTfFiE+5OHIrQguBbC7bXgkRwbPqEK0PcD";
           };
         };
       };
