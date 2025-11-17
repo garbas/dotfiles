@@ -36,7 +36,6 @@
 
   inputs.ghostty.url = "github:ghostty-org/ghostty/v1.1.3";
   inputs.devenv.url = "github:cachix/devenv/v1.8.1";
-  #inputs.flox.url = "github:flox/flox/v1.7.5";
   inputs.flox.url = "github:flox/flox/release-1.7.7";
   inputs.git-hooks.url = "github:cachix/git-hooks.nix";
   inputs.git-hooks.inputs.nixpkgs.follows = "nixpkgs-unstable";

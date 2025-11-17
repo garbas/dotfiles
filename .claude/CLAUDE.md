@@ -107,7 +107,7 @@ The Flox environment has two initialization phases:
 **Phase 1: `on-activate` hooks** (runs first):
 
 1. Authenticates with 1Password and loads secrets (ANTROPIC_API_KEY,
-   OPENAI_API_KEY, HF_TOKEN)
+   OPENAI_API_KEY, HF_TOKEN, CLAUDE_GITHUB_MCP_TOKEN)
 2. On macOS: Syncs applications to `~/Applications/Flox (default) Apps`
    using mac-app-util
 
