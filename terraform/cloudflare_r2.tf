@@ -2,7 +2,7 @@
 resource "cloudflare_r2_bucket" "cloudflare_r2_garbas_dotfiles_nix_binary_cache_bucket" {
   account_id = var.cloudflare_account_id
   name       = "garbas-dotfiles-nix-cache"
-  location   = "auto"
+  location   = "ENAM" # Eastern North America
 }
 
 # Read-Write API Token for GitHub Actions (uploading builds)
