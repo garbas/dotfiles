@@ -65,26 +65,16 @@ cache.
 
 ## Prerequisites
 
-1. **OpenTofu** or **Terraform** installed (>= 1.0)
+1. **Cloudflare Account** with R2 enabled
 
-   ```bash
-   # Install OpenTofu (recommended)
-   brew install opentofu
-
-   # Or Terraform
-   brew install terraform
-   ```
-
-2. **Cloudflare Account** with R2 enabled
-
-3. **Cloudflare API Token** with R2 permissions:
+2. **Cloudflare API Token** with R2 permissions:
    - Go to <https://dash.cloudflare.com/profile/api-tokens>
    - Click "Create Token"
    - Use "Edit Cloudflare Workers" template or create custom with:
      - Account.Cloudflare R2 (Edit)
    - Note your token (shown only once!)
 
-4. **Cloudflare Account ID**:
+3. **Cloudflare Account ID**:
    - Find at <https://dash.cloudflare.com/>
    - Look in URL or account settings
 
