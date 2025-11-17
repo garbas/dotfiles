@@ -69,31 +69,22 @@ fi
 
 [profile]
 common = '''
-## Starting/Attaching to TMUX session"
-##
-## 1. Check if the session already exists
-#tmux has-session -t $TMUX_SESSION_NAME 2>/dev/null
-##
-## 2. If the session doesn't exist, start a new one
-#if [ $? -ne 0 ]; then
-# echo "Creating new session $TMUX_SESSION_NAME"
-# tmux new-session -s $TMUX_SESSION_NAME -d
-#fi
-##
-## 3. If the session exists, reattach to it
-#if [ ! -n "$NVIM_LISTEN_ADDRESS" ] ; then
-#if [ "$TERM_PROGRAM" = tmux ]; then
-#  echo 'In tmux'
-#else
-#  echo 'Not in tmux'
-#fi
-##  echo "Not inside neovim terminal"
-##  if [ -n "$TMUX" ]; then
-##    tmux switch-client -t $TMUX_SESSION_NAME
-##  else
-##    tmux attach-session -t $TMUX_SESSION_NAME
-##  fi
-#fi
+# Starting/Attaching to TMUX session
+#
+# Skip tmux management if:
+# - Already inside a tmux session
+# - Inside a Neovim terminal
+# - Not in an interactive shell
+if [ -z "$TMUX" ] && [ -z "$NVIM_LISTEN_ADDRESS" ] && [ -n "$PS1" ]; then
+  # Check if the session already exists
+  if ! tmux has-session -t "$TMUX_SESSION_NAME" 2>/dev/null; then
+    echo "📺 Creating new tmux session: $TMUX_SESSION_NAME"
+    tmux new-session -s "$TMUX_SESSION_NAME"
+  else
+    echo "📺 Attaching to existing tmux session: $TMUX_SESSION_NAME"
+    tmux attach-session -t "$TMUX_SESSION_NAME"
+  fi
+fi
 '''
 
 [options]
