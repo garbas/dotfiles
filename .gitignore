@@ -29,5 +29,18 @@
 /terraform/.terraformrc
 /terraform/terraform.rc
 
+# Claude
+/claude/debug/
+/claude/file-history/
+/claude/history.jsonl
+/claude/projects/
+/claude/shell-snapshots/
+/claude/statsig/
+/claude/todos/
+
+
 # Personal TODO tracking
 TODO.md
+
+# Git worktrees
+/w/
