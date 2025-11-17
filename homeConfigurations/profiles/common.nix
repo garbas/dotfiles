@@ -226,6 +226,10 @@
   programs.tmux.extraConfig = ''
     set-option -g set-clipboard on
 
+    # disable automatic window renaming to respect manual names
+    set-option -g automatic-rename off
+    set-option -g allow-rename off
+
     # allow terminal scrolling
     set-option -g terminal-overrides 'xterm*:smcup@:rmcup@'
 
@@ -253,6 +257,15 @@
     bind-key -r J resize-pane -D 3
     bind-key -r K resize-pane -U 3
     bind-key -r L resize-pane -R 3
+
+    set-option -g status-left ""
+    set-option -g @catppuccin_window_text " #W"
+    set-option -g @catppuccin_window_current_text " #W"
+    set-option -g status-right "#{E:@catppuccin_status_date_time}"
+
+    # Override catppuccin formats to use window name (#W) instead of pane title (#T)
+    set-option -g window-status-format "#[fg=#11111b,bg=#{@thm_overlay_2}] #I #[fg=#cdd6f4,bg=#{@thm_surface_0}] #W "
+    set-option -g window-status-current-format "#[fg=#11111b,bg=#{@thm_mauve}] #I #[fg=#cdd6f4,bg=#{@thm_surface_1}] #W "
 
   '';
 
