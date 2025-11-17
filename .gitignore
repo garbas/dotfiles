@@ -29,7 +29,9 @@
 /terraform/.terraformrc
 /terraform/terraform.rc
 
-# Claude
+# Claude Code runtime files
+# Note: /claude/ = runtime/cache files (ignored)
+#       /.claude/ = project instructions/config (tracked in git)
 /claude/debug/
 /claude/file-history/
 /claude/history.jsonl
