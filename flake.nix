@@ -185,7 +185,10 @@
           (
             system:
             let
-              pkgs = import nixpkgs-unstable { inherit system; };
+              pkgs = import nixpkgs-unstable {
+                inherit system;
+                config.allowUnfree = true;
+              };
               pre-commit-check = inputs.git-hooks.lib.${system}.run {
                 src = ./.;
                 hooks = {
@@ -231,10 +234,25 @@
                     home-manager.packages.${system}.default
                     markdownlint-cli
                     opentofu
+                    _1password-cli
+                    jq
                   ]
                   ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [ nix-darwin.packages.${system}.default ];
                 shellHook = ''
                   ${pre-commit-check.shellHook}
+
+                  # Load Cloudflare credentials from 1Password
+                  echo "🔑 Loading Cloudflare credentials from 1Password"
+                  eval $(op --account my.1password.com signin)
+                  __DOTFILES_SECRETS="$(op --account my.1password.com item get .files --format json)"
+
+                  export TF_VAR_cloudflare_account_id=$(echo $__DOTFILES_SECRETS | jq -r '.fields[] | select(.label == "CLOUDFLARE_ACCOUNT_ID") | .value')
+                  export TF_VAR_cloudflare_api_token=$(echo $__DOTFILES_SECRETS | jq -r '.fields[] | select(.label == "CLOUDFLARE_R2_ACCESS_KEY_ID") | .value')
+
+                  echo "  ✓ Exported TF_VAR_cloudflare_account_id"
+                  echo "  ✓ Exported TF_VAR_cloudflare_api_token"
+
+                  unset __DOTFILES_SECRETS
                 '';
               };
             }
