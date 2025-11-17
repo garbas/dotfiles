@@ -412,6 +412,48 @@ files:
 See `terraform/README.md` for complete Terraform conventions and setup
 documentation.
 
+## GitHub Actions / YAML Conventions
+
+### String Quoting
+
+**All strings in YAML files must be double-quoted**, including:
+
+- Workflow names
+- Job names
+- Step names
+- Action versions
+- Branch names
+- Run commands
+- Any other string values
+
+**Example:**
+
+```yaml
+name: "CI"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  check:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout repository"
+        uses: "actions/checkout@v4"
+
+      - name: "Install Nix"
+        uses: "cachix/install-nix-action@v27"
+
+      - name: "Run flake check"
+        run: "nix flake check"
+```
+
+**Rationale:** Consistent quoting improves readability, prevents parsing
+edge cases, and makes the style uniform across all YAML files.
+
 ## Troubleshooting
 
 ### Flox activation fails
