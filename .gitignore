@@ -13,18 +13,21 @@
 /.pre-commit-config.yaml
 
 # Terraform/OpenTofu
-**/*.tfstate
-**/*.tfstate.*
-**/*.tfstate.backup
-**/.terraform/
-**/.terraform.lock.hcl
-**/terraform.tfvars
-**/*.auto.tfvars
-**/crash.log
-**/crash.*.log
-**/override.tf
-**/override.tf.json
-**/*_override.tf
-**/*_override.tf.json
-**/.terraformrc
-**/terraform.rc
+/terraform/*.tfstate
+/terraform/*.tfstate.*
+/terraform/*.tfstate.backup
+/terraform/.terraform/
+/terraform/.terraform.lock.hcl
+/terraform/terraform.tfvars
+/terraform/*.auto.tfvars
+/terraform/crash.log
+/terraform/crash.*.log
+/terraform/override.tf
+/terraform/override.tf.json
+/terraform/*_override.tf
+/terraform/*_override.tf.json
+/terraform/.terraformrc
+/terraform/terraform.rc
+
+# Personal TODO tracking
+TODO.md
