@@ -384,3 +384,5 @@ nix-daemon is running on remote.
 
 Run garbage collection: `nix-collect-garbage -d` (add `sudo` for
 system-wide on NixOS)
+
+- Add a name I can refer to or number to each of the issues in my to-do.md
