@@ -63,7 +63,7 @@
     },
     "vars": {
       "OP_ACCOUNT": "my.1password.com",
-      "OP_SECRETS": "ANTROPIC_API_KEY OPENAI_API_KEY HF_TOKEN CLAUDE_GITHUB_MCP_TOKEN",
+      "OP_SECRETS": "ANTHROPIC_API_KEY OPENAI_API_KEY HF_TOKEN CLAUDE_GITHUB_MCP_TOKEN",
       "OP_SECRETS_ITEM": "Terminal",
       "TMUX_SESSION_NAME": "flox-session"
     },
