@@ -157,7 +157,17 @@ else
   ((passed++))
 fi
 
-# Test 15: Check if fidget loads
+# Test 15: Check if snacks loads
+echo -n "✓ snacks.nvim loads... "
+if nvim --headless -c 'lua require("snacks")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
+  echo -e "${RED}FAILED${NC}"
+  ((failed++))
+else
+  echo -e "${GREEN}OK${NC}"
+  ((passed++))
+fi
+
+# Test 16: Check if fidget loads
 echo -n "✓ fidget.nvim loads... "
 if nvim --headless -c 'lua require("fidget")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
   echo -e "${RED}FAILED${NC}"
@@ -167,7 +177,7 @@ else
   ((passed++))
 fi
 
-# Test 16: Check LSP config
+# Test 17: Check LSP config
 echo -n "✓ LSP configuration... "
 if nvim --headless -c 'lua vim.lsp' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
   echo -e "${RED}FAILED${NC}"
@@ -177,7 +187,7 @@ else
   ((passed++))
 fi
 
-# Test 17: Run checkhealth (capture output)
+# Test 18: Run checkhealth (capture output)
 echo ""
 echo "📋 Running :checkhealth..."
 echo ""

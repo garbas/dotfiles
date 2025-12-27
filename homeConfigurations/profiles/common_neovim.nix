@@ -332,6 +332,38 @@
           '';
       }
 
+      # Collection of 40+ small QoL plugins
+      # https://github.com/folke/snacks.nvim
+      # Features enabled:
+      #   bigfile - Disable heavy features for large files (better performance)
+      #   indent - Visual indent guides with scope detection
+      #   notifier - Better notification system (timeout: 3s)
+      #   quickfile - Faster file opening by deferring expensive operations
+      #   scroll - Smooth scrolling animations
+      #   statuscolumn - Enhanced gutter/sign column rendering
+      #   words - LSP reference highlighting under cursor (like vim-illuminate)
+      # Keybindings:
+      #   None - all features work automatically
+      {
+        plugin = snacks-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require('snacks').setup({
+              bigfile = { enabled = true },
+              indent = { enabled = true },
+              notifier = {
+                enabled = true,
+                timeout = 3000,  -- 3 second timeout for notifications
+              },
+              quickfile = { enabled = true },
+              scroll = { enabled = true },
+              statuscolumn = { enabled = true },
+              words = { enabled = true },
+            })
+          '';
+      }
+
       # 🍨 Soothing pastel theme fsor (Neo)vim
       # https://github.com/catppuccin/nvim
       {
