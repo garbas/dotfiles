@@ -116,7 +116,17 @@ else
   ((passed++))
 fi
 
-# Test 11: Check LSP config
+# Test 11: Check if nvim-surround loads
+echo -n "✓ nvim-surround loads... "
+if nvim --headless -c 'lua require("nvim-surround")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
+  echo -e "${RED}FAILED${NC}"
+  ((failed++))
+else
+  echo -e "${GREEN}OK${NC}"
+  ((passed++))
+fi
+
+# Test 12: Check LSP config
 echo -n "✓ LSP configuration... "
 if nvim --headless -c 'lua vim.lsp' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
   echo -e "${RED}FAILED${NC}"
@@ -126,7 +136,7 @@ else
   ((passed++))
 fi
 
-# Test 12: Run checkhealth (capture output)
+# Test 13: Run checkhealth (capture output)
 echo ""
 echo "📋 Running :checkhealth..."
 echo ""
