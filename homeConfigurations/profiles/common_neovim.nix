@@ -195,6 +195,31 @@
           '';
       }
 
+      # Surround text objects with brackets, quotes, etc.
+      # https://github.com/kylechui/nvim-surround
+      # Keybindings:
+      #   ys{motion}{char} - Add surrounding (e.g., ysiw" surrounds word with quotes)
+      #   ds{char}         - Delete surrounding (e.g., ds" removes quotes)
+      #   cs{old}{new}     - Change surrounding (e.g., cs"' changes " to ')
+      #   yss{char}        - Surround entire line
+      # Examples:
+      #   ysiw)   - Surround word with parentheses: word -> (word)
+      #   ysiw(   - Surround with spacing: word -> ( word )
+      #   ds"     - Delete quotes: "text" -> text
+      #   cs"'    - Change quotes: "text" -> 'text'
+      #   dsf     - Delete function call: func(text) -> text
+      #   yssb    - Surround line with brackets
+      {
+        plugin = nvim-surround;
+        type = "lua";
+        config = # lua
+          ''
+            require('nvim-surround').setup({
+              -- Use default keybindings (ys, ds, cs)
+            })
+          '';
+      }
+
       # 🍨 Soothing pastel theme fsor (Neo)vim
       # https://github.com/catppuccin/nvim
       {
