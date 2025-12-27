@@ -18,9 +18,18 @@
   home.sessionVariables.GIT_EDITOR = "nvim";
 
   home.packages = with pkgs; [
-    asciinema
+    # Nix tooling
     devbox
-    asdf
+    devenv
+    nix-output-monitor
+    nix-tree
+    nixd
+
+    # AI
+    claude-code
+
+    # Misc
+    asciinema
     coreutils
     entr
     fd
@@ -28,7 +37,6 @@
     gnutar
     htop
     jq
-    nix-output-monitor
     procs
     ripgrep
     tig
@@ -38,12 +46,7 @@
     wget
     which
     _1password-cli
-    claude-code
-    claude-monitor
 
-    nix-tree
-    #pngpaste
-    nixd
     bash-language-server
 
   ];
@@ -57,6 +60,9 @@
     window-padding-x = 10
     window-padding-y = 10
     theme = dark:catppuccin-mocha.conf,light:catppuccin-latte.conf
+
+    # Send macOS notification when bell is triggered (e.g., Claude Code needs attention)
+    macos-notification-on-bell = true
   '';
   xdg.configFile."ghostty/themes/catppuccin-latte.conf".source =
     "${inputs.catppuccin-ghostty}/themes/catppuccin-latte.conf";
@@ -258,14 +264,28 @@
     bind-key -r K resize-pane -U 3
     bind-key -r L resize-pane -R 3
 
+    # Activity monitoring for attention notifications
+    # This will highlight windows when they have activity (output) or bell signals
+    set-option -g monitor-activity on
+    set-option -g monitor-bell on
+    set-option -g activity-action none  # Don't switch windows automatically
+    set-option -g bell-action any       # Monitor bells in any window
+    set-option -g visual-activity off   # Don't show "Activity in window X" message
+    set-option -g visual-bell off       # Don't show bell message
+
     set-option -g status-left ""
     set-option -g @catppuccin_window_text " #W"
     set-option -g @catppuccin_window_current_text " #W"
     set-option -g status-right "#{E:@catppuccin_status_date_time}"
 
     # Override catppuccin formats to use window name (#W) instead of pane title (#T)
+    # Normal window (no activity)
     set-option -g window-status-format "#[fg=#11111b,bg=#{@thm_overlay_2}] #I #[fg=#cdd6f4,bg=#{@thm_surface_0}] #W "
+    # Current window
     set-option -g window-status-current-format "#[fg=#11111b,bg=#{@thm_mauve}] #I #[fg=#cdd6f4,bg=#{@thm_surface_1}] #W "
+    # Window with activity/bell - using Catppuccin yellow (#f9e2af)
+    set-option -g window-status-activity-style "fg=#11111b,bg=#f9e2af,bold"
+    set-option -g window-status-bell-style "fg=#11111b,bg=#f9e2af,bold"
 
   '';
 

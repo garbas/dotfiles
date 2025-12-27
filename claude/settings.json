@@ -1,5 +1,9 @@
 {
-  "alwaysThinkingEnabled": true,
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "alwaysThinkingEnabled": false,
   "editorMode": "vim",
   "mcpServers": {
     "flox": {
@@ -11,7 +15,9 @@
     "github": {
       "type": "stdio",
       "command": "github-mcp-server",
-      "args": ["stdio"],
+      "args": [
+        "stdio"
+      ],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${CLAUDE_GITHUB_MCP_TOKEN}"
       }

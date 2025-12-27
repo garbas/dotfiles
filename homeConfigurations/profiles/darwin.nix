@@ -10,6 +10,9 @@
   # darwin specific packages
   home.packages = with pkgs; [
     tart
+    ghostty-bin
+    pngpaste
+
   ];
 
   programs.zsh.initContent = ''
