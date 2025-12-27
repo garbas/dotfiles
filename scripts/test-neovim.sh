@@ -197,7 +197,17 @@ else
   ((passed++))
 fi
 
-# Test 19: Check LSP config
+# Test 19: Check if render-markdown loads
+echo -n "✓ render-markdown.nvim loads... "
+if nvim --headless -c 'lua require("render-markdown")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
+  echo -e "${RED}FAILED${NC}"
+  ((failed++))
+else
+  echo -e "${GREEN}OK${NC}"
+  ((passed++))
+fi
+
+# Test 20: Check LSP config
 echo -n "✓ LSP configuration... "
 if nvim --headless -c 'lua vim.lsp' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
   echo -e "${RED}FAILED${NC}"
@@ -207,7 +217,7 @@ else
   ((passed++))
 fi
 
-# Test 20: Run checkhealth (capture output)
+# Test 21: Run checkhealth (capture output)
 echo ""
 echo "📋 Running :checkhealth..."
 echo ""
