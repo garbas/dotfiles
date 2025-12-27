@@ -364,6 +364,45 @@
           '';
       }
 
+      # Code outline window for navigation
+      # https://github.com/stevearc/aerial.nvim
+      # Features:
+      #   - Hierarchical view of code symbols (functions, classes, methods)
+      #   - Works with Treesitter, LSP, and markdown
+      #   - Navigate between symbols with { and }
+      #   - Toggle outline with <leader>o
+      # Keybindings in outline window:
+      #   <CR> - Jump to symbol
+      #   o/za - Toggle tree node
+      #   zR - Open all nodes
+      #   zM - Close all nodes
+      #   q - Close window
+      {
+        plugin = aerial-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require('aerial').setup({
+              backends = { "treesitter", "lsp", "markdown" },
+              layout = {
+                max_width = { 40, 0.2 },
+                default_direction = "prefer_right",
+                placement = "window",
+              },
+              -- Auto-attach keybindings on supported buffers
+              on_attach = function(bufnr)
+                vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>", { buffer = bufnr, desc = "Previous symbol" })
+                vim.keymap.set("n", "}", "<cmd>AerialNext<CR>", { buffer = bufnr, desc = "Next symbol" })
+              end,
+            })
+
+            -- Toggle aerial with leader key
+            require("which-key").add({
+              { "<leader>o", "<cmd>AerialToggle!<CR>", desc = "Toggle Code Outline" },
+            })
+          '';
+      }
+
       # 🍨 Soothing pastel theme fsor (Neo)vim
       # https://github.com/catppuccin/nvim
       {
