@@ -413,6 +413,108 @@
       # No configuration needed - works automatically on file open
       vim-sleuth
 
+      # Task runner and job management
+      # https://github.com/stevearc/overseer.nvim
+      # Overseer provides:
+      #   - Task execution for make, npm, cargo, VS Code tasks
+      #   - Real-time task output monitoring
+      #   - Integration with diagnostics and quickfix
+      #   - Persistent task history
+      # Custom telescope integration (no built-in support):
+      #   - Browse running/completed tasks with fuzzy search
+      #   - View task status in picker
+      #   - Quick access to task details
+      {
+        plugin = overseer-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require('overseer').setup({
+              -- Task list window configuration
+              task_list = {
+                default_detail = 1,        -- Show basic task details
+                direction = "bottom",      -- Open at bottom of screen
+                min_height = 10,           -- Minimum 10 lines
+                max_height = 0.3,          -- Maximum 30% of screen height
+              },
+              -- Built-in task detection for:
+              --   - Makefile targets
+              --   - package.json scripts
+              --   - Cargo.toml tasks
+              --   - VS Code tasks.json
+              templates = { "builtin" },
+              -- Disable DAP integration (we don't use nvim-dap)
+              dap = false,
+            })
+
+            -- Custom telescope picker for overseer tasks
+            -- Overseer doesn't have built-in telescope support, so we create our own
+            -- This provides fuzzy searching through all tasks (running, completed, failed)
+            local function telescope_overseer()
+              local pickers = require("telescope.pickers")
+              local finders = require("telescope.finders")
+              local conf = require("telescope.config").values
+              local actions = require("telescope.actions")
+              local action_state = require("telescope.actions.state")
+
+              pickers.new({}, {
+                prompt_title = "Overseer Tasks",
+                -- Use dynamic finder to always get fresh task list
+                finder = finders.new_dynamic({
+                  fn = function()
+                    local overseer = require("overseer")
+                    -- Get all tasks (no filter)
+                    local task_list = overseer.list_tasks({})
+                    local results = {}
+
+                    -- Transform task objects into picker entries
+                    for _, task in ipairs(task_list) do
+                      table.insert(results, {
+                        name = task.name,
+                        status = task.status,  -- e.g., "RUNNING", "SUCCESS", "FAILURE"
+                        task = task,           -- Store full task object for actions
+                      })
+                    end
+
+                    return results
+                  end,
+                  -- Format each task for display in telescope
+                  entry_maker = function(entry)
+                    return {
+                      value = entry.task,
+                      -- Display format: "task_name [STATUS]"
+                      display = entry.name .. " [" .. entry.status .. "]",
+                      ordinal = entry.name,  -- Used for fuzzy matching
+                    }
+                  end,
+                }),
+                sorter = conf.generic_sorter({}),
+                -- Define what happens when user selects a task
+                attach_mappings = function(prompt_bufnr, map)
+                  actions.select_default:replace(function()
+                    actions.close(prompt_bufnr)
+                    local selection = action_state.get_selected_entry()
+                    if selection then
+                      -- Open the selected task (shows output, logs, etc.)
+                      require("overseer").run_action(selection.value, "open")
+                    end
+                  end)
+                  return true
+                end,
+              }):find()
+            end
+
+            -- Keybindings for overseer
+            require("which-key").add({
+              { "<leader>oo", "<cmd>OverseerToggle<CR>", desc = "Toggle Task List" },
+              { "<leader>or", "<cmd>OverseerRun<CR>", desc = "Run Task" },
+              { "<leader>oa", "<cmd>OverseerTaskAction<CR>", desc = "Task Actions" },
+              -- Custom telescope integration for browsing tasks
+              { "<leader>ot", telescope_overseer, desc = "Browse Tasks (Telescope)" },
+            })
+          '';
+      }
+
       # 🍨 Soothing pastel theme fsor (Neo)vim
       # https://github.com/catppuccin/nvim
       {
