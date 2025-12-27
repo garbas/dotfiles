@@ -216,6 +216,26 @@
                   commitizen = {
                     enable = true;
                   };
+                  # Block commits with AI attribution
+                  no-ai-attribution = {
+                    enable = true;
+                    name = "no-ai-attribution";
+                    description = "Block commits with AI attribution footer";
+                    entry = toString (
+                      pkgs.writeShellScript "no-ai-attribution" ''
+                        commit_msg_file="$1"
+                        # Block actual attribution footer (with emoji or https://claude.com link)
+                        if grep -qE "🤖.*Generated.*claude\.com|Co-Authored-By: Claude <" "$commit_msg_file"; then
+                          echo "❌ ERROR: Commit message contains AI attribution footer!"
+                          echo "   Remove '🤖 Generated with [Claude Code](https://claude.com/...)' line."
+                          echo "   Remove 'Co-Authored-By: Claude <noreply@anthropic.com>' line."
+                          echo "   See .claude/CLAUDE.md for commit message guidelines."
+                          exit 1
+                        fi
+                      ''
+                    );
+                    stages = [ "commit-msg" ];
+                  };
                 };
               };
             in
