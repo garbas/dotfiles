@@ -687,9 +687,88 @@
               indent = {
                 enable = true
               },
+              -- Textobjects configuration (requires nvim-treesitter-textobjects)
+              textobjects = {
+                select = {
+                  enable = true,
+                  lookahead = true,  -- Automatically jump forward to textobj
+                  keymaps = {
+                    -- Functions
+                    ["af"] = "@function.outer",
+                    ["if"] = "@function.inner",
+                    -- Classes
+                    ["ac"] = "@class.outer",
+                    ["ic"] = "@class.inner",
+                    -- Parameters/arguments
+                    ["aa"] = "@parameter.outer",
+                    ["ia"] = "@parameter.inner",
+                    -- Conditionals
+                    ["ai"] = "@conditional.outer",
+                    ["ii"] = "@conditional.inner",
+                    -- Loops
+                    ["al"] = "@loop.outer",
+                    ["il"] = "@loop.inner",
+                  },
+                },
+                move = {
+                  enable = true,
+                  set_jumps = true,  -- Add jumps to jumplist
+                  goto_next_start = {
+                    ["]m"] = "@function.outer",
+                    ["]]"] = "@class.outer",
+                  },
+                  goto_next_end = {
+                    ["]M"] = "@function.outer",
+                    ["]["] = "@class.outer",
+                  },
+                  goto_previous_start = {
+                    ["[m"] = "@function.outer",
+                    ["[["] = "@class.outer",
+                  },
+                  goto_previous_end = {
+                    ["[M"] = "@function.outer",
+                    ["[]"] = "@class.outer",
+                  },
+                },
+                swap = {
+                  enable = true,
+                  swap_next = {
+                    ["<leader>a"] = "@parameter.inner",
+                  },
+                  swap_previous = {
+                    ["<leader>A"] = "@parameter.inner",
+                  },
+                },
+              },
             }
+
+            -- Make treesitter textobject movements repeatable with ; and ,
+            local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
+            vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next)
+            vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous)
           '';
       }
+
+      # Syntax aware textobjects, select, move, swap
+      # https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+      # Keybindings (configured in nvim-treesitter.configs above):
+      # Selection:
+      #   af/if - outer/inner function
+      #   ac/ic - outer/inner class
+      #   aa/ia - outer/inner argument/parameter
+      #   ai/ii - outer/inner conditional
+      #   al/il - outer/inner loop
+      # Movement:
+      #   ]m/[m - next/previous function start
+      #   ]M/[M - next/previous function end
+      #   ]]/[[ - next/previous class start
+      #   ][/[] - next/previous class end
+      #   ; - repeat last movement forward
+      #   , - repeat last movement backward
+      # Swap:
+      #   <leader>a - swap parameter with next
+      #   <leader>A - swap parameter with previous
+      nvim-treesitter-textobjects
 
       # Navigation using Telescope
       # https://github.com/nvim-telescope/telescope.nvim/
@@ -1105,6 +1184,30 @@
                 -- See the configuration section for more details
                 -- Load luvit types when the `vim.uv` word is found
                 { path = "''${3 rd}/luv/library", words = { "vim%.uv" } },
+              },
+            })
+          '';
+      }
+
+      # LSP progress notifications in corner
+      # https://github.com/j-hui/fidget.nvim
+      # Features:
+      #   - Shows LSP progress in bottom-right corner
+      #   - Animated spinner while LSP is working
+      #   - Completion checkmark when done
+      #   - Auto-hides after 3 seconds
+      # No keybindings needed - works automatically with LSP
+      {
+        plugin = fidget-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require('fidget').setup({
+              notification = {
+                window = {
+                  winblend = 0,      -- Transparency (0 = opaque)
+                  border = "none",   -- No border
+                },
               },
             })
           '';
