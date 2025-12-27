@@ -258,6 +258,80 @@
           '';
       }
 
+      # Highlight and search for TODO/FIXME/NOTE comments
+      # https://github.com/folke/todo-comments.nvim
+      # Keywords recognized:
+      #   TODO:  - Things to do
+      #   FIXME: - Things to fix
+      #   HACK:  - Temporary workarounds
+      #   WARN:  - Warnings
+      #   PERF:  - Performance issues
+      #   NOTE:  - Important notes
+      #   TEST:  - Testing related
+      # Keybindings:
+      #   ]t - Jump to next TODO comment
+      #   [t - Jump to previous TODO comment
+      #   <leader>ft - Search all TODO comments with Telescope
+      {
+        plugin = todo-comments-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require('todo-comments').setup({
+              signs = true,  -- Show signs in sign column
+              keywords = {
+                FIX = {
+                  icon = " ",
+                  color = "error",
+                  alt = { "FIXME", "BUG", "FIXIT", "ISSUE" },
+                },
+                TODO = {
+                  icon = " ",
+                  color = "info",
+                },
+                HACK = {
+                  icon = " ",
+                  color = "warning",
+                },
+                WARN = {
+                  icon = " ",
+                  color = "warning",
+                  alt = { "WARNING", "XXX" },
+                },
+                PERF = {
+                  icon = " ",
+                  color = "default",
+                  alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" },
+                },
+                NOTE = {
+                  icon = " ",
+                  color = "hint",
+                  alt = { "INFO" },
+                },
+                TEST = {
+                  icon = "⏲ ",
+                  color = "test",
+                  alt = { "TESTING", "PASSED", "FAILED" },
+                },
+              },
+            })
+
+            -- Keybindings for navigation
+            vim.keymap.set("n", "]t", function()
+              require("todo-comments").jump_next()
+            end, { desc = "Next todo comment" })
+
+            vim.keymap.set("n", "[t", function()
+              require("todo-comments").jump_prev()
+            end, { desc = "Previous todo comment" })
+
+            -- Telescope integration
+            require("which-key").add({
+              { "<leader>ft", "<cmd>TodoTelescope<cr>", desc = "Find TODOs" },
+            })
+          '';
+      }
+
       # 🍨 Soothing pastel theme fsor (Neo)vim
       # https://github.com/catppuccin/nvim
       {
