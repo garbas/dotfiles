@@ -9,31 +9,6 @@
   # https://github.com/NeogitOrg/neogit
   # https://github.com/pwntester/octo.nvim
 
-  # # Better UI
-  # {
-  #   plugin = noice-nvim;
-  #   type = "lua";
-  #   config = # lua
-  #     ''
-  #       require("noice").setup({
-  #         lsp = {
-  #           override = {
-  #             ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-  #             ["vim.lsp.util.stylize_markdown"] = true,
-  #             ["cmp.entry.get_documentation"] = true,
-  #           },
-  #         },
-  #         presets = {
-  #           bottom_search = true,
-  #           command_palette = true,
-  #           long_message_to_split = true,
-  #           inc_rename = false,
-  #           lsp_doc_border = false,
-  #         },
-  #       })
-  #     '';
-  # }
-  #
   # # Testing support
   # {
   #   plugin = neotest;
@@ -363,6 +338,42 @@
               { "<leader>Nn", "<cmd>:Telescope notify<cr>", desc = "Notification" },
               { "<leader>Nc", "<cmd>lua require(\"notify\").clear_history()<cr>", desc = "Dismiss All Notifications" },
               { "<leader>Nh", "<cmd>lua require(\"notify\").history()<cr>", desc = "Notification History" },
+            })
+          '';
+      }
+
+      # UI component library (dependency for noice.nvim)
+      # https://github.com/MunifTanjim/nui.nvim
+      pkgs.vimPlugins.nui-nvim
+
+      # Better UI for messages, cmdline and popups
+      # https://github.com/folke/noice.nvim
+      # Improvements:
+      #   - Replaces default command line with better UI
+      #   - Better LSP signature help and hover docs
+      #   - Message history and search
+      #   - Customizable notification display
+      {
+        plugin = noice-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require("noice").setup({
+              lsp = {
+                -- Override markdown rendering for LSP hover/signature
+                override = {
+                  ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+                  ["vim.lsp.util.stylize_markdown"] = true,
+                  ["cmp.entry.get_documentation"] = true,
+                },
+              },
+              presets = {
+                bottom_search = true,         -- Use classic bottom search
+                command_palette = true,        -- Position cmdline and popupmenu together
+                long_message_to_split = true,  -- Long messages -> split
+                inc_rename = false,            -- Don't use inc-rename
+                lsp_doc_border = false,        -- Don't add border to LSP docs
+              },
             })
           '';
       }
