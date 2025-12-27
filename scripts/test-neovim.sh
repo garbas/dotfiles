@@ -79,7 +79,18 @@ else
   ((passed++))
 fi
 
-# Test 7: Check if copilot loads
+# Test 7: Check if treesitter-textobjects loads
+echo -n "✓ nvim-treesitter-textobjects loads... "
+# textobjects provides repeatable_move module
+if nvim --headless -c 'lua require("nvim-treesitter.textobjects.repeatable_move")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
+  echo -e "${RED}FAILED${NC}"
+  ((failed++))
+else
+  echo -e "${GREEN}OK${NC}"
+  ((passed++))
+fi
+
+# Test 8: Check if copilot loads
 echo -n "✓ copilot.lua loads... "
 if nvim --headless -c 'lua require("copilot")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
   echo -e "${RED}FAILED${NC}"
@@ -89,7 +100,7 @@ else
   ((passed++))
 fi
 
-# Test 8: Check if claude-code loads
+# Test 9: Check if claude-code loads
 echo -n "✓ claude-code.nvim loads... "
 if nvim --headless -c 'lua require("claude-code")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
   echo -e "${RED}FAILED${NC}"
@@ -99,14 +110,14 @@ else
   ((passed++))
 fi
 
-# Test 9: Check if nui loads (noice dependency - it's a library, so skip direct test)
+# Test 10: Check if nui loads (noice dependency - it's a library, so skip direct test)
 echo -n "✓ nui.nvim present... "
 # nui is a library plugin, not directly loadable via require()
 # We'll verify it works through noice
 echo -e "${GREEN}OK (library)${NC}"
 ((passed++))
 
-# Test 10: Check if noice loads
+# Test 11: Check if noice loads
 echo -n "✓ noice.nvim loads... "
 if nvim --headless -c 'lua require("noice")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
   echo -e "${RED}FAILED${NC}"
@@ -116,7 +127,7 @@ else
   ((passed++))
 fi
 
-# Test 11: Check if nvim-surround loads
+# Test 12: Check if nvim-surround loads
 echo -n "✓ nvim-surround loads... "
 if nvim --headless -c 'lua require("nvim-surround")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
   echo -e "${RED}FAILED${NC}"
@@ -126,7 +137,7 @@ else
   ((passed++))
 fi
 
-# Test 12: Check if nvim-autopairs loads
+# Test 13: Check if nvim-autopairs loads
 echo -n "✓ nvim-autopairs loads... "
 if nvim --headless -c 'lua require("nvim-autopairs")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
   echo -e "${RED}FAILED${NC}"
@@ -136,7 +147,7 @@ else
   ((passed++))
 fi
 
-# Test 13: Check if todo-comments loads
+# Test 14: Check if todo-comments loads
 echo -n "✓ todo-comments.nvim loads... "
 if nvim --headless -c 'lua require("todo-comments")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
   echo -e "${RED}FAILED${NC}"
@@ -146,7 +157,17 @@ else
   ((passed++))
 fi
 
-# Test 14: Check LSP config
+# Test 15: Check if fidget loads
+echo -n "✓ fidget.nvim loads... "
+if nvim --headless -c 'lua require("fidget")' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
+  echo -e "${RED}FAILED${NC}"
+  ((failed++))
+else
+  echo -e "${GREEN}OK${NC}"
+  ((passed++))
+fi
+
+# Test 16: Check LSP config
 echo -n "✓ LSP configuration... "
 if nvim --headless -c 'lua vim.lsp' -c 'quitall' 2>&1 | grep -i "error" > /dev/null; then
   echo -e "${RED}FAILED${NC}"
@@ -156,7 +177,7 @@ else
   ((passed++))
 fi
 
-# Test 15: Run checkhealth (capture output)
+# Test 17: Run checkhealth (capture output)
 echo ""
 echo "📋 Running :checkhealth..."
 echo ""
