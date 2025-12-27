@@ -130,13 +130,14 @@ To customize the tmux session name, edit the `TMUX_SESSION_NAME` variable in
 ### System Management
 
 ```bash
-# macOS: Rebuild and switch system configuration
-darwin-rebuild switch --flake .#jaime
+# macOS: Rebuild and switch system configuration (includes home-manager)
+# -L flag shows detailed build logs
+sudo darwin-rebuild switch --flake .#jaime -L
 
 # Linux: Rebuild and switch NixOS configuration
 sudo nixos-rebuild switch --flake .#floki
 
-# Home Manager: Update user environment independently
+# Home Manager: Update user environment independently (rarely needed)
 home-manager switch --flake .#jaime
 ```
 
