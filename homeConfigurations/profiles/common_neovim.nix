@@ -515,6 +515,80 @@
           '';
       }
 
+      # Enhanced markdown rendering in Neovim
+      # https://github.com/MeanderingProgrammer/render-markdown.nvim
+      # Provides:
+      #   - Beautiful heading icons and highlighting
+      #   - Code block language icons and backgrounds
+      #   - Table rendering with borders
+      #   - Checkbox rendering with custom icons
+      #   - LaTeX formula rendering
+      #   - Callout/blockquote icons
+      # Dependencies:
+      #   - Treesitter: markdown, markdown_inline (already installed)
+      #   - Optional: html, latex, yaml parsers
+      #   - Nerd font for icons (we have this)
+      {
+        plugin = render-markdown-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require('render-markdown').setup({
+              -- Enable rendering by default
+              enabled = true,
+              -- Maximum file size to render (in MB) to avoid performance issues
+              max_file_size = 1.5,
+              -- Render in normal mode (not just when cursor is elsewhere)
+              render_modes = { 'n', 'c' },
+              -- Heading configuration
+              heading = {
+                -- Enable heading rendering
+                enabled = true,
+                -- Icons for each heading level (h1-h6)
+                icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+                -- Heading colors match level
+                backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+              },
+              -- Code block configuration
+              code = {
+                -- Enable code block rendering
+                enabled = true,
+                -- Show language icon and name
+                sign = true,
+                -- Style: 'full' (background), 'normal' (no background), 'language' (icon only)
+                style = 'full',
+                -- Left padding for code blocks
+                left_pad = 2,
+                right_pad = 2,
+              },
+              -- Bullet list configuration
+              bullet = {
+                enabled = true,
+                -- Custom icons for different list levels
+                icons = { '●', '○', '◆', '◇' },
+              },
+              -- Checkbox configuration
+              checkbox = {
+                enabled = true,
+                -- Icons for unchecked, checked, and custom states
+                unchecked = { icon = '󰄱 ' },
+                checked = { icon = '󰱒 ' },
+              },
+              -- Link configuration
+              link = {
+                enabled = true,
+                -- Show link icon
+                icon = '󰌹 ',
+              },
+            })
+
+            -- Toggle markdown rendering on/off
+            require("which-key").add({
+              { "<leader>tm", "<cmd>RenderMarkdown toggle<CR>", desc = "Toggle Markdown Rendering" },
+            })
+          '';
+      }
+
       # 🍨 Soothing pastel theme fsor (Neo)vim
       # https://github.com/catppuccin/nvim
       {
