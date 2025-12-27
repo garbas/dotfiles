@@ -326,6 +326,10 @@
         // mkHomeConfiguration {
           system = "aarch64-linux";
           name = "indigo";
+        }
+        // mkHomeConfiguration {
+          system = "x86_64-linux";
+          name = "floki";
         };
       darwinConfigurations =
         { }
