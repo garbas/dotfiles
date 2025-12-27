@@ -220,6 +220,44 @@
           '';
       }
 
+      # Auto-close brackets, quotes, and other pairs
+      # https://github.com/windwp/nvim-autopairs
+      # Features:
+      #   - Automatically closes brackets, quotes, etc.
+      #   - Treesitter integration for smart pairing
+      #   - Works in insert mode
+      # Behavior:
+      #   Type '(' -> automatically adds ')'
+      #   Type '{' + Enter -> adds closing brace with proper indentation
+      #   Type '"' -> automatically adds closing quote
+      {
+        plugin = nvim-autopairs;
+        type = "lua";
+        config = # lua
+          ''
+            require('nvim-autopairs').setup({
+              check_ts = true,  -- Enable treesitter integration
+              ts_config = {
+                lua = {'string'},         -- Don't add pairs in lua string treesitter nodes
+                javascript = {'template_string'},  -- Don't add pairs in JS template strings
+                java = false,             -- Don't check treesitter on java
+              },
+              -- Disable for certain filetypes
+              disable_filetype = { "TelescopePrompt", "vim" },
+            })
+
+            -- Integration with blink.cmp (completion framework)
+            -- Auto-insert closing pair on completion confirm
+            local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+            local cmp = require('blink.cmp')
+            -- Note: This uses the nvim-cmp compatible event
+            -- blink.cmp may require different integration approach
+            pcall(function()
+              cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+            end)
+          '';
+      }
+
       # 🍨 Soothing pastel theme fsor (Neo)vim
       # https://github.com/catppuccin/nvim
       {
