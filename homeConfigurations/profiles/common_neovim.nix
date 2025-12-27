@@ -403,6 +403,16 @@
           '';
       }
 
+      # Automatic detection of indentation settings
+      # https://github.com/tpope/vim-sleuth
+      # Features:
+      #   - Auto-detects tabs vs spaces from existing file content
+      #   - Detects indent size (2, 4, 8 spaces)
+      #   - Sets shiftwidth, expandtab, tabstop automatically
+      #   - Works silently in the background
+      # No configuration needed - works automatically on file open
+      vim-sleuth
+
       # 🍨 Soothing pastel theme fsor (Neo)vim
       # https://github.com/catppuccin/nvim
       {
