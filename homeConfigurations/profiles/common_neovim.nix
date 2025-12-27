@@ -2,14 +2,8 @@
 {
 
   # TODO:
-  # AI:
-  # - https://github.com/olimorris/codecompanion.nvim?tab=readme-ov-file
-  # - https://github.com/dlants/magenta.nvim
-  # - https://github.com/rakotomandimby/code-ai.nvim
-  # - https://github.com/yacineMTB/dingllm.nvim
-  # - https://github.com/charmbracelet/mods
-  # - https://github.com/yetone/avante.nvim/blob/main/cursor-planning-mode.md
-  # https://github.com/kndndrj/nvim-dbee
+  # - https://github.com/coder/claudecode.nvim (MCP integration - Claude sees buffers/selections)
+  # - https://github.com/kndndrj/nvim-dbee
   # https://github.com/jackMort/tide.nvim
   # https://github.com/samjwill/nvim-unception
   # https://github.com/NeogitOrg/neogit
@@ -494,37 +488,31 @@
 
       # Syntax highlighting (via treesitter)
       # https://github.com/nvim-treesitter/nvim-treesitter
-      #{
-      #  plugin = let ppp = filter (
-      #    p: builtins.abort "${p.language}"
-      #  ) pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
-      #  type = "lua";
-      #  config = # lua
-      #    ''
-      #      require('nvim-treesitter.configs').setup {
-      #        ensure_installed = {},
-      #        sync_install = false,
-      #        auto_install = false,
-      #        highlight = {
-      #          enable = true,
-      #          -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-      #          additional_vim_regex_highlighting = false,
-      #        },
-      #        incremental_selection = {
-      #          enable = true,
-      #          keymaps = {
-      #            init_selection = "vv",
-      #            node_incremental = "v",
-      #            scope_incremental = "b",
-      #            node_decremental = "V",
-      #          },
-      #        },
-      #        indent = {
-      #          enable = true
-      #        },
-      #      }
-      #    '';
-      #}
+      {
+        plugin = pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
+        type = "lua";
+        config = # lua
+          ''
+            require('nvim-treesitter.configs').setup {
+              highlight = {
+                enable = true,
+                additional_vim_regex_highlighting = false,
+              },
+              incremental_selection = {
+                enable = true,
+                keymaps = {
+                  init_selection = "vv",
+                  node_incremental = "v",
+                  scope_incremental = "b",
+                  node_decremental = "V",
+                },
+              },
+              indent = {
+                enable = true
+              },
+            }
+          '';
+      }
 
       # Navigation using Telescope
       # https://github.com/nvim-telescope/telescope.nvim/
@@ -608,43 +596,7 @@
       #  #    https://github.com/NixOS/nixpkgs/issues/340281
 
       # -- AI -----------------------------------------------------------------
-      # https://github.com/yetone/avante.nvim
-      {
-        plugin = avante-nvim;
-        type = "lua";
-        config = # lua
-          ''
-            require('avante_lib').load()
-            require('avante').setup({
-              -- See https://github.com/yetone/avante.nvim/blob/main/lua/avante/config.lua
 
-              provider = 'claude',
-              providers = {
-                claude = {
-                  endpoint = "https://api.anthropic.com",
-                  model = "claude-sonnet-4-20250514",
-                  api_key_name = "cmd:echo $ANTROPIC_API_KEY",
-                  timeout = 30000, -- Timeout in milliseconds
-                    extra_request_body = {
-                      temperature = 0.75,
-                      max_tokens = 20480,
-                    },
-                },
-              },
-
-              file_selector = {
-                provider = "telescope",
-                provider_opts = {},
-              },
-            })
-
-            require("which-key").add({
-              { "<leader>a", group = "AI" },
-            })
-          '';
-      }
-
-      #
       # https://github.com/zbirenbaum/copilot.lua
       {
         plugin = copilot-lua;
@@ -655,6 +607,34 @@
               suggestion = { enabled = false },
               panel = { enabled = false },
               copilot_node_command = "${pkgs.nodejs}/bin/node", -- Node.js version must be > 18.x
+            })
+          '';
+      }
+
+      # Lua functions library (dependency for claude-code.nvim)
+      # https://github.com/nvim-lua/plenary.nvim
+      plenary-nvim
+
+      # Claude Code CLI integration in Neovim terminal
+      # https://github.com/greggh/claude-code.nvim
+      {
+        plugin = claude-code-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require('claude-code').setup({
+              -- Use floating window for Claude Code terminal
+              window = {
+                type = "float",
+                width = 0.9,
+                height = 0.9,
+              },
+            })
+
+            require("which-key").add({
+              { "<leader>a", group = "AI" },
+              { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Claude Code" },
+              { "<leader>at", "<cmd>ClaudeCodeToggle<cr>", desc = "Toggle Claude Code" },
             })
           '';
       }
@@ -686,11 +666,6 @@
         config = # lua
           ''
             require('blink-compat').setup()
-            -- monkeypatch cmp.ConfirmBehavior for Avante
-            require("cmp").ConfirmBehavior = {
-              Insert = "insert",
-              Replace = "replace",
-            }
           '';
       }
       # Adds copilot suggestions as a source for Saghen/blink.cmp
@@ -1162,8 +1137,6 @@
                 theme = "catppuccin",
                 disabled_filetypes = {
                   'alpha',
-                  'Avante',
-                  'AvanteInput',
                 },
               },
               extensions = { 'oil', 'toggleterm' },
