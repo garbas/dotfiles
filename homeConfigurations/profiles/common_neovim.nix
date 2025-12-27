@@ -8,16 +8,7 @@
   # https://github.com/samjwill/nvim-unception
   # https://github.com/NeogitOrg/neogit
   # https://github.com/pwntester/octo.nvim
-  # # Better navigation
-  # {
-  #   plugin = leap-nvim;
-  #   type = "lua";
-  #   config = # lua
-  #     ''
-  #       require('leap').add_default_mappings()
-  #     '';
-  # }
-  #
+
   # # Better UI
   # {
   #   plugin = noice-nvim;
@@ -188,6 +179,44 @@
         config = # lua
           ''
             require('better_escape').setup()
+          '';
+      }
+
+      # Better navigation with leap motions
+      # https://codeberg.org/andyg/leap.nvim (moved from GitHub)
+      # Keybindings (Sneak-style, recommended):
+      #   s{char}{char}  - Leap forward to location
+      #   S{char}{char}  - Leap backward to location
+      #   gs{char}{char} - Leap from windows (cross-window)
+      #   x/X            - Exclusive selection (operator-pending)
+      {
+        plugin = leap-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            local leap = require('leap')
+
+            -- Sneak-style keybindings (recommended by upstream)
+            vim.keymap.set({'n', 'x', 'o'}, 's',  '<Plug>(leap-forward)')
+            vim.keymap.set({'n', 'x', 'o'}, 'S',  '<Plug>(leap-backward)')
+            vim.keymap.set('n',             'gs', '<Plug>(leap-from-window)')
+
+            -- Exclusive selection (operator-pending and visual)
+            vim.keymap.set({'x', 'o'}, 'x', '<Plug>(leap-forward-till)')
+            vim.keymap.set({'x', 'o'}, 'X', '<Plug>(leap-backward-till)')
+
+            -- Preview filtering: reduce visual noise
+            leap.opts.preview = function (ch0, ch1, ch2)
+              return not (
+                ch1:match('%s')
+                or (ch0:match('%a') and ch1:match('%a') and ch2:match('%a'))
+              )
+            end
+
+            -- Equivalence classes: group similar characters
+            leap.opts.equivalence_classes = {
+              ' \t\r\n', '([{', ')]}', '\'"`'
+            }
           '';
       }
 
