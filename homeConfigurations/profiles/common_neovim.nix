@@ -384,8 +384,55 @@
         type = "lua";
         config = # lua
           ''
+            -- Define Flox gradient colors (yellow to pink)
+            local colors = {
+              { name = "FloxGrad0", fg = "#ffd43c" },
+              { name = "FloxGrad1", fg = "#feca4c" },
+              { name = "FloxGrad2", fg = "#fec05c" },
+              { name = "FloxGrad3", fg = "#fdb66d" },
+              { name = "FloxGrad4", fg = "#fcac7d" },
+              { name = "FloxGrad5", fg = "#fca28d" },
+              { name = "FloxGrad6", fg = "#fb989d" },
+              { name = "FloxGrad7", fg = "#fa8eae" },
+              { name = "FloxGrad8", fg = "#fa84be" },
+              { name = "FloxGrad9", fg = "#f97ace" },
+            }
+
+            for _, color in ipairs(colors) do
+              vim.api.nvim_set_hl(0, color.name, { fg = color.fg })
+            end
+
             require('snacks').setup({
               bigfile = { enabled = true },
+              dashboard = {
+                enabled = true,
+                sections = {
+                  {
+                    text = {
+                      { "         ███████████████████████\n", hl = "FloxGrad9" },
+                      { "      ██████████████████████████\n", hl = "FloxGrad8" },
+                      { "   █████████████████████████████\n", hl = "FloxGrad7" },
+                      { "████████████████████████████████\n", hl = "FloxGrad7" },
+                      { "█████████████████████████████   \n", hl = "FloxGrad6" },
+                      { "███████████████████████         \n", hl = "FloxGrad6" },
+                      { "█████████████████               \n", hl = "FloxGrad5" },
+                      { "███████████                     \n", hl = "FloxGrad5" },
+                      { "           █████████████████████\n", hl = "FloxGrad4" },
+                      { "           █████████████████████\n", hl = "FloxGrad4" },
+                      { "           █████████████████████\n", hl = "FloxGrad3" },
+                      { "           █████████████████████\n", hl = "FloxGrad3" },
+                      { "███████████                     \n", hl = "FloxGrad2" },
+                      { "███████████                     \n", hl = "FloxGrad2" },
+                      { "███████████                     \n", hl = "FloxGrad1" },
+                      { "███████████                     \n", hl = "FloxGrad0" },
+                    },
+                    align = "center",
+                    padding = 1,
+                  },
+                  { section = "keys", gap = 1, padding = 1 },
+                  { section = "recent_files", cwd = true, icon = " ", title = "Recent Files", padding = 1 },
+                },
+              },
               indent = { enabled = true },
               notifier = { enabled = false },  -- Use nvim-notify (noice dependency)
               quickfile = { enabled = true },
@@ -394,6 +441,14 @@
               terminal = { enabled = true },  -- Replaces toggleterm-nvim
               words = { enabled = true },
               zen = { enabled = true },  -- Replaces zen-mode.nvim
+            })
+
+            -- Hide fold column on dashboard
+            vim.api.nvim_create_autocmd("FileType", {
+              pattern = "snacks_dashboard",
+              callback = function()
+                vim.opt_local.foldcolumn = "0"
+              end,
             })
 
             -- Keybindings for snacks features
