@@ -634,6 +634,10 @@
         type = "lua";
         config = # lua
           ''
+            -- NOTE: This configuration requires render-markdown.nvim v8.0+
+            -- The 'link' configuration table was introduced in v8.0
+            -- If using an older nixpkgs pin, the link configuration will cause errors
+            -- Nixpkgs unstable includes v8.0+ as of January 2025
             require('render-markdown').setup({
               -- Enable rendering by default
               enabled = true,
