@@ -358,11 +358,12 @@
       # Features enabled:
       #   bigfile - Disable heavy features for large files (better performance)
       #   indent - Visual indent guides with scope detection
-      #   notifier - Better notification system (timeout: 3s)
       #   quickfile - Faster file opening by deferring expensive operations
       #   scroll - Smooth scrolling animations
       #   statuscolumn - Enhanced gutter/sign column rendering
       #   words - LSP reference highlighting under cursor (like vim-illuminate)
+      # Features disabled:
+      #   notifier - Using nvim-notify instead (required by noice.nvim)
       # Keybindings:
       #   None - all features work automatically
       {
@@ -373,10 +374,7 @@
             require('snacks').setup({
               bigfile = { enabled = true },
               indent = { enabled = true },
-              notifier = {
-                enabled = true,
-                timeout = 3000,  -- 3 second timeout for notifications
-              },
+              notifier = { enabled = false },  -- Use nvim-notify instead (noice dependency)
               quickfile = { enabled = true },
               scroll = { enabled = true },
               statuscolumn = { enabled = true },
@@ -718,17 +716,8 @@
       mini-icons # https://github.com/echasnovski/mini.icons
       nvim-web-devicons # https://github.com/nvim-tree/nvim-web-devicons
 
-      # Indent guides for Neovim
-      # https://github.com/lukas-reineke/indent-blankline.nvim
-      {
-        plugin = indent-blankline-nvim;
-        type = "lua";
-        config = # lua
-          ''
-            require('ibl').setup()
-          '';
-
-      }
+      # Indent guides provided by snacks.nvim (snacks.indent)
+      # Removed indent-blankline-nvim to avoid duplication
 
       # 🧘 Distraction-free coding for Neovim
       # https://github.com/folke/zen-mode.nvim
@@ -1788,25 +1777,8 @@
           '';
       }
 
-      # Status column plugin that provides a configurable 'statuscolumn' and
-      # click handlers.
-      # https://github.com/luukvbaal/statuscol.nvim
-      {
-        plugin = statuscol-nvim;
-        type = "lua";
-        config = # lua
-          ''
-            local builtin = require("statuscol.builtin")
-            require("statuscol").setup({
-              relculright = true,
-              segments = {
-                { text = { builtin.foldfunc }, click = "v:lua.ScFa" },
-                { text = { builtin.lnumfunc, " " }, click = "v:lua.ScLa" },
-                { text = { "%s" }, click = "v:lua.ScSa" },
-              },
-            })
-          '';
-      }
+      # Status column provided by snacks.nvim (snacks.statuscolumn)
+      # Removed statuscol-nvim to avoid duplication
 
       # Not UFO in the sky, but an ultra fold in Neovim.
       # https://github.com/kevinhwang91/nvim-ufo
