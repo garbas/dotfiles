@@ -254,6 +254,7 @@
                     opentofu
                     _1password-cli
                     jq
+                    bats
                   ]
                   ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [ nix-darwin.packages.${system}.default ];
                 shellHook = ''

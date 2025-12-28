@@ -574,11 +574,16 @@
                 unchecked = { icon = '󰄱 ' },
                 checked = { icon = '󰱒 ' },
               },
-              -- Link configuration
+              -- Link configuration (v8.0+ API)
               link = {
-                enabled = true,
-                -- Show link icon
-                icon = '󰌹 ',
+                -- Image link icon
+                image = '󰥶 ',
+                -- Email autolink icon
+                email = '󰀓 ',
+                -- Hyperlink icon (for inline and URI autolinks)
+                hyperlink = '󰌹 ',
+                -- Highlight group for link icons
+                highlight = 'RenderMarkdownLink',
               },
             })
 
