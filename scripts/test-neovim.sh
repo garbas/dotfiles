@@ -137,14 +137,14 @@ test_plugin_loads() {
 
   # Check for CRITICAL errors only (ignore warnings about missing optional tools)
   # Errors we ignore:
-  #   - Missing image tools (magick, convert, gs, pdflatex, mmdc)
-  #   - Kitty graphics protocol (terminal-specific)
-  #   - Copilot LSP (requires auth)
-  #   - Tmux/terminal settings (environment-specific)
-  #   - render-markdown config warnings
-  #   - Treesitter query errors (need :TSUpdate)
+  #   - Missing image tools (magick, convert, gs, pdflatex, mmdc) - optional for render-markdown
+  #   - Kitty graphics protocol (terminal-specific) - not available in all terminals
+  #   - Copilot LSP (requires auth) - user may not have authenticated yet
+  #   - Tmux/terminal settings (environment-specific) - escape-time, TERM values
+  #   - Treesitter query errors (need :TSUpdate) - transient, fixable by user
+  #   - Generic "is not ready" - often false positives
   local critical_errors=$(grep -i "ERROR" "$checkhealth_file" | \
-    grep -v "magick\|convert\|gs\|pdflatex\|mmdc\|kitty graphics\|Copilot LSP\|escape-time\|TERM should be\|link.icon\|is not ready\|errors found in the query\|TSUpdate" || true)
+    grep -v "magick\|convert\|gs\|pdflatex\|mmdc\|kitty graphics\|Copilot LSP\|escape-time\|TERM should be\|is not ready\|errors found in the query\|TSUpdate" || true)
 
   if [ -n "$critical_errors" ]; then
     echo "# ⚠️  Found critical errors in :checkhealth" >&3
