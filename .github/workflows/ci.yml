@@ -48,5 +48,6 @@ jobs:
           # Export the built Neovim to PATH so tests use our custom configuration
           # The devShell has BATS but not our homeConfiguration's neovim
           # We need to explicitly use the neovim we built in the previous step
+          # Neovim is wrapped with all required tools (rg, fd, lazygit, ncurses) via extraPackages
           export PATH="$(nix build .#homeConfigurations.floki.config.programs.neovim.finalPackage --accept-flake-config --no-link --print-out-paths)/bin:$PATH"
           nix develop --command bats scripts/test-neovim.sh

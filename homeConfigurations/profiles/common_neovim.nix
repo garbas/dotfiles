@@ -48,6 +48,27 @@
   programs.neovim.withNodeJs = true;
   programs.neovim.withPython3 = true;
   programs.neovim.withRuby = true;
+
+  # Add required external tools to neovim's PATH
+  # These are dependencies for various plugins:
+  #   - ripgrep (rg): telescope, snacks picker/grep
+  #   - fd: snacks picker/explorer, telescope file finding
+  #   - lazygit: snacks.lazygit integration
+  #   - ncurses: provides infocmp for terminal capabilities
+  #   - imagemagick: render-markdown image conversion (magick, convert)
+  #   - ghostscript: render-markdown PDF support (gs)
+  #   - tectonic: render-markdown LaTeX rendering (modern, faster than pdflatex)
+  #   - mermaid-cli: render-markdown mermaid diagram support (mmdc)
+  programs.neovim.extraPackages = with pkgs; [
+    ripgrep
+    fd
+    lazygit
+    ncurses
+    imagemagick
+    ghostscript
+    tectonic
+    mermaid-cli
+  ];
   programs.neovim.defaultEditor = true;
 
   programs.neovim.extraLuaConfig = # lua

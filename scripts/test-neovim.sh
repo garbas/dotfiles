@@ -135,16 +135,16 @@ test_plugin_loads() {
 
   nvim --headless -c 'checkhealth' -c "write! ${checkhealth_file}" -c 'quitall' 2>/dev/null
 
-  # Check for CRITICAL errors only (ignore warnings about missing optional tools)
-  # Errors we ignore:
-  #   - Missing image tools (magick, convert, gs, pdflatex, mmdc) - optional for render-markdown
-  #   - Kitty graphics protocol (terminal-specific) - not available in all terminals
-  #   - Copilot LSP (requires auth) - user may not have authenticated yet
-  #   - Tmux/terminal settings (environment-specific) - escape-time, TERM values
-  #   - Treesitter query errors (need :TSUpdate) - transient, fixable by user
-  #   - Generic "is not ready" - often false positives
+  # Check for CRITICAL errors only
+  # We filter out errors that cannot be fixed in CI environment:
+  #   - Copilot LSP: requires user authentication
+  #   - kitty/wezterm/ghostty graphics: CI has no GUI terminal
+  #   - tmux settings (escape-time, TERM): environment-specific
+  #   - treesitter queries: transient, fixed by :TSUpdate
+  #   - "is not ready": vague, often false positive
+  #   - auto-dark-mode: macOS-specific, doesn't work on Linux
   local critical_errors=$(grep -i "ERROR" "$checkhealth_file" | \
-    grep -v "magick\|convert\|gs\|pdflatex\|mmdc\|kitty graphics\|Copilot LSP\|escape-time\|TERM should be\|is not ready\|errors found in the query\|TSUpdate" || true)
+    grep -v "Copilot LSP\|kitty\|wezterm\|ghostty\|escape-time\|TERM should be\|errors found in the query\|TSUpdate\|is not ready\|auto-dark-mode" || true)
 
   if [ -n "$critical_errors" ]; then
     echo "# ⚠️  Found critical errors in :checkhealth" >&3
