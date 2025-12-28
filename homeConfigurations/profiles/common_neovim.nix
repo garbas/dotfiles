@@ -1,4 +1,8 @@
-{ pkgs, customVimPlugins, ... }:
+{
+  pkgs,
+  customVimPlugins,
+  ...
+}:
 {
 
   # TODO:
@@ -355,15 +359,24 @@
 
       # Collection of 40+ small QoL plugins
       # https://github.com/folke/snacks.nvim
-      # Features enabled:
+      #
+      # FEATURES ENABLED:
       #   bigfile - Disable heavy features for large files (better performance)
-      #   indent - Visual indent guides with scope detection
+      #   indent - Visual indent guides with scope detection (replaces indent-blankline)
       #   quickfile - Faster file opening by deferring expensive operations
       #   scroll - Smooth scrolling animations
-      #   statuscolumn - Enhanced gutter/sign column rendering
+      #   statuscolumn - Enhanced gutter/sign column (replaces statuscol-nvim)
       #   words - LSP reference highlighting under cursor (like vim-illuminate)
-      # Features disabled:
+      #
+      # FEATURES NOT ENABLED (with reasons):
       #   notifier - Using nvim-notify instead (required by noice.nvim)
+      #   dashboard - Using alpha-nvim instead (more customizable start screen)
+      #   terminal - Using toggleterm-nvim instead (more mature, better splits)
+      #   zen - Using zen-mode.nvim instead (simpler API, well-established)
+      #   lazygit - Available but configured separately when needed
+      #   picker - Using telescope-nvim instead (more plugins, better ecosystem)
+      #   bufdelete - Native buffer deletion sufficient for now
+      #
       # Keybindings:
       #   None - all features work automatically
       {
@@ -374,7 +387,7 @@
             require('snacks').setup({
               bigfile = { enabled = true },
               indent = { enabled = true },
-              notifier = { enabled = false },  -- Use nvim-notify instead (noice dependency)
+              notifier = { enabled = false },  -- Use nvim-notify (noice dependency)
               quickfile = { enabled = true },
               scroll = { enabled = true },
               statuscolumn = { enabled = true },
@@ -721,6 +734,7 @@
 
       # 🧘 Distraction-free coding for Neovim
       # https://github.com/folke/zen-mode.nvim
+      # Note: snacks.nvim also has zen mode, but keeping this for simpler API
       {
         plugin = zen-mode-nvim;
         type = "lua";
