@@ -272,11 +272,14 @@
             })
 
             -- Integration with blink.cmp (completion framework)
+            -- NOTE: blink.cmp has built-in auto-bracket support based on semantic tokens,
+            -- so this integration may not be necessary. The code below attempts nvim-cmp
+            -- compatible integration but may not work correctly with blink.cmp's API.
+            -- If auto-pairing on completion doesn't work, it's safe to remove this block.
             -- Auto-insert closing pair on completion confirm
             local cmp_autopairs = require('nvim-autopairs.completion.cmp')
             local cmp = require('blink.cmp')
-            -- Note: This uses the nvim-cmp compatible event
-            -- blink.cmp may require different integration approach
+            -- Uses nvim-cmp compatible event API - may not work with blink.cmp
             pcall(function()
               cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
             end)

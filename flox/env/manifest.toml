@@ -71,6 +71,11 @@ fi
 common = '''
 # Starting/Attaching to TMUX session
 #
+# DISABLED: Automatic tmux session management is currently disabled.
+# Reason: User preference - no auto-activation of tmux when opening Flox environment.
+# To re-enable: Uncomment the code below and adjust to your preferences.
+#
+# When enabled, automatically creates/attaches to tmux session.
 # Skip tmux management if:
 # - Already inside a tmux session
 # - Inside a Neovim terminal
