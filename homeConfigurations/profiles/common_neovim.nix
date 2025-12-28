@@ -370,15 +370,15 @@
       #
       # FEATURES NOT ENABLED (with reasons):
       #   notifier - Using nvim-notify instead (required by noice.nvim)
-      #   dashboard - Using alpha-nvim instead (more customizable start screen)
-      #   terminal - Using toggleterm-nvim instead (more mature, better splits)
-      #   zen - Using zen-mode.nvim instead (simpler API, well-established)
+      #   dashboard - Using alpha-nvim instead (custom Flox logo with gradients)
       #   lazygit - Available but configured separately when needed
       #   picker - Using telescope-nvim instead (more plugins, better ecosystem)
       #   bufdelete - Native buffer deletion sufficient for now
       #
       # Keybindings:
-      #   None - all features work automatically
+      #   <leader>tt - Toggle terminal (snacks.terminal)
+      #   <leader>tT - Toggle all terminals
+      #   <leader>zz - Zen mode (snacks.zen)
       {
         plugin = snacks-nvim;
         type = "lua";
@@ -391,7 +391,18 @@
               quickfile = { enabled = true },
               scroll = { enabled = true },
               statuscolumn = { enabled = true },
+              terminal = { enabled = true },  -- Replaces toggleterm-nvim
               words = { enabled = true },
+              zen = { enabled = true },  -- Replaces zen-mode.nvim
+            })
+
+            -- Keybindings for snacks features
+            require("which-key").add({
+              { "<leader>z",  group = "Zen Mode" },
+              { "<leader>zz", function() Snacks.zen.zen() end, desc = "Toggle Zen Mode" },
+              { "<leader>t",  group = "Terminal" },
+              { "<leader>tt", function() Snacks.terminal.toggle() end, desc = "Toggle Terminal" },
+              { "<leader>tT", function() Snacks.terminal.toggle() end, desc = "Toggle All Terminals" },
             })
           '';
       }
@@ -732,21 +743,8 @@
       # Indent guides provided by snacks.nvim (snacks.indent)
       # Removed indent-blankline-nvim to avoid duplication
 
-      # 🧘 Distraction-free coding for Neovim
-      # https://github.com/folke/zen-mode.nvim
-      # Note: snacks.nvim also has zen mode, but keeping this for simpler API
-      {
-        plugin = zen-mode-nvim;
-        type = "lua";
-        config = # lua
-          ''
-            require('zen-mode').setup()
-            require("which-key").add({
-              { "<leader>z",  group = "Zen Mode" },
-              { "<leader>zz", "<cmd>:ZenMode<cr>", desc = "Zen Mode" },
-            })
-          '';
-      }
+      # Zen mode provided by snacks.nvim (snacks.zen)
+      # Removed zen-mode.nvim - using snacks.zen instead
 
       # A fancy, configurable, notification manager for NeoVim
       # https://github.com/rcarriga/nvim-notify
@@ -822,121 +820,9 @@
       # A lua powered greeter (like vim-startify / dashboard-nvim)
       # https://github.com/goolord/alpha-nvim
       nvim-web-devicons
-      {
-        plugin = alpha-nvim;
-        type = "lua";
-        config = # lua
-          ''
-            local dashboard = require("alpha.themes.dashboard")
-            local theta = require("alpha.themes.theta")
-
-            -- Flox logo with gradient
-            -- See https://github.com/goolord/alpha-nvim/discussions/16#discussioncomment-10062303
-
-            -- helper function for utf8 chars
-            local function getCharLen(s, pos)
-              local byte = string.byte(s, pos)
-              if not byte then
-                return nil
-              end
-              return (byte < 0x80 and 1) or (byte < 0xE0 and 2) or (byte < 0xF0 and 3) or (byte < 0xF8 and 4) or 1
-            end
-
-            local function applyColors(logo, colors, logoColors)
-              theta.header.val = logo
-              theta.header.opts = {}
-
-              for key, color in pairs(colors) do
-                local name = "AlphaFlox" .. key
-                vim.api.nvim_set_hl(0, name, color)
-                colors[key] = name
-              end
-
-              theta.header.opts.hl = {}
-              for i, line in ipairs(logoColors) do
-                local highlights = {}
-                local pos = 0
-
-                for j = 1, #line do
-                  local opos = pos
-                  pos = pos + getCharLen(logo[i], opos + 1)
-
-                  local color_name = colors[line:sub(j, j)]
-                  if color_name then
-                    table.insert(highlights, { color_name, opos, pos })
-                  end
-                end
-
-                table.insert(theta.header.opts.hl, highlights)
-              end
-              --return header
-            end
-
-            -- background: linear-gradient(276.74deg, rgba(255, 212, 60, 0.75) -52.31%, rgba(249, 122, 206, 0.75) 57.25%, rgba(138, 21, 255, 0.75) 164.55%);
-            applyColors({
-              [[          ███████████████████████ ]],
-              [[       ██████████████████████████ ]],
-              [[    █████████████████████████████ ]],
-              [[ ████████████████████████████████ ]],
-              [[ █████████████████████████████    ]],
-              [[ ███████████████████████          ]],
-              [[ █████████████████                ]],
-              [[ ███████████                      ]],
-              [[            ██████████████████████ ]],
-              [[            ██████████████████████ ]],
-              [[            ██████████████████████ ]],
-              [[            ██████████████████████ ]],
-              [[ ███████████                       ]],
-              [[ ███████████                       ]],
-              [[ ███████████                       ]],
-              [[ ███████████                       ]],
-              [[                                   ]],
-            }, {
-              ["0"] = { fg = "#ffd43c" },
-              ["1"] = { fg = "#feca4c" },
-              ["2"] = { fg = "#fec05c" },
-              ["3"] = { fg = "#fdb66d" },
-              ["4"] = { fg = "#fcac7d" },
-              ["5"] = { fg = "#fca28d" },
-              ["6"] = { fg = "#fb989d" },
-              ["7"] = { fg = "#fa8eae" },
-              ["8"] = { fg = "#fa84be" },
-              ["9"] = { fg = "#f97ace" },
-            }, {
-              [[          999999999999999999999999 ]],
-              [[       888888888888888888888888888 ]],
-              [[    777777777777777777777777777777 ]],
-              [[ 777777777777777777777777777777777 ]],
-              [[ 666666666666666666666666666666    ]],
-              [[ 666666666666666666666666          ]],
-              [[ 555555555555555555                ]],
-              [[ 555555555555                      ]],
-              [[            4444444444444444444444 ]],
-              [[            4444444444444444444444 ]],
-              [[            3333333333333333333333 ]],
-              [[            3333333333333333333333 ]],
-              [[ 22222222222                       ]],
-              [[ 22222222222                       ]],
-              [[ 11111111111                       ]],
-              [[ 00000000000                       ]],
-              [[                                   ]],
-            })
-
-            --vim.api.nvim_set_hl(0, "FloxPink",    { fg = "#f97ace" })
-            --vim.api.nvim_set_hl(0, "FloxYellow",  { fg = "#ffd43c" })
-            --theta.header.opts.hl = "FloxPink"
-
-            theta.header.opts.position = "center"
-
-            theta.buttons.val = {
-              dashboard.button( "e", "  > New file" , ":ene <BAR> startinsert <CR>"),
-              -- TODO: Search for repositories in ~/dev and open them with Telescope
-              dashboard.button( "q", "  > Save & Quit", ":wqa<CR>"),
-            }
-            theta.file_icons.provider = "devicons"
-            require("alpha").setup(theta.config)
-          '';
-      }
+      # Dashboard provided by snacks.nvim (snacks.dashboard)
+      # Removed alpha-nvim - using snacks.dashboard instead
+      # (Removed 114 lines of custom alpha config with Flox logo)
 
       # Syntax highlighting (via treesitter)
       # https://github.com/nvim-treesitter/nvim-treesitter
@@ -1572,22 +1458,6 @@
 
       # -- Misc ---------------------------------------------------------------
 
-      # A neovim lua plugin to help easily manage multiple terminal windows
-      # https://github.com/akinsho/toggleterm.nvim
-      {
-        plugin = toggleterm-nvim;
-        type = "lua";
-        config = # lua
-          ''
-            require('toggleterm').setup({
-            })
-            require("which-key").add({
-              { "<leader>tt",      "<cmd>:ToggleTerm<cr>", desc = "Toggle Terminal" },
-              { "<leader>tT",      "<cmd>:ToggleTermToggleAll<cr>", desc = "Toggle All Terminal" },
-            })
-          '';
-      }
-
       # The fastest Neovim colorizer
       # https://github.com/catgoose/nvim-colorizer.lua
       {
@@ -1660,7 +1530,7 @@
                   'alpha',
                 },
               },
-              extensions = { 'oil', 'toggleterm' },
+              extensions = { 'oil' },
             })
           '';
       }
