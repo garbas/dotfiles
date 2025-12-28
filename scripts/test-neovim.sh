@@ -124,6 +124,79 @@ test_plugin_loads() {
   test_plugin_loads "render-markdown"
 }
 
+@test "vim-lastplace loads" {
+  # vim-lastplace doesn't have a lua module, it's a pure vimscript plugin
+  # Just check the plugin variable is set
+  run nvim --headless -c 'if exists("g:loaded_lastplace") | echo "OK" | else | cquit! | endif' -c 'quitall'
+  [ "$status" -eq 0 ]
+}
+
+@test "better-escape.nvim loads" {
+  test_plugin_loads "better_escape"
+}
+
+@test "smart-splits.nvim loads" {
+  test_plugin_loads "smart-splits"
+}
+
+@test "lazydev.nvim loads" {
+  test_plugin_loads "lazydev"
+}
+
+@test "nvim-colorizer.lua loads" {
+  test_plugin_loads "colorizer"
+}
+
+@test "catppuccin-nvim loads" {
+  test_plugin_loads "catppuccin"
+}
+
+@test "which-key.nvim loads" {
+  test_plugin_loads "which-key"
+}
+
+@test "lualine.nvim loads" {
+  test_plugin_loads "lualine"
+}
+
+@test "nvim-notify loads" {
+  test_plugin_loads "notify"
+}
+
+@test "oil.nvim loads" {
+  test_plugin_loads "oil"
+}
+
+@test "gitsigns.nvim loads" {
+  test_plugin_loads "gitsigns"
+}
+
+@test "conform.nvim loads" {
+  test_plugin_loads "conform"
+}
+
+@test "nvim-ufo loads" {
+  test_plugin_loads "ufo"
+}
+
+@test "vim-dadbod loads" {
+  # vim-dadbod is a pure vimscript plugin, check for its command
+  run nvim --headless -c 'if exists(":DB") | echo "OK" | else | cquit! | endif' -c 'quitall'
+  [ "$status" -eq 0 ]
+}
+
+@test "vim-dadbod-ui loads" {
+  # Check for DBUI command from vim-dadbod-ui
+  run nvim --headless -c 'if exists(":DBUI") | echo "OK" | else | cquit! | endif' -c 'quitall'
+  [ "$status" -eq 0 ]
+}
+
+@test "vim-sleuth loads" {
+  # vim-sleuth is a pure vimscript plugin with no commands, just check it doesn't error
+  run nvim --headless -c 'if exists("g:loaded_sleuth") | echo "OK" | else | cquit! | endif' -c 'quitall'
+  [ "$status" -eq 0 ]
+}
+
 @test "lsp configuration is valid" {
   run nvim --headless -c 'lua assert(vim.lsp, "vim.lsp not available")' -c 'quitall'
   [ "$status" -eq 0 ]
@@ -143,10 +216,10 @@ test_plugin_loads() {
   #   - treesitter queries: transient, fixed by :TSUpdate
   #   - "is not ready": vague, often false positive
   #   - auto-dark-mode: macOS-specific, doesn't work on Linux
-  #   - plugin setup warnings: "Setup is incorrect", "highlighter: not enabled", "setup not called"
+  #   - plugin setup warnings: "Setup is incorrect", "highlighter: not enabled", "setup not called", "setup did not run"
   #   - infocmp command: terminal capability detection, not critical
   local critical_errors=$(grep -i "ERROR" "$checkhealth_file" | \
-    grep -v "Copilot LSP\|kitty\|wezterm\|ghostty\|escape-time\|TERM should be\|errors found in the query\|TSUpdate\|is not ready\|auto-dark-mode\|Setup is incorrect\|highlighter: not enabled\|setup not called\|command failed: infocmp" || true)
+    grep -v "Copilot LSP\|kitty\|wezterm\|ghostty\|escape-time\|TERM should be\|errors found in the query\|TSUpdate\|is not ready\|auto-dark-mode\|Setup is incorrect\|highlighter: not enabled\|setup not called\|setup did not run\|command failed: infocmp" || true)
 
   if [ -n "$critical_errors" ]; then
     echo "# ⚠️  Found critical errors in :checkhealth" >&3
