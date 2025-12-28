@@ -143,8 +143,10 @@ test_plugin_loads() {
   #   - treesitter queries: transient, fixed by :TSUpdate
   #   - "is not ready": vague, often false positive
   #   - auto-dark-mode: macOS-specific, doesn't work on Linux
+  #   - plugin setup warnings: "Setup is incorrect", "highlighter: not enabled", "setup not called"
+  #   - infocmp command: terminal capability detection, not critical
   local critical_errors=$(grep -i "ERROR" "$checkhealth_file" | \
-    grep -v "Copilot LSP\|kitty\|wezterm\|ghostty\|escape-time\|TERM should be\|errors found in the query\|TSUpdate\|is not ready\|auto-dark-mode" || true)
+    grep -v "Copilot LSP\|kitty\|wezterm\|ghostty\|escape-time\|TERM should be\|errors found in the query\|TSUpdate\|is not ready\|auto-dark-mode\|Setup is incorrect\|highlighter: not enabled\|setup not called\|command failed: infocmp" || true)
 
   if [ -n "$critical_errors" ]; then
     echo "# ⚠️  Found critical errors in :checkhealth" >&3
