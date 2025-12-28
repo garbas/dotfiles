@@ -75,16 +75,16 @@ common = '''
 # - Already inside a tmux session
 # - Inside a Neovim terminal
 # - Not in an interactive shell
-if [ -z "$TMUX" ] && [ -z "$NVIM_LISTEN_ADDRESS" ] && [ -n "$PS1" ]; then
-  # Check if the session already exists
-  if ! tmux has-session -t "$TMUX_SESSION_NAME" 2>/dev/null; then
-    echo "📺 Creating new tmux session: $TMUX_SESSION_NAME"
-    tmux new-session -s "$TMUX_SESSION_NAME" -n "main"
-  else
-    echo "📺 Attaching to existing tmux session: $TMUX_SESSION_NAME"
-    tmux attach-session -t "$TMUX_SESSION_NAME"
-  fi
-fi
+#if [ -z "$TMUX" ] && [ -z "$NVIM_LISTEN_ADDRESS" ] && [ -n "$PS1" ]; then
+#  # Check if the session already exists
+#  if ! tmux has-session -t "$TMUX_SESSION_NAME" 2>/dev/null; then
+#    echo "📺 Creating new tmux session: $TMUX_SESSION_NAME"
+#    tmux new-session -s "$TMUX_SESSION_NAME" -n "main"
+#  else
+#    echo "📺 Attaching to existing tmux session: $TMUX_SESSION_NAME"
+#    tmux attach-session -t "$TMUX_SESSION_NAME"
+#  fi
+#fi
 '''
 
 [options]
