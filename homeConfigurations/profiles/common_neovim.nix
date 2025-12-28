@@ -792,8 +792,17 @@
       }
 
       # Icons
-      mini-icons # https://github.com/echasnovski/mini.icons
-      nvim-web-devicons # https://github.com/nvim-tree/nvim-web-devicons
+      # Minimal icon provider plugin
+      # https://github.com/echasnovski/mini.icons
+      # Features: File type icons with Nerd Fonts, lighter alternative to nvim-web-devicons
+      # Used by: Various plugins as icon source
+      mini-icons
+
+      # File type icons using Nerd Fonts
+      # https://github.com/nvim-tree/nvim-web-devicons
+      # Features: Comprehensive icon set for filetypes with colors
+      # Dependency for: telescope, lualine, oil, and other UI plugins
+      nvim-web-devicons
 
       # Indent guides provided by snacks.nvim (snacks.indent)
       # Removed indent-blankline-nvim to avoid duplication
@@ -818,8 +827,10 @@
           '';
       }
 
-      # UI component library (dependency for noice.nvim)
+      # UI component library - popup/split/input components
       # https://github.com/MunifTanjim/nui.nvim
+      # Features: Provides UI primitives (borders, layouts, input fields, menus)
+      # Used by: noice.nvim and other modern UI plugins
       pkgs.vimPlugins.nui-nvim
 
       # Better UI for messages, cmdline and popups
@@ -988,9 +999,27 @@
 
       # Navigation using Telescope
       # https://github.com/nvim-telescope/telescope.nvim/
+
+      # C port of fzf sorter for telescope - significantly faster fuzzy finding
+      # https://github.com/nvim-telescope/telescope-fzf-native.nvim
+      # Features: FZF algorithm for better performance, case-sensitive/insensitive modes
+      # Note: Automatically enabled in telescope config below
       telescope-fzf-native-nvim
+
+      # File browser extension for telescope
+      # https://github.com/nvim-telescope/telescope-file-browser.nvim
+      # Keybinding: <leader>fF - Open file browser
+      # Features: Browse/create/delete/rename files with fuzzy finding
       telescope-file-browser-nvim
+
+      # GitHub integration for telescope (issues, PRs, gists)
+      # https://github.com/nvim-telescope/telescope-github.nvim
+      # Note: Keybindings currently disabled, planned to replace with octo.nvim
       telescope-github-nvim
+
+      # Use telescope for all LSP handler windows (definitions, references, etc.)
+      # https://github.com/gbrlsnchs/telescope-lsp-handlers.nvim
+      # Features: Prettier LSP views with fuzzy search instead of quickfix/location list
       telescope-lsp-handlers-nvim
       {
         plugin = telescope-nvim;
@@ -1083,12 +1112,16 @@
           '';
       }
 
-      # Lua functions library (dependency for claude-code.nvim)
+      # Lua functions library - "All the lua functions I don't want to write twice"
       # https://github.com/nvim-lua/plenary.nvim
+      # Features: Async functions, job control, path utilities, functional programming helpers
+      # Used by: telescope, gitsigns, claude-code, and many other plugins
       plenary-nvim
 
-      # Claude Code CLI integration in Neovim terminal
+      # Claude Code CLI integration - opens Claude Code in floating terminal
       # https://github.com/greggh/claude-code.nvim
+      # Keybindings: <leader>ac (open Claude), <leader>at (toggle)
+      # Features: 90% screen floating window, persistent terminal, quick AI access
       {
         plugin = claude-code-nvim;
         type = "lua";
@@ -1112,7 +1145,17 @@
       }
 
       # -- SQL ----------------------------------------------------------------
+
+      # Database interface - interact with databases from Neovim
+      # https://github.com/tpope/vim-dadbod
+      # Features: Supports PostgreSQL, MySQL, SQLite, MongoDB, Redis, and more
+      # Usage: Used with vim-dadbod-ui for visual database explorer
       vim-dadbod
+
+      # Database autocompletion for vim-dadbod
+      # https://github.com/kristijanhusak/vim-dadbod-completion
+      # Features: Table names, column names, SQL keywords
+      # Integration: Connected to blink.cmp as 'dadbod' source (see blink.cmp config below)
       vim-dadbod-completion
       {
         plugin = vim-dadbod-ui;
@@ -1127,11 +1170,16 @@
 
       # -- COMPLETION / SNIPPETS ----------------------------------------------
 
-      # Set of preconfigured snippets for different languages.
+      # Collection of preconfigured snippets for 20+ languages
       # https://github.com/rafamadriz/friendly-snippets
+      # Features: JS/TS, Python, Go, Rust, HTML, CSS, Markdown, and more
+      # Integration: Used by blink.cmp snippet source
       friendly-snippets
-      # Compatibility layer for using nvim-cmp sources on blink.cmp
+
+      # Compatibility layer to use nvim-cmp sources with blink.cmp
       # https://github.com/saghen/blink.compat
+      # Purpose: Bridges API differences between nvim-cmp and blink.cmp
+      # Why needed: Allows using vim-dadbod-completion (nvim-cmp source) with blink.cmp
       {
         plugin = blink-compat;
         type = "lua";
@@ -1140,8 +1188,11 @@
             require('blink-compat').setup()
           '';
       }
-      # Adds copilot suggestions as a source for Saghen/blink.cmp
+
+      # Copilot completion source for blink.cmp
       # https://github.com/giuxtaposition/blink-cmp-copilot
+      # Features: GitHub Copilot AI suggestions in completion menu
+      # Integration: Configured with high priority (score_offset 200) and custom icon
       blink-cmp-copilot
       # Performant, batteries-included completion plugin for Neovim
       # https://github.com/Saghen/blink.cmp
