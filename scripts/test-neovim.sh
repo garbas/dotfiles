@@ -126,8 +126,8 @@ test_plugin_loads() {
 
 @test "vim-lastplace loads" {
   # vim-lastplace is a pure vimscript plugin with no commands or lua modules
-  # Check that the plugin is in the runtimepath and its plugin file exists
-  run nvim --headless -c 'let found = len(filter(split(&rtp, ","), "v:val =~ \"vim-lastplace\"")) > 0' -c 'if found | echo "OK" | else | cquit! | endif' -c 'quitall'
+  # Check that the plugin is in the runtimepath
+  run nvim --headless -c 'if stridx(&rtp, "vim-lastplace") >= 0 | echo "OK" | else | cquit! | endif' -c 'quitall'
   [ "$status" -eq 0 ]
 }
 
