@@ -125,9 +125,15 @@ test_plugin_loads() {
 }
 
 @test "vim-lastplace loads" {
-  # vim-lastplace doesn't have a lua module, it's a pure vimscript plugin
-  # Just check the plugin variable is set
-  run nvim --headless -c 'if exists("g:loaded_lastplace") | echo "OK" | else | cquit! | endif' -c 'quitall'
+  # vim-lastplace is an autoload plugin that loads when opening files
+  # Create a temp file and open it to trigger the plugin
+  local test_file=$(mktemp)
+  echo "test content" > "$test_file"
+
+  # Open the file, which triggers lastplace autoload, then check the variable
+  run nvim --headless "$test_file" -c 'if exists("g:loaded_lastplace") | echo "OK" | else | cquit! | endif' -c 'quitall'
+
+  rm -f "$test_file"
   [ "$status" -eq 0 ]
 }
 
