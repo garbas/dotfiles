@@ -40,6 +40,8 @@
   # Custom vim/neovim plugins
   inputs.vimPlugin-auto-dark-mode.url = "github:f-person/auto-dark-mode.nvim";
   inputs.vimPlugin-auto-dark-mode.flake = false;
+  inputs.vimPlugin-telescope-tabs.url = "github:LukasPietzschmann/telescope-tabs";
+  inputs.vimPlugin-telescope-tabs.flake = false;
 
   inputs.flox.url = "github:flox/flox/release-1.7.9";
 
@@ -83,6 +85,8 @@
                   pname = normalizeName name;
                   version = toPluginVersion inputs.${name};
                   src = inputs.${name};
+                  # Disable require check for telescope-tabs (needs telescope.nvim at runtime)
+                  doCheck = if name == "vimPlugin-telescope-tabs" then false else true;
                 };
               }) pluginsNames
             );

@@ -1031,6 +1031,68 @@
       #   <leader>A - swap parameter with previous
       nvim-treesitter-textobjects
 
+      # -- TABS / TABLINE -----------------------------------------------------
+
+      # Highly configurable tabline plugin with custom tab names
+      # https://github.com/nanozuki/tabby.nvim
+      # Features:
+      #   - Custom tab names with :TabRename <name>
+      #   - Tab names persist in sessions (add 'globals' to sessionoptions)
+      #   - Declarative, highly customizable tabline
+      #   - Use tabs as workspace multiplexer (one tab per project)
+      # Keybindings:
+      #   :TabRename <name> - Rename current tab
+      #   <leader>tr - Rename tab (mapped below)
+      {
+        plugin = tabby-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require('tabby').setup({
+              preset = 'active_wins_at_tail',  -- Show active windows in each tab
+            })
+
+            -- Add 'globals' to sessionoptions to persist tab names
+            vim.opt.sessionoptions:append("globals")
+
+            require("which-key").add({
+              { "<leader>t", group = "Terminal/Tabs" },
+              { "<leader>tr", ":TabRename ", desc = "Rename Tab" },
+            })
+          '';
+      }
+
+      # Telescope extension for switching between tabs
+      # https://github.com/LukasPietzschmann/telescope-tabs
+      # Features:
+      #   - Fuzzy search through tabs
+      #   - Shows tab names from tabby.nvim
+      #   - Smart tab history (last shown tab stack)
+      # Keybindings:
+      #   <leader>bt - Browse tabs with telescope
+      {
+        plugin = custom-telescope-tabs;
+        type = "lua";
+        config = # lua
+          ''
+            require('telescope-tabs').setup({
+              -- Display tab names from tabby.nvim
+              entry_formatter = function(tab_id, buffer_ids, file_names, file_paths, is_current)
+                local tab_name = require('tabby.feature.tab_name').get(tab_id)
+                local marker = is_current and ' <' or ""
+                return string.format('%d: %s%s', tab_id, tab_name, marker)
+              end,
+              entry_ordinal = function(tab_id, buffer_ids, file_names, file_paths, is_current)
+                return require('tabby.feature.tab_name').get(tab_id)
+              end,
+            })
+
+            require("which-key").add({
+              { "<leader>bt", "<cmd>lua require('telescope-tabs').list_tabs()<cr>", desc = "Browse Tabs" },
+            })
+          '';
+      }
+
       # Navigation using Telescope
       # https://github.com/nvim-telescope/telescope.nvim/
 
