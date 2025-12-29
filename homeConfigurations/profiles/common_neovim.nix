@@ -441,7 +441,13 @@
               quickfile = { enabled = true },
               scroll = { enabled = true },
               statuscolumn = { enabled = true },
-              terminal = { enabled = true },  -- Replaces toggleterm-nvim
+              terminal = {
+                enabled = true,
+                win = {
+                  position = "right",  -- Open terminal on the right side
+                  width = 0.4,         -- 40% of screen width
+                },
+              },
               words = { enabled = true },
               zen = { enabled = true },  -- Replaces zen-mode.nvim
             })
@@ -1125,21 +1131,20 @@
       # Used by: telescope, gitsigns, claude-code, and many other plugins
       plenary-nvim
 
-      # Claude Code CLI integration - opens Claude Code in floating terminal
+      # Claude Code CLI integration - opens Claude Code in vertical split terminal
       # https://github.com/greggh/claude-code.nvim
       # Keybindings: <leader>ac (open Claude), <leader>at (toggle)
-      # Features: 90% screen floating window, persistent terminal, quick AI access
+      # Features: Right-side vertical split (40% width), persistent terminal, quick AI access
       {
         plugin = claude-code-nvim;
         type = "lua";
         config = # lua
           ''
             require('claude-code').setup({
-              -- Use floating window for Claude Code terminal
+              -- Use vertical split on the right for Claude Code terminal
               window = {
-                type = "float",
-                width = 0.9,
-                height = 0.9,
+                position = "vertical",  -- Opens on the right side
+                split_ratio = 0.4,      -- 40% of screen width
               },
             })
 
