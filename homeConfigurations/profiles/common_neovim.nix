@@ -164,6 +164,27 @@
 
       -- Use the system clipboard
       o.clipboard      = "unnamed"
+
+      -- Terminal mode keybindings
+      -- Problem: When using vim mode in zsh or Claude Code CLI, single <Esc> exits
+      -- vim mode in the shell, but doesn't exit Neovim's terminal mode, causing confusion.
+      --
+      -- Solution: Use double escape and <C-w> mappings for easy terminal navigation
+      -- without conflicting with shell vim mode.
+      --
+      -- Keybindings:
+      --   <Esc><Esc>  - Exit terminal mode (first Esc exits shell vim, second exits terminal)
+      --   <C-w>h/j/k/l - Navigate to left/down/up/right window directly from terminal
+      --   <C-w>        - Access all window commands (then use any <C-w> command)
+      --
+      -- Default Neovim way (<C-\><C-n>) still works but is harder to type.
+
+      vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+      vim.keymap.set('t', '<C-w>', '<C-\\><C-n><C-w>', { desc = 'Window commands from terminal' })
+      vim.keymap.set('t', '<C-w>h', '<C-\\><C-n><C-w>h', { desc = 'Move to left window' })
+      vim.keymap.set('t', '<C-w>j', '<C-\\><C-n><C-w>j', { desc = 'Move to bottom window' })
+      vim.keymap.set('t', '<C-w>k', '<C-\\><C-n><C-w>k', { desc = 'Move to top window' })
+      vim.keymap.set('t', '<C-w>l', '<C-\\><C-n><C-w>l', { desc = 'Move to right window' })
     '';
 
   programs.neovim.plugins =
