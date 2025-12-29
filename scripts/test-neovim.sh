@@ -129,9 +129,7 @@ test_plugin_loads() {
   # Check that the plugin file exists in the pack directory
   local output_file=$(mktemp)
 
-  nvim --headless -c 'let pack_dirs = glob(&packpath . "/pack/*/start/vim-lastplace", 0, 1)' \
-       -c 'if len(pack_dirs) > 0 | echo "FOUND:" . pack_dirs[0] | else | echo "NOT FOUND" | cquit! | endif' \
-       -c 'quitall' > "$output_file" 2>&1
+  nvim --headless -c 'let pack_dirs = glob(&packpath . "/pack/*/start/vim-lastplace", 0, 1)' -c 'if len(pack_dirs) > 0 | echo "FOUND:" . pack_dirs[0] | else | echo "NOT FOUND" | cquit! | endif' -c 'quitall' > "$output_file" 2>&1
 
   local exit_code=$?
   local output=$(cat "$output_file")
