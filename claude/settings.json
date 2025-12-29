@@ -3,7 +3,6 @@
     "type": "command",
     "command": "bash ~/.claude/statusline-command.sh"
   },
-  "alwaysThinkingEnabled": false,
   "editorMode": "vim",
   "mcpServers": {
     "flox": {
