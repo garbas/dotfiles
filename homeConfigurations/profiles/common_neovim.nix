@@ -773,12 +773,12 @@
       # https://github.com/farmergreg/vim-lastplace
       {
         plugin = vim-lastplace;
-        type = "viml";
-        config = # viml
+        type = "lua";
+        config = # lua
           ''
-            let g:lastplace_ignore = "gitcommit,gitrebase,hgcommit,svn,xxd"
-            let g:lastplace_ignore_buftype = "help,nofile,quickfix"
-            let g:lastplace_open_folds = 0
+            vim.g.lastplace_ignore = "gitcommit,gitrebase,hgcommit,svn,xxd"
+            vim.g.lastplace_ignore_buftype = "help,nofile,quickfix"
+            vim.g.lastplace_open_folds = 0
           '';
       }
 

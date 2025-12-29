@@ -126,9 +126,24 @@ test_plugin_loads() {
 
 @test "vim-lastplace loads" {
   # vim-lastplace is a pure vimscript plugin with no commands or lua modules
-  # Check that the plugin is in the runtimepath
-  run nvim --headless -c 'if stridx(&rtp, "vim-lastplace") >= 0 | echo "OK" | else | cquit! | endif' -c 'quitall'
-  [ "$status" -eq 0 ]
+  # Check that the plugin file exists in the pack directory
+  local output_file=$(mktemp)
+
+  nvim --headless -c 'let pack_dirs = glob(&packpath . "/pack/*/start/vim-lastplace", 0, 1)' \
+       -c 'if len(pack_dirs) > 0 | echo "FOUND:" . pack_dirs[0] | else | echo "NOT FOUND" | cquit! | endif' \
+       -c 'quitall' > "$output_file" 2>&1
+
+  local exit_code=$?
+  local output=$(cat "$output_file")
+
+  # Print output for debugging
+  echo "# vim-lastplace check output: $output" >&3
+  echo "# Exit code: $exit_code" >&3
+
+  rm -f "$output_file"
+
+  # Check exit code and that we found the plugin
+  [ "$exit_code" -eq 0 ] && [[ "$output" == *"FOUND:"* ]]
 }
 
 @test "better-escape.nvim loads" {
