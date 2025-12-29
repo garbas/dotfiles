@@ -39,6 +39,7 @@
 /claude/shell-snapshots/
 /claude/statsig/
 /claude/todos/
+/claude/*.md
 
 # Personal TODO tracking
 TODO.md
