@@ -437,7 +437,8 @@
         "nix-darwin": "nix-darwin",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "vimPlugin-auto-dark-mode": "vimPlugin-auto-dark-mode"
+        "vimPlugin-auto-dark-mode": "vimPlugin-auto-dark-mode",
+        "vimPlugin-telescope-tabs": "vimPlugin-telescope-tabs"
       }
     },
     "rust-analyzer-src": {
@@ -518,6 +519,22 @@
       "original": {
         "owner": "f-person",
         "repo": "auto-dark-mode.nvim",
+        "type": "github"
+      }
+    },
+    "vimPlugin-telescope-tabs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1756725211,
+        "narHash": "sha256-5NpH9+0ECrcKi8quPLpCHLSPTuzGETWtq4E+2jqUKio=",
+        "owner": "LukasPietzschmann",
+        "repo": "telescope-tabs",
+        "rev": "777b1f630f3d6a12a2e71635a82581c988d6da2e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "LukasPietzschmann",
+        "repo": "telescope-tabs",
         "type": "github"
       }
     }
