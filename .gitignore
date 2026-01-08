@@ -45,6 +45,9 @@
 /claude/telemetry/
 /claude/todos/
 
+# Backup directories
+/_flox.backup/
+
 # Personal TODO tracking
 TODO.md
 
