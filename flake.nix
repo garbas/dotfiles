@@ -43,7 +43,7 @@
   inputs.vimPlugin-telescope-tabs.url = "github:LukasPietzschmann/telescope-tabs";
   inputs.vimPlugin-telescope-tabs.flake = false;
 
-  inputs.flox.url = "github:flox/flox/release-1.7.9";
+  inputs.flox.url = "github:flox/flox/v1.8.1";
 
   outputs =
     {
