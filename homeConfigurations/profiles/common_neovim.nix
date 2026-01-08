@@ -1029,7 +1029,8 @@
       # Swap:
       #   <leader>a - swap parameter with next
       #   <leader>A - swap parameter with previous
-      nvim-treesitter-textobjects
+      # Note: nvim-treesitter-textobjects is included via nvim-treesitter.withAllGrammars
+      # and configured in the treesitter config block above
 
       # -- TABS / TABLINE -----------------------------------------------------
 

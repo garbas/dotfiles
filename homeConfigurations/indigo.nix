@@ -72,7 +72,7 @@
   nixpkgs.config.allowUnfreeRedistributable = true;
 
   home.packages = with pkgs; [
-    inputs.ghostty.packages.${system}.default.terminfo
+    inputs.ghostty.packages.${pkgs.stdenv.hostPlatform.system}.default.terminfo
   ];
 
   xdg.configFile."git/config-flox".text = ''
