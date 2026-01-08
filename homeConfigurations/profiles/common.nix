@@ -61,9 +61,6 @@
     window-padding-x = 10
     window-padding-y = 10
     theme = dark:catppuccin-mocha.conf,light:catppuccin-latte.conf
-
-    # Send macOS notification when bell is triggered (e.g., Claude Code needs attention)
-    macos-notification-on-bell = true
   '';
   xdg.configFile."ghostty/themes/catppuccin-latte.conf".source =
     "${inputs.catppuccin-ghostty}/themes/catppuccin-latte.conf";
