@@ -4,7 +4,8 @@
     "command": "bash ~/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "flox@flox-agentic": true
   },
   "editorMode": "vim",
   "mcpServers": {
