@@ -32,14 +32,18 @@
 # Claude Code runtime files
 # Note: /claude/ = runtime/cache files (ignored)
 #       /.claude/ = project instructions/config (tracked in git)
+/claude/*.md
 /claude/debug/
 /claude/file-history/
 /claude/history.jsonl
+/claude/plans/
+/claude/plugins/
 /claude/projects/
 /claude/shell-snapshots/
+/claude/stats-cache.json
 /claude/statsig/
+/claude/telemetry/
 /claude/todos/
-/claude/*.md
 
 # Personal TODO tracking
 TODO.md
