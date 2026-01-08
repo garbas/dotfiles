@@ -7,6 +7,7 @@
 {
   imports = [
     (import ./common_neovim.nix)
+    (import ./modules/onepassword-secrets.nix)
   ];
 
   home.username = user.username;
@@ -72,6 +73,18 @@
     "${inputs.catppuccin-ghostty}/themes/catppuccin-macchiato.conf";
   xdg.configFile."ghostty/themes/catppuccin-mocha.conf".source =
     "${inputs.catppuccin-ghostty}/themes/catppuccin-mocha.conf";
+
+  # Enable 1Password secrets loading
+  services.onepassword-secrets = {
+    enable = true;
+    account = "my.1password.com";
+    item = "Terminal";
+    secrets = [
+      "OPENAI_API_KEY"
+      "HF_TOKEN"
+      "CLAUDE_GITHUB_MCP_TOKEN"
+    ];
+  };
 
   programs.bat.enable = true;
 

@@ -206,7 +206,7 @@
                   # Nix formatting with RFC 166 style
                   nixfmt = {
                     enable = true;
-                    package = pkgs.nixfmt-rfc-style;
+                    package = pkgs.nixfmt;
                   };
                   # Terraform formatting
                   terraform-format = {
@@ -252,7 +252,7 @@
                   with pkgs;
                   [
                     nixd
-                    nixfmt-rfc-style
+                    nixfmt
                     home-manager.packages.${system}.default
                     markdownlint-cli
                     opentofu

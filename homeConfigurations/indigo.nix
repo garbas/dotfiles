@@ -71,12 +71,6 @@
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
 
-  programs.flox.enable = true;
-
-  programs.zsh.initContent = ''
-    #eval "$(flox activate -d ~ -m run)"
-  '';
-
   home.packages = with pkgs; [
     inputs.ghostty.packages.${system}.default.terminfo
   ];
