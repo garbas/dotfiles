@@ -79,7 +79,6 @@
     secrets = [
       "OPENAI_API_KEY"
       "HF_TOKEN"
-      "CLAUDE_GITHUB_MCP_TOKEN"
     ];
   };
 

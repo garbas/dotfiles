@@ -13,21 +13,21 @@
 /.pre-commit-config.yaml
 
 # Terraform/OpenTofu
+/terraform/*.auto.tfvars
 /terraform/*.tfstate
 /terraform/*.tfstate.*
 /terraform/*.tfstate.backup
-/terraform/.terraform/
-/terraform/.terraform.lock.hcl
-/terraform/terraform.tfvars
-/terraform/*.auto.tfvars
-/terraform/crash.log
-/terraform/crash.*.log
-/terraform/override.tf
-/terraform/override.tf.json
 /terraform/*_override.tf
 /terraform/*_override.tf.json
+/terraform/.terraform.lock.hcl
+/terraform/.terraform/
 /terraform/.terraformrc
+/terraform/crash.*.log
+/terraform/crash.log
+/terraform/override.tf
+/terraform/override.tf.json
 /terraform/terraform.rc
+/terraform/terraform.tfvars
 
 # Claude Code runtime files
 # Note: /claude/ = runtime/cache files (ignored)
@@ -36,6 +36,7 @@
 /claude/debug/
 /claude/file-history/
 /claude/history.jsonl
+/claude/ide/
 /claude/plans/
 /claude/plugins/
 /claude/projects/
