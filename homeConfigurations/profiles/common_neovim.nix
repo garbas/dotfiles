@@ -63,6 +63,7 @@
   #   - ghostscript: render-markdown PDF support (gs)
   #   - tectonic: render-markdown LaTeX rendering (modern, faster than pdflatex)
   #   - mermaid-cli: render-markdown mermaid diagram support (mmdc)
+  #   - tree-sitter: nvim-treesitter main branch requires CLI for parser management
   programs.neovim.extraPackages = with pkgs; [
     ripgrep
     fd
@@ -72,6 +73,7 @@
     ghostscript
     tectonic
     mermaid-cli
+    tree-sitter # Required by nvim-treesitter main branch
   ];
   programs.neovim.defaultEditor = true;
 
@@ -926,16 +928,45 @@
 
       # Syntax highlighting (via treesitter)
       # https://github.com/nvim-treesitter/nvim-treesitter
+      # NOTE: nvim-treesitter main branch (2025) is a complete rewrite.
+      # The old require('nvim-treesitter.configs').setup API is gone.
+      # Now using Neovim's built-in treesitter APIs directly.
+      #
+      # TODO: Re-add nvim-treesitter-textobjects once nixpkgs updates it
+      # to be compatible with the new treesitter main branch.
+      # See: https://github.com/NixOS/nixpkgs/issues/415438
       {
         plugin = pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
         type = "lua";
         config = # lua
           ''
-            require('nvim-treesitter.configs').setup {
-              highlight = {
-                enable = true,
-                additional_vim_regex_highlighting = false,
-              },
+            -- Enable treesitter highlighting and indentation for all filetypes
+            vim.api.nvim_create_autocmd("FileType", {
+              callback = function(args)
+                -- Check if treesitter parser exists for this filetype
+                local ok = pcall(vim.treesitter.start, args.buf)
+                if ok then
+                  -- Enable treesitter-based indentation
+                  vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                end
+              end,
+            })
+          '';
+      }
+
+      # Incremental selection (was removed from nvim-treesitter main branch)
+      # https://github.com/MeanderingProgrammer/treesitter-modules.nvim
+      # Keybindings:
+      #   vv - init selection
+      #   v  - expand selection to parent node
+      #   V  - shrink selection to child node
+      #   b  - expand selection to scope
+      {
+        plugin = pkgs.vimPlugins.treesitter-modules-nvim;
+        type = "lua";
+        config = # lua
+          ''
+            require("treesitter-modules").setup({
               incremental_selection = {
                 enable = true,
                 keymaps = {
@@ -945,92 +976,9 @@
                   node_decremental = "V",
                 },
               },
-              indent = {
-                enable = true
-              },
-              -- Textobjects configuration (requires nvim-treesitter-textobjects)
-              textobjects = {
-                select = {
-                  enable = true,
-                  lookahead = true,  -- Automatically jump forward to textobj
-                  keymaps = {
-                    -- Functions
-                    ["af"] = "@function.outer",
-                    ["if"] = "@function.inner",
-                    -- Classes
-                    ["ac"] = "@class.outer",
-                    ["ic"] = "@class.inner",
-                    -- Parameters/arguments
-                    ["aa"] = "@parameter.outer",
-                    ["ia"] = "@parameter.inner",
-                    -- Conditionals
-                    ["ai"] = "@conditional.outer",
-                    ["ii"] = "@conditional.inner",
-                    -- Loops
-                    ["al"] = "@loop.outer",
-                    ["il"] = "@loop.inner",
-                  },
-                },
-                move = {
-                  enable = true,
-                  set_jumps = true,  -- Add jumps to jumplist
-                  goto_next_start = {
-                    ["]m"] = "@function.outer",
-                    ["]]"] = "@class.outer",
-                  },
-                  goto_next_end = {
-                    ["]M"] = "@function.outer",
-                    ["]["] = "@class.outer",
-                  },
-                  goto_previous_start = {
-                    ["[m"] = "@function.outer",
-                    ["[["] = "@class.outer",
-                  },
-                  goto_previous_end = {
-                    ["[M"] = "@function.outer",
-                    ["[]"] = "@class.outer",
-                  },
-                },
-                swap = {
-                  enable = true,
-                  swap_next = {
-                    ["<leader>a"] = "@parameter.inner",
-                  },
-                  swap_previous = {
-                    ["<leader>A"] = "@parameter.inner",
-                  },
-                },
-              },
-            }
-
-            -- Make treesitter textobject movements repeatable with ; and ,
-            local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
-            vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next)
-            vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous)
+            })
           '';
       }
-
-      # Syntax aware textobjects, select, move, swap
-      # https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-      # Keybindings (configured in nvim-treesitter.configs above):
-      # Selection:
-      #   af/if - outer/inner function
-      #   ac/ic - outer/inner class
-      #   aa/ia - outer/inner argument/parameter
-      #   ai/ii - outer/inner conditional
-      #   al/il - outer/inner loop
-      # Movement:
-      #   ]m/[m - next/previous function start
-      #   ]M/[M - next/previous function end
-      #   ]]/[[ - next/previous class start
-      #   ][/[] - next/previous class end
-      #   ; - repeat last movement forward
-      #   , - repeat last movement backward
-      # Swap:
-      #   <leader>a - swap parameter with next
-      #   <leader>A - swap parameter with previous
-      # Note: nvim-treesitter-textobjects is included via nvim-treesitter.withAllGrammars
-      # and configured in the treesitter config block above
 
       # -- TABS / TABLINE -----------------------------------------------------
 

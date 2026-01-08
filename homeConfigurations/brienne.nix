@@ -9,7 +9,7 @@
     HOMEBREW_NO_ANALYTICS = "1"; # https://docs.brew.sh/Analytics
   };
 
-  programs.zsh.initExtra = ''
+  programs.zsh.initContent = ''
     eval "$(/opt/homebrew/bin/brew shellenv)"
   '';
 

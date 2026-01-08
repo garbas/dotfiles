@@ -39,7 +39,7 @@ in
       pkgs.jq
     ];
 
-    programs.zsh.initExtra = ''
+    programs.zsh.initContent = ''
       # Load secrets from 1Password
       _load_op_secrets() {
         # Only run if op is available

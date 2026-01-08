@@ -70,8 +70,10 @@ test_plugin_loads() {
   test_plugin_loads "nvim-treesitter"
 }
 
+# TODO: Re-enable when nixpkgs updates textobjects for treesitter main branch
+# See: https://github.com/NixOS/nixpkgs/issues/415438
 @test "nvim-treesitter-textobjects loads" {
-  test_plugin_loads "nvim-treesitter.textobjects.repeatable_move"
+  skip "textobjects temporarily disabled - incompatible with treesitter main branch"
 }
 
 @test "copilot.lua loads" {
