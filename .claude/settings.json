@@ -1,0 +1,71 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep", 
+      "Glob",
+      "LS",
+      "NotebookRead",
+      "WebFetch",
+      "WebSearch",
+      
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(less:*)",
+      "Bash(more:*)",
+      "Bash(wc:*)",
+      "Bash(file:*)",
+      
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(fd:*)",
+      "Bash(tree:*)",
+      "Bash(stat:*)",
+      "Bash(du:*)",
+      "Bash(df:*)",
+      
+      "Bash(pwd)",
+      "Bash(which:*)",
+      "Bash(whereis:*)",
+      "Bash(type:*)",
+      "Bash(echo:*)",
+      "Bash(env)",
+      "Bash(printenv:*)",
+      "Bash(uname:*)",
+      "Bash(hostname)",
+      "Bash(whoami)",
+      "Bash(id)",
+      "Bash(date:*)",
+      
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote:*)",
+      "Bash(git tag:*)",
+      "Bash(git stash list:*)",
+      "Bash(git blame:*)",
+      "Bash(git shortlog:*)",
+      
+      "Bash(npm list:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm outdated:*)",
+      "Bash(npm view:*)",
+      "Bash(pnpm list:*)",
+      "Bash(pnpm ls:*)",
+      "Bash(yarn list:*)",
+      "Bash(cargo tree:*)",
+      "Bash(pip list:*)",
+      "Bash(pip show:*)",
+      "Bash(pip freeze:*)",
+      
+      "Bash(nix:*)",
+      "Bash(flox list:*)",
+      "Bash(flox show:*)"
+    ]
+  }
+}
