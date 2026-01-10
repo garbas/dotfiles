@@ -49,6 +49,54 @@
 
     bash-language-server
 
+    # Custom scripts
+    (writeShellScriptBin "tmux-worktree" ''
+      # tmux-worktree: Create git worktree and open tmux window with claude
+      set -euo pipefail
+
+      NAME="$1"
+
+      if [ -z "$NAME" ]; then
+          tmux display-message "Error: No worktree name provided"
+          exit 1
+      fi
+
+      # Get the git root from the current pane's directory
+      PANE_PATH=$(tmux display-message -p '#{pane_current_path}')
+      REPO_ROOT=$(cd "$PANE_PATH" && ${git}/bin/git rev-parse --show-toplevel 2>/dev/null)
+
+      if [ -z "$REPO_ROOT" ]; then
+          tmux display-message "Error: Not in a git repository"
+          exit 1
+      fi
+
+      WORKTREE_PATH="$REPO_ROOT/w/$NAME"
+
+      # Check if worktree already exists
+      if [ -d "$WORKTREE_PATH" ]; then
+          tmux display-message "Worktree already exists, opening: $WORKTREE_PATH"
+      else
+          # Create the w/ directory if it doesn't exist
+          mkdir -p "$REPO_ROOT/w"
+
+          # Create worktree with new branch
+          if ! ${git}/bin/git -C "$REPO_ROOT" worktree add "$WORKTREE_PATH" -b "$NAME" 2>&1; then
+              tmux display-message "Error: Failed to create worktree"
+              exit 1
+          fi
+      fi
+
+      # Create new window in the worktree directory
+      tmux new-window -c "$WORKTREE_PATH" -n "$NAME"
+
+      # Split horizontally (left/right) and run claude on the right
+      tmux split-window -h -c "$WORKTREE_PATH" "claude"
+
+      # Focus the left pane (the shell)
+      tmux select-pane -L
+
+      tmux display-message "Worktree ready: w/$NAME"
+    '')
   ];
 
   # So happy when home manager is almost having Ghostty support hours after release:
@@ -300,6 +348,9 @@
     # Window with activity/bell - using Catppuccin yellow (#f9e2af)
     set-option -g window-status-activity-style "fg=#11111b,bg=#f9e2af,bold"
     set-option -g window-status-bell-style "fg=#11111b,bg=#f9e2af,bold"
+
+    # Worktree workflow: prefix + W prompts for name, creates worktree, opens split with claude
+    bind W command-prompt -p "Worktree name:" "run-shell 'tmux-worktree \"%%\"'"
 
   '';
 

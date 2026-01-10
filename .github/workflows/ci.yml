@@ -46,10 +46,13 @@ jobs:
 
       - name: "Build home-manager configuration"
         id: "build-hm"
+        env:
+          NIXPKGS_ALLOW_UNFREE: "1"
         run: |
           # Build the home-manager activation package
           # Using floki (x86_64-linux) since we're on ubuntu-latest
-          ACTIVATION_PATH=$(nix build .#homeConfigurations.floki.activationPackage --accept-flake-config --no-link --print-out-paths --print-build-logs)
+          # --impure needed for NIXPKGS_ALLOW_UNFREE (1password-cli is unfree)
+          ACTIVATION_PATH=$(nix build .#homeConfigurations.floki.activationPackage --accept-flake-config --impure --no-link --print-out-paths --print-build-logs)
           echo "path=$ACTIVATION_PATH" >> $GITHUB_OUTPUT
 
       - name: "Activate home-manager"

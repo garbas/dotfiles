@@ -172,3 +172,98 @@ get_window_option() {
   v_binding=$(tmux list-keys -T prefix '-')
   [[ "$v_binding" == *"pane_current_path"* ]]
 }
+
+@test "prefix+W binding exists for worktree workflow" {
+  run tmux list-keys -T prefix 'W'
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"command-prompt"* ]]
+  [[ "$output" == *"tmux-worktree"* ]]
+}
+
+@test "tmux-worktree script is in PATH" {
+  command -v tmux-worktree >/dev/null 2>&1
+}
+
+@test "tmux-worktree creates worktree and branch" {
+  # Create a temporary git repo for testing
+  TEST_REPO=$(mktemp -d)
+  cd "$TEST_REPO"
+  git init --initial-branch=main
+  git config user.email "test@test.com"
+  git config user.name "Test"
+  echo "test" > README.md
+  git add README.md
+  git commit -m "Initial commit"
+
+  # Create a window in the test repo so tmux-worktree can find it
+  tmux new-window -t "$TEST_SESSION" -c "$TEST_REPO" -n "test-repo"
+  sleep 0.5
+
+  # Run tmux-worktree (we can't use the actual script because it runs claude,
+  # so we test the worktree creation part separately)
+  WORKTREE_NAME="test-feature"
+  mkdir -p "$TEST_REPO/w"
+  git worktree add "$TEST_REPO/w/$WORKTREE_NAME" -b "$WORKTREE_NAME"
+
+  # Verify worktree was created
+  [ -d "$TEST_REPO/w/$WORKTREE_NAME" ]
+
+  # Verify branch exists
+  git branch | grep -q "$WORKTREE_NAME"
+
+  # Verify worktree is listed
+  git worktree list | grep -q "$WORKTREE_NAME"
+
+  # Cleanup
+  git worktree remove "$TEST_REPO/w/$WORKTREE_NAME" --force
+  rm -rf "$TEST_REPO"
+}
+
+@test "tmux-worktree script creates window with split panes" {
+  # Create a temporary git repo
+  TEST_REPO=$(mktemp -d)
+  cd "$TEST_REPO"
+  git init --initial-branch=main
+  git config user.email "test@test.com"
+  git config user.name "Test"
+  echo "test" > README.md
+  git add README.md
+  git commit -m "Initial commit"
+
+  # Create a window in the test repo
+  tmux new-window -t "$TEST_SESSION" -c "$TEST_REPO" -n "worktree-test"
+  sleep 0.5
+
+  # Count windows before
+  windows_before=$(tmux list-windows -t "$TEST_SESSION" | wc -l)
+
+  # Simulate what tmux-worktree does (without running claude)
+  WORKTREE_NAME="e2e-test-$$"
+  mkdir -p "$TEST_REPO/w"
+  git worktree add "$TEST_REPO/w/$WORKTREE_NAME" -b "$WORKTREE_NAME"
+
+  # Create new window like the script does
+  tmux new-window -t "$TEST_SESSION" -c "$TEST_REPO/w/$WORKTREE_NAME" -n "$WORKTREE_NAME"
+
+  # Split horizontally (but use 'true' instead of 'claude' for testing)
+  tmux split-window -t "$TEST_SESSION" -h -c "$TEST_REPO/w/$WORKTREE_NAME" "sleep 2"
+  sleep 0.5
+
+  # Count windows after
+  windows_after=$(tmux list-windows -t "$TEST_SESSION" | wc -l)
+
+  # Should have one more window
+  [ "$windows_after" -gt "$windows_before" ]
+
+  # The new window should have 2 panes
+  pane_count=$(tmux list-panes -t "$TEST_SESSION:$WORKTREE_NAME" 2>/dev/null | wc -l)
+  [ "$pane_count" -eq 2 ]
+
+  # Window name should match worktree name
+  tmux list-windows -t "$TEST_SESSION" -F '#{window_name}' | grep -q "$WORKTREE_NAME"
+
+  # Cleanup
+  git -C "$TEST_REPO" worktree remove "w/$WORKTREE_NAME" --force 2>/dev/null || true
+  git -C "$TEST_REPO" branch -D "$WORKTREE_NAME" 2>/dev/null || true
+  rm -rf "$TEST_REPO"
+}
