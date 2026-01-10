@@ -88,8 +88,9 @@
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreeRedistributable = true;
 
-  # Enable Touch ID for sudo
+  # Enable Touch ID for sudo (reattach enables it in tmux/screen)
   security.pam.services.sudo_local.touchIdAuth = true;
+  security.pam.services.sudo_local.reattach = true;
 
   #homebrew.enable = true;
   #homebrew.casks = [

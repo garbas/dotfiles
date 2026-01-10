@@ -241,16 +241,20 @@
   programs.tmux.extraConfig = ''
     set-option -g set-clipboard on
 
-    # disable automatic window renaming to respect manual names
-    set-option -g automatic-rename off
-    set-option -g allow-rename off
+    # Auto-rename window to current folder name
+    set-option -g status-interval 1
+    set-option -g automatic-rename on
+    set-option -g automatic-rename-format '#{b:pane_current_path}'
 
     # allow terminal scrolling
     set-option -g terminal-overrides 'xterm*:smcup@:rmcup@'
 
-    # easier to remember split pane command
-    bind | split-window -h
-    bind - split-window -v
+    # New windows start from home directory
+    bind c new-window -c "~"
+
+    # Splits stay in current directory
+    bind | split-window -h -c "#{pane_current_path}"
+    bind - split-window -v -c "#{pane_current_path}"
     unbind '"'
     unbind %
 
@@ -282,7 +286,8 @@
     set-option -g visual-activity off   # Don't show "Activity in window X" message
     set-option -g visual-bell off       # Don't show bell message
 
-    set-option -g status-left ""
+    set -g status-left-length 100
+    set -g status-left "#h "
     set-option -g @catppuccin_window_text " #W"
     set-option -g @catppuccin_window_current_text " #W"
     set-option -g status-right "#{E:@catppuccin_status_date_time}"
@@ -325,4 +330,5 @@
       src = "${./.}";
     }
   ];
+
 }
