@@ -56,6 +56,10 @@
       ...
     }@inputs:
     let
+      # Shared 1Password secrets helper
+      opSecretsLib = import ./lib/op-secrets.nix { lib = nixpkgs-unstable.lib; };
+      inherit (opSecretsLib) mkOpSecretsShellHook;
+
       mkCustomVimPlugins =
         { pkgs }:
         let
@@ -264,18 +268,21 @@
                 shellHook = ''
                   ${pre-commit-check.shellHook}
 
-                  # Load Cloudflare credentials from 1Password
-                  echo "🔑 Loading Cloudflare credentials from 1Password"
-                  eval $(op --account my.1password.com signin)
-                  __DOTFILES_SECRETS="$(op --account my.1password.com item get dotfiles --format json)"
+                  ${mkOpSecretsShellHook {
+                    cacheId = "devshell-dotfiles";
+                    account = "my.1password.com";
+                    item = "dotfiles";
+                    secrets = [
+                      "TERRAFORM_CLOUDFLARE_ACCOUNT_ID"
+                      "TERRAFORM_CLOUDFLARE_R2_ACCESS_KEY_ID"
+                    ];
+                  }}
 
-                  export TF_VAR_cloudflare_account_id=$(echo $__DOTFILES_SECRETS | jq -r '.fields[] | select(.label == "TERRAFORM_CLOUDFLARE_ACCOUNT_ID") | .value')
-                  export TF_VAR_cloudflare_api_token=$(echo $__DOTFILES_SECRETS | jq -r '.fields[] | select(.label == "TERRAFORM_CLOUDFLARE_R2_ACCESS_KEY_ID") | .value')
-
+                  # Re-export as TF_VAR_ prefixed variables
+                  export TF_VAR_cloudflare_account_id="$TERRAFORM_CLOUDFLARE_ACCOUNT_ID"
+                  export TF_VAR_cloudflare_api_token="$TERRAFORM_CLOUDFLARE_R2_ACCESS_KEY_ID"
                   echo "  ✓ Exported TF_VAR_cloudflare_account_id"
                   echo "  ✓ Exported TF_VAR_cloudflare_api_token"
-
-                  unset __DOTFILES_SECRETS
                 '';
               };
             }

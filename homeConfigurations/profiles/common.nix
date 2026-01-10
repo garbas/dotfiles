@@ -13,7 +13,6 @@
   home.username = user.username;
   home.stateVersion = "22.11";
 
-  home.sessionVariables.DIRENV_LOG_FORMAT = "";
   home.sessionVariables.EDITOR = "nvim";
   home.sessionVariables.FZF_DEFAULT_COMMAND = "rg --files";
   home.sessionVariables.GIT_EDITOR = "nvim";
@@ -87,6 +86,7 @@
   programs.direnv.enable = true;
   programs.direnv.enableZshIntegration = true;
   programs.direnv.nix-direnv.enable = true;
+  programs.direnv.silent = true;
 
   programs.eza.enable = true;
   programs.eza.enableZshIntegration = true;
