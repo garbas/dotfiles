@@ -25,12 +25,16 @@ jobs:
       - name: "Run flake check"
         run: "nix flake check"
 
-  neovim-test:
-    name: "Neovim test"
+  bats-tests:
+    name: "Test: ${{ matrix.suite }}"
     runs-on: "ubuntu-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: ["neovim", "tmux"]
     steps:
       - name: "Checkout repository"
-        uses: "actions/checkout@v5"
+        uses: "actions/checkout@v6"
 
       - name: "Install Nix"
         uses: "cachix/install-nix-action@v31"
@@ -40,18 +44,22 @@ jobs:
             substituters = https://cache.nixos.org https://cache.flox.dev https://devenv.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
 
-      - name: "Build Neovim configuration"
-        id: "build-neovim"
+      - name: "Build home-manager configuration"
+        id: "build-hm"
         run: |
-          # Build once and capture the output path for reuse in tests
-          NVIM_PATH=$(nix build .#homeConfigurations.floki.config.programs.neovim.finalPackage --accept-flake-config --no-link --print-out-paths --print-build-logs)
-          echo "path=$NVIM_PATH" >> $GITHUB_OUTPUT
+          # Build the home-manager activation package
+          # Using floki (x86_64-linux) since we're on ubuntu-latest
+          ACTIVATION_PATH=$(nix build .#homeConfigurations.floki.activationPackage --accept-flake-config --no-link --print-out-paths --print-build-logs)
+          echo "path=$ACTIVATION_PATH" >> $GITHUB_OUTPUT
 
-      - name: "Run Neovim test suite"
+      - name: "Activate home-manager"
         run: |
-          # Export the built Neovim to PATH so tests use our custom configuration
-          # The devShell has BATS but not our homeConfiguration's neovim
-          # We reuse the Neovim path from the previous build step (no duplicate build)
-          # Neovim is wrapped with all required tools (rg, fd, lazygit, ncurses) via extraPackages
-          export PATH="${{ steps.build-neovim.outputs.path }}/bin:$PATH"
-          nix develop --command bats scripts/test-neovim.sh
+          # Activate home-manager to get our configuration
+          ${{ steps.build-hm.outputs.path }}/activate
+
+      - name: "Run ${{ matrix.suite }} tests"
+        run: |
+          # Add home-manager profile to PATH
+          export PATH="$HOME/.nix-profile/bin:$PATH"
+          # Run tests using bats from devShell
+          nix develop --command bats tests/${{ matrix.suite }}.bats
