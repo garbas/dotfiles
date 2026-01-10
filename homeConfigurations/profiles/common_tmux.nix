@@ -150,6 +150,10 @@
     set -g pane-border-style fg=black
     set -g pane-active-border-style fg=brightred
 
+    # Dim inactive panes (brighter background for inactive, keeps text colors intact)
+    set -g window-style 'bg=#313244,fg=#cdd6f4'
+    set -g window-active-style 'bg=#1e1e2e,fg=#cdd6f4'
+
     # moving between panes vim style
     bind h select-pane -L
     bind j select-pane -D
