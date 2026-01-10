@@ -78,8 +78,8 @@ jobs:
           HM_PATH=$(nix build .#homeConfigurations.floki.activationPackage --accept-flake-config --impure --no-link --print-out-paths 2>/dev/null)
           echo "hm_path=${HM_PATH}" >> "$GITHUB_OUTPUT"
 
-          # Build tmux package separately
-          TMUX_PATH=$(nix build nixpkgs#tmux --no-link --print-out-paths 2>/dev/null)
+          # Build tmux package separately (take first output, ignore -man)
+          TMUX_PATH=$(nix build nixpkgs#tmux --no-link --print-out-paths 2>/dev/null | grep -v '\-man$' | head -1)
           echo "tmux_path=${TMUX_PATH}" >> "$GITHUB_OUTPUT"
 
       - name: "Run tmux tests"
