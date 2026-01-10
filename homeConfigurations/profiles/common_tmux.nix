@@ -122,6 +122,8 @@
   programs.tmux.plugins = with pkgs.tmuxPlugins; [
     catppuccin
     tmux-fzf
+    resurrect
+    continuum
   ];
   programs.tmux.extraConfig = ''
     set-option -g set-clipboard on
@@ -195,6 +197,11 @@
 
     # Worktree attach: prefix + w opens fzf picker to select existing worktree
     bind w run-shell "tmux-worktree-attach"
+
+    # Session restoration with resurrect + continuum
+    set -g @resurrect-capture-pane-contents 'on'
+    set -g @continuum-restore 'on'
+    set -g @continuum-save-interval '10'
 
   '';
 }
