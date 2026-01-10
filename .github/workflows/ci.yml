@@ -73,12 +73,14 @@ jobs:
           NIXPKGS_ALLOW_UNFREE: "1"
         run: |
           # Build home-manager generation to get tmux config files (no activation)
-          HM_PATH=$(nix build .#homeConfigurations.floki.activationPackage --accept-flake-config --impure --no-link --print-out-paths --print-build-logs)
-          echo "hm_path=$HM_PATH" >> $GITHUB_OUTPUT
+          # Capture only the output path, not build logs
+          nix build .#homeConfigurations.floki.activationPackage --accept-flake-config --impure --no-link --print-build-logs
+          HM_PATH=$(nix build .#homeConfigurations.floki.activationPackage --accept-flake-config --impure --no-link --print-out-paths 2>/dev/null)
+          echo "hm_path=${HM_PATH}" >> "$GITHUB_OUTPUT"
 
           # Build tmux package separately
-          TMUX_PATH=$(nix build nixpkgs#tmux --no-link --print-out-paths)
-          echo "tmux_path=$TMUX_PATH" >> $GITHUB_OUTPUT
+          TMUX_PATH=$(nix build nixpkgs#tmux --no-link --print-out-paths 2>/dev/null)
+          echo "tmux_path=${TMUX_PATH}" >> "$GITHUB_OUTPUT"
 
       - name: "Run tmux tests"
         env:
