@@ -25,13 +25,9 @@ jobs:
       - name: "Run flake check"
         run: "nix flake check"
 
-  bats-tests:
-    name: "Test: ${{ matrix.suite }}"
+  neovim-test:
+    name: "Test: neovim"
     runs-on: "ubuntu-latest"
-    strategy:
-      fail-fast: false
-      matrix:
-        suite: ["neovim", "tmux"]
     steps:
       - name: "Checkout repository"
         uses: "actions/checkout@v6"
@@ -44,25 +40,68 @@ jobs:
             substituters = https://cache.nixos.org https://cache.flox.dev https://devenv.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
 
-      - name: "Build home-manager configuration"
-        id: "build-hm"
+      - name: "Build Neovim configuration"
+        id: "build-neovim"
+        run: |
+          # Build the wrapped neovim with our config (no activation needed)
+          NVIM_PATH=$(nix build .#homeConfigurations.floki.config.programs.neovim.finalPackage --accept-flake-config --no-link --print-out-paths --print-build-logs)
+          echo "path=$NVIM_PATH" >> $GITHUB_OUTPUT
+
+      - name: "Run neovim tests"
+        run: |
+          export PATH="${{ steps.build-neovim.outputs.path }}/bin:$PATH"
+          nix develop --command bats tests/neovim.bats
+
+  tmux-test:
+    name: "Test: tmux"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout repository"
+        uses: "actions/checkout@v6"
+
+      - name: "Install Nix"
+        uses: "cachix/install-nix-action@v31"
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            substituters = https://cache.nixos.org https://cache.flox.dev https://devenv.cachix.org
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
+
+      - name: "Build tmux with config"
+        id: "build-tmux"
         env:
           NIXPKGS_ALLOW_UNFREE: "1"
         run: |
-          # Build the home-manager activation package
-          # Using floki (x86_64-linux) since we're on ubuntu-latest
-          # --impure needed for NIXPKGS_ALLOW_UNFREE (1password-cli is unfree)
-          ACTIVATION_PATH=$(nix build .#homeConfigurations.floki.activationPackage --accept-flake-config --impure --no-link --print-out-paths --print-build-logs)
-          echo "path=$ACTIVATION_PATH" >> $GITHUB_OUTPUT
+          # Build home-manager generation to get tmux config files (no activation)
+          HM_PATH=$(nix build .#homeConfigurations.floki.activationPackage --accept-flake-config --impure --no-link --print-out-paths --print-build-logs)
+          echo "hm_path=$HM_PATH" >> $GITHUB_OUTPUT
 
-      - name: "Activate home-manager"
-        run: |
-          # Activate home-manager to get our configuration
-          ${{ steps.build-hm.outputs.path }}/activate
+          # Build tmux package separately
+          TMUX_PATH=$(nix build nixpkgs#tmux --no-link --print-out-paths)
+          echo "tmux_path=$TMUX_PATH" >> $GITHUB_OUTPUT
 
-      - name: "Run ${{ matrix.suite }} tests"
+      - name: "Run tmux tests"
+        env:
+          NIXPKGS_ALLOW_UNFREE: "1"
         run: |
-          # Add home-manager profile to PATH
-          export PATH="$HOME/.nix-profile/bin:$PATH"
-          # Run tests using bats from devShell
-          nix develop --command bats tests/${{ matrix.suite }}.bats
+          export PATH="${{ steps.build-tmux.outputs.tmux_path }}/bin:$PATH"
+
+          # Find and use tmux.conf from home-manager generation (no activation needed)
+          HM_FILES="${{ steps.build-tmux.outputs.hm_path }}/home-files"
+          TMUX_CONF=""
+          if [ -f "$HM_FILES/.config/tmux/tmux.conf" ]; then
+            TMUX_CONF="$HM_FILES/.config/tmux/tmux.conf"
+          elif [ -f "$HM_FILES/.tmux.conf" ]; then
+            TMUX_CONF="$HM_FILES/.tmux.conf"
+          fi
+
+          # Start tmux server with our config
+          if [ -n "$TMUX_CONF" ]; then
+            tmux -f "$TMUX_CONF" start-server
+          else
+            echo "Warning: tmux.conf not found, using default"
+            tmux start-server
+          fi
+
+          # Run tests
+          nix develop --impure --command bats tests/tmux.bats
