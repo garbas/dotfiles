@@ -129,8 +129,12 @@
     set-option -g set-clipboard on
 
     # Allow passthrough of escape sequences (OSC 8 hyperlinks, etc.)
-    # This enables Cmd+click on URLs to work in Ghostty/iTerm2/etc.
     set-option -g allow-passthrough on
+
+    # Enable OSC 8 hyperlinks - allows clickable links in terminal
+    # With mouse mode on, use Cmd+Shift+click (macOS) or Ctrl+Shift+click (Linux)
+    # Requires tmux 3.4+ and server restart (tmux kill-server) after config change
+    set -as terminal-features ",*:hyperlinks"
 
     # Auto-rename window to current folder name
     set-option -g status-interval 1
