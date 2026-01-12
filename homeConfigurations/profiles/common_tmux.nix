@@ -128,6 +128,10 @@
   programs.tmux.extraConfig = ''
     set-option -g set-clipboard on
 
+    # Allow passthrough of escape sequences (OSC 8 hyperlinks, etc.)
+    # This enables Cmd+click on URLs to work in Ghostty/iTerm2/etc.
+    set-option -g allow-passthrough on
+
     # Auto-rename window to current folder name
     set-option -g status-interval 1
     set-option -g automatic-rename on
