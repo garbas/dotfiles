@@ -107,6 +107,11 @@ get_window_option() {
   [ "$result" = "on" ]
 }
 
+@test "terminal-features includes hyperlinks for OSC 8 links" {
+  result=$(tmux show-options -g "terminal-features" 2>/dev/null)
+  [[ "$result" == *"hyperlinks"* ]]
+}
+
 @test "monitor-activity is on" {
   result=$(get_option "monitor-activity")
   [ "$result" = "on" ]
