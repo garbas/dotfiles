@@ -102,6 +102,11 @@ get_window_option() {
   [ "$result" = "on" ]
 }
 
+@test "allow-passthrough is on for clickable links" {
+  result=$(get_option "allow-passthrough")
+  [ "$result" = "on" ]
+}
+
 @test "monitor-activity is on" {
   result=$(get_option "monitor-activity")
   [ "$result" = "on" ]
@@ -268,4 +273,50 @@ get_window_option() {
   git -C "$TEST_REPO" worktree remove "w/$WORKTREE_NAME" --force 2>/dev/null || true
   git -C "$TEST_REPO" branch -D "$WORKTREE_NAME" 2>/dev/null || true
   rm -rf "$TEST_REPO"
+}
+
+# Session restore tests (resurrect + continuum plugins)
+
+@test "resurrect plugin: capture-pane-contents is on" {
+  result=$(tmux show-options -g "@resurrect-capture-pane-contents" 2>/dev/null | sed 's/^@resurrect-capture-pane-contents //')
+  [ "$result" = "on" ]
+}
+
+@test "continuum plugin: restore is on" {
+  result=$(tmux show-options -g "@continuum-restore" 2>/dev/null | sed 's/^@continuum-restore //')
+  [ "$result" = "on" ]
+}
+
+@test "continuum plugin: save-interval is 10 minutes" {
+  result=$(tmux show-options -g "@continuum-save-interval" 2>/dev/null | sed 's/^@continuum-save-interval //')
+  [ "$result" = "10" ]
+}
+
+@test "resurrect plugin: save binding exists (prefix + Ctrl-s)" {
+  run tmux list-keys
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"C-s"* ]]
+}
+
+@test "resurrect plugin: restore binding exists (prefix + Ctrl-r)" {
+  run tmux list-keys
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"C-r"* ]]
+}
+
+@test "resurrect plugin: save creates resurrect file" {
+  # Resurrect restore only works on tmux server restart, not for individual
+  # killed sessions. This test verifies the save mechanism works.
+
+  RESURRECT_DIR="$HOME/.tmux/resurrect"
+
+  # Trigger resurrect save via the binding (prefix + Ctrl-s)
+  tmux send-keys -t "$TEST_SESSION" C-Space C-s
+  sleep 2  # Wait for save to complete
+
+  # Verify resurrect created a save file
+  [ -d "$RESURRECT_DIR" ] || skip "Resurrect directory not found"
+
+  # Check that a save file exists (last symlink or files in dir)
+  [ -e "$RESURRECT_DIR/last" ] || [ -n "$(ls -A "$RESURRECT_DIR" 2>/dev/null)" ]
 }

@@ -190,6 +190,26 @@ nix build .#nixosConfigurations.floki.config.system.build.toplevel
 nix build .#homeConfigurations.jaime.activationPackage
 ```
 
+### Applying Configuration Changes
+
+When making changes to Nix configuration files, Claude can rebuild and
+apply the configuration directly:
+
+```bash
+# Rebuild Darwin configuration (requires sudo)
+sudo darwin-rebuild switch --flake .#jaime -L
+
+# Reload tmux configuration without restarting
+tmux source-file ~/.config/tmux/tmux.conf
+
+# Or restart tmux server entirely (kills all sessions!)
+tmux kill-server
+```
+
+**Note:** After rebuilding, tmux config is automatically updated at
+`~/.config/tmux/tmux.conf`. Use `tmux source-file` to reload without
+losing sessions, or restart tmux if needed.
+
 ## Git Configuration Strategy
 
 The repository uses conditional git includes based on repository
@@ -479,5 +499,3 @@ nix-daemon is running on remote.
 
 Run garbage collection: `nix-collect-garbage -d` (add `sudo` for
 system-wide on NixOS)
-
-- Add a name I can refer to or number to each of the issues in my to-do.md
