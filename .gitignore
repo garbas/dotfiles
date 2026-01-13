@@ -33,6 +33,8 @@
 # Note: /claude/ = runtime/cache files (ignored)
 #       /.claude/ = project instructions/config (tracked in git)
 /claude/*.md
+/claude/cache/
+/claude/chrome/
 /claude/debug/
 /claude/file-history/
 /claude/history.jsonl
