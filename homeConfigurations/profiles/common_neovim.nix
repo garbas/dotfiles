@@ -1075,6 +1075,8 @@
             local actions_layout = require("telescope.actions.layout")
             require('telescope').setup {
               defaults = {
+                -- Exclude .git folder from all pickers (find_files, live_grep, etc.)
+                file_ignore_patterns = { "^%.git/", "/%.git/" },
                 mappings = {
                   i = {
                     -- Mapping <Esc> to quit in insert mode
@@ -1097,6 +1099,28 @@
                   filesize_limit = 0.3, -- in MB
                 },
               },
+              pickers = {
+                find_files = {
+                  -- Show hidden files like .github, .gitignore, etc.
+                  hidden = true,
+                  -- Still respect .gitignore (don't show .git folder contents)
+                  no_ignore = false,
+                },
+                live_grep = {
+                  -- Search in hidden files/folders like .github
+                  -- But exclude .git folder (too noisy)
+                  additional_args = function()
+                    return { "--hidden", "--glob", "!.git/" }
+                  end,
+                },
+                grep_string = {
+                  -- Search in hidden files/folders
+                  -- But exclude .git folder (too noisy)
+                  additional_args = function()
+                    return { "--hidden", "--glob", "!.git/" }
+                  end,
+                },
+              },
               extensions = {
                 fzf = {
                   fuzzy = true,                    -- false will only do exact matching
@@ -1117,10 +1141,11 @@
 
               { "<leader>f", group = "Files" },
               { "<leader>fF", "<cmd>Telescope file_browser<cr>", desc = "File browser" },
-              { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find File" },
+              { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find File (incl. hidden)" },
               { "<leader>fn", "<cmd>enew<cr>", desc = "New File" },
               { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Open Recent File" },
-              { "<leader>fs", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
+              { "<leader>fs", "<cmd>Telescope live_grep<cr>", desc = "Live grep (incl. hidden)" },
+              { "<leader>fk", "<cmd>Telescope keymaps<cr>", desc = "Search Keymaps" },
 
               -- TODO: replace with octo
               --{ "<leader>gH", group = "GitHub" },
