@@ -27,7 +27,8 @@
     nixd
 
     # AI
-    claude-code
+    llm-agents.claude-code
+    llm-agents.agent-deck
 
     # Misc
     asciinema
@@ -71,15 +72,15 @@
     "${inputs.catppuccin-ghostty}/themes/catppuccin-mocha.conf";
 
   # Enable 1Password secrets loading
-  services.onepassword-secrets = {
-    enable = true;
-    account = "my.1password.com";
-    item = "Terminal";
-    secrets = [
-      "OPENAI_API_KEY"
-      "HF_TOKEN"
-    ];
-  };
+  # services.onepassword-secrets = {
+  #   enable = true;
+  #   account = "my.1password.com";
+  #   item = "Terminal";
+  #   secrets = [
+  #     "OPENAI_API_KEY"
+  #     "HF_TOKEN"
+  #   ];
+  # };
 
   programs.bat.enable = true;
 

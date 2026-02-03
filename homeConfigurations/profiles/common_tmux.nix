@@ -6,15 +6,28 @@
       set -euo pipefail
 
       NAME="$1"
+      PANE_ID="$2"
 
       if [ -z "$NAME" ]; then
           tmux display-message "Error: No worktree name provided"
           exit 1
       fi
 
+      if [ -z "$PANE_ID" ]; then
+          tmux display-message "Error: No pane ID provided"
+          exit 1
+      fi
+
+      # Query the specific pane's current path using its ID
+      PANE_PATH=$(tmux display-message -t "$PANE_ID" -p '#{pane_current_path}')
+
+      if [ -z "$PANE_PATH" ]; then
+          tmux display-message "Error: Could not get pane path"
+          exit 1
+      fi
+
       # Get the MAIN repo root (not worktree root) from the current pane's directory
       # Using --git-common-dir to handle being inside a worktree
-      PANE_PATH=$(tmux display-message -p '#{pane_current_path}')
       GIT_COMMON_DIR=$(cd "$PANE_PATH" && ${git}/bin/git rev-parse --git-common-dir 2>/dev/null)
 
       if [ -z "$GIT_COMMON_DIR" ]; then
@@ -57,9 +70,23 @@
     (writeShellScriptBin "tmux-worktree-attach" ''
       set -euo pipefail
 
+      PANE_ID="$1"
+
+      if [ -z "$PANE_ID" ]; then
+          tmux display-message "Error: No pane ID provided"
+          exit 1
+      fi
+
+      # Query the specific pane's current path using its ID
+      PANE_PATH=$(tmux display-message -t "$PANE_ID" -p '#{pane_current_path}')
+
+      if [ -z "$PANE_PATH" ]; then
+          tmux display-message "Error: Could not get pane path"
+          exit 1
+      fi
+
       # Get the MAIN repo root (not worktree root) from the current pane's directory
       # Using --git-common-dir to handle being inside a worktree
-      PANE_PATH=$(tmux display-message -p '#{pane_current_path}')
       GIT_COMMON_DIR=$(cd "$PANE_PATH" && ${git}/bin/git rev-parse --git-common-dir 2>/dev/null)
 
       if [ -z "$GIT_COMMON_DIR" ]; then
@@ -201,10 +228,12 @@
     set-option -g window-status-bell-style "fg=#11111b,bg=#f9e2af,bold"
 
     # Worktree workflow: prefix + W prompts for name, creates worktree, opens split with claude
-    bind W command-prompt -p "Worktree name:" "run-shell 'tmux-worktree \"%%\"'"
+    # Pass pane_id so script can query that specific pane's path
+    bind W command-prompt -p "Worktree name:" "run-shell 'tmux-worktree \"%%\" \"#{pane_id}\"'"
 
     # Worktree attach: prefix + w opens fzf picker to select existing worktree
-    bind w run-shell "tmux-worktree-attach"
+    # Pass pane_id so script can query that specific pane's path
+    bind w run-shell "tmux-worktree-attach '#{pane_id}'"
 
     # Session restoration with resurrect + continuum
     set -g @resurrect-capture-pane-contents 'on'

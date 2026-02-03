@@ -43,7 +43,10 @@
   inputs.vimPlugin-telescope-tabs.url = "github:LukasPietzschmann/telescope-tabs";
   inputs.vimPlugin-telescope-tabs.flake = false;
 
-  inputs.flox.url = "github:flox/flox/v1.8.1";
+  inputs.llm-agents.url = "github:numtide/llm-agents.nix";
+
+  inputs.flox.url = "github:flox/flox/latest";
+  #inputs.flox.url = "github:flox/flox/release-1.9.0";
 
   outputs =
     {
@@ -53,12 +56,17 @@
       nix-darwin,
       home-manager,
       mac-app-util,
+      llm-agents,
       ...
     }@inputs:
     let
       # Shared 1Password secrets helper
       opSecretsLib = import ./lib/op-secrets.nix { lib = nixpkgs-unstable.lib; };
       inherit (opSecretsLib) mkOpSecretsShellHook;
+
+      overlays = [
+        llm-agents.overlays.default
+      ];
 
       mkCustomVimPlugins =
         { pkgs }:
@@ -107,13 +115,21 @@
         {
           "${name}" = home-manager.lib.homeManagerConfiguration rec {
             pkgs = import nixpkgs { inherit system; };
-            modules = [ (import (self + "/homeConfigurations/${name}.nix")) ];
             extraSpecialArgs = {
               inherit inputs system;
               customVimPlugins = mkCustomVimPlugins { inherit pkgs; };
               user = user // user.machines.${name};
               hostname = name;
             };
+            modules = [
+              (
+                { ... }:
+                {
+                  nixpkgs.overlays = overlays;
+                }
+              )
+              (import (self + "/homeConfigurations/${name}.nix"))
+            ];
           };
         };
 
@@ -124,7 +140,7 @@
           system ? "aarch64-darwin",
         }:
         let
-          pkgs = import nixpkgs { inherit system; };
+          pkgs = import nixpkgs { inherit system overlays; };
         in
         {
           "${name}" = nix-darwin.lib.darwinSystem {
@@ -141,6 +157,7 @@
               (
                 { ... }:
                 {
+                  nixpkgs.overlays = overlays;
                   home-manager.sharedModules = [ mac-app-util.homeManagerModules.default ];
                 }
               )
@@ -173,6 +190,7 @@
               (
                 { ... }:
                 {
+                  nixpkgs.overlays = overlays;
                   system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
                   nix.registry.nixpkgs.flake = nixpkgs;
                   networking.hostName = name;
@@ -198,6 +216,12 @@
               };
               pre-commit-check = inputs.git-hooks.lib.${system}.run {
                 src = ./.;
+                package = pkgs.pre-commit.overridePythonAttrs (
+                  final: prev: {
+                    checkInputs = [ ];
+                    checkPhase = false;
+                  }
+                );
                 hooks = {
                   # Markdown linting to enforce 80 column width
                   markdownlint = {
@@ -250,6 +274,11 @@
             {
               inherit inputs;
               checks.pre-commit = pre-commit-check;
+              packages.pre-commit = pkgs.pre-commit.overridePythonAttrs (_: {
+                nativeCheckInputs = [ ];
+                dontUsePytestCheck = true;
+                preCheck = "";
+              });
               devShells.default = pkgs.mkShell {
                 inherit system;
                 packages =
