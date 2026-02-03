@@ -216,12 +216,11 @@
               };
               pre-commit-check = inputs.git-hooks.lib.${system}.run {
                 src = ./.;
-                package = pkgs.pre-commit.overridePythonAttrs (
-                  final: prev: {
-                    checkInputs = [ ];
-                    checkPhase = false;
-                  }
-                );
+                package = pkgs.pre-commit.overridePythonAttrs (_: {
+                  nativeCheckInputs = [ ];
+                  dontUsePytestCheck = true;
+                  preCheck = "";
+                });
                 hooks = {
                   # Markdown linting to enforce 80 column width
                   markdownlint = {
