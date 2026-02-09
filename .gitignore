@@ -47,6 +47,9 @@
 /claude/statsig/
 /claude/telemetry/
 /claude/todos/
+/claude/paste-cache/
+/claude/rules/
+/claude/tasks/
 
 # Backup directories
 /_flox.backup/
