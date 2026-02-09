@@ -77,7 +77,7 @@
   ];
   programs.neovim.defaultEditor = true;
 
-  programs.neovim.extraLuaConfig = # lua
+  programs.neovim.initLua = # lua
     ''
       local g = vim.g
       local o = vim.opt

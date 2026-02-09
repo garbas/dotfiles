@@ -18,39 +18,47 @@
   home.sessionVariables.FZF_DEFAULT_COMMAND = "rg --files";
   home.sessionVariables.GIT_EDITOR = "nvim";
 
-  home.packages = with pkgs; [
-    # Nix tooling
-    devbox
-    devenv
-    nix-output-monitor
-    nix-tree
-    nixd
+  home.packages =
+    (with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
+      claude-code
+      ccstatusline
+      agent-deck
+      gemini-cli
+      opencode
+      pi
+      copilot-cli
+    ])
+    ++ (with pkgs; [
+      # Nix tooling
+      devbox
+      devenv
+      nix-output-monitor
+      nix-tree
+      nixd
 
-    # AI
-    llm-agents.claude-code
-    llm-agents.agent-deck
+      # AI
 
-    # Misc
-    asciinema
-    coreutils
-    entr
-    fd
-    file
-    gnutar
-    htop
-    jq
-    procs
-    ripgrep
-    tig
-    tmate
-    tree
-    unzip
-    wget
-    which
-    _1password-cli
+      # Misc
+      asciinema
+      coreutils
+      entr
+      fd
+      file
+      gnutar
+      htop
+      jq
+      procs
+      ripgrep
+      tig
+      tmate
+      tree
+      unzip
+      wget
+      which
+      _1password-cli
 
-    bash-language-server
-  ];
+      bash-language-server
+    ]);
 
   # So happy when home manager is almost having Ghostty support hours after release:
   # See https://github.com/nix-community/home-manager/pull/6235
