@@ -29,6 +29,10 @@
       copilot-cli
     ])
     ++ (with pkgs; [
+      # MCP servers
+      slack-mcp-server
+      incidentio-mcp
+
       # Nix tooling
       devbox
       devenv
@@ -56,6 +60,8 @@
       wget
       which
       _1password-cli
+
+      nodejs # needed for npx (mcp-remote) used by ZenHub and Fellow MCP servers
 
       bash-language-server
     ]);

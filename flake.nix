@@ -68,6 +68,44 @@
 
       overlays = [
         llm-agents.overlays.default
+        (final: prev: {
+          slack-mcp-server = (prev.buildGoModule.override { go = prev.go_1_24; }) {
+            pname = "slack-mcp-server";
+            version = "1.1.28";
+            src = prev.fetchFromGitHub {
+              owner = "korotovsky";
+              repo = "slack-mcp-server";
+              rev = "v1.1.28";
+              hash = "sha256-tA0JzWaMtYF0DC5xUm+hGAVEPvxBTMLau5lrhOQU9gU=";
+            };
+            vendorHash = "sha256-CEg7OHriwCD1XM4lOCNcIPiMXnHuerramWp4//9roOo=";
+            subPackages = [ "cmd/slack-mcp-server" ];
+            ldflags = [
+              "-s"
+              "-w"
+            ];
+            meta.mainProgram = "slack-mcp-server";
+          };
+          incidentio-mcp = prev.buildGoModule {
+            pname = "incidentio-mcp";
+            version = "0-unstable-2025-07-02";
+            src = prev.fetchFromGitHub {
+              owner = "incident-io";
+              repo = "incidentio-mcp-golang";
+              rev = "dc630c8886af21dc72d33cd1061bebe245aafbd2";
+              hash = "sha256-jFRLMcqRETsM8Uy65XyXcUG+C6TqGAJlIhdiB95F5DY=";
+            };
+            vendorHash = null;
+            subPackages = [ "cmd/mcp-server" ];
+            postPatch = "find . -type f -name '*.go' -exec sed -i 's/\\r$//' {} +";
+            ldflags = [
+              "-s"
+              "-w"
+            ];
+            postInstall = "mv $out/bin/mcp-server $out/bin/incidentio-mcp";
+            meta.mainProgram = "incidentio-mcp";
+          };
+        })
       ];
 
       mkCustomVimPlugins =
