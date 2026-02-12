@@ -82,7 +82,7 @@
         }
         {
           id = "8";
-          type = "cwd";
+          type = "current-working-dir";
           color = "blue";
         }
         {
