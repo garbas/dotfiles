@@ -28,6 +28,9 @@
       pi
       copilot-cli
     ])
+    ++ [
+      inputs.tgdash.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ]
     ++ (with pkgs; [
       # MCP servers
       slack-mcp-server

@@ -47,6 +47,8 @@
 
   inputs.llm-agents.url = "github:numtide/llm-agents.nix";
 
+  inputs.tgdash.url = "github:garbas/tgdash";
+
   inputs.flox.url = "github:flox/flox/latest";
   #inputs.flox.url = "github:flox/flox/release-1.9.0";
 
