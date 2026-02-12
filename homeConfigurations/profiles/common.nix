@@ -32,6 +32,7 @@
       # MCP servers
       slack-mcp-server
       incidentio-mcp
+      signal-cli # needed for Signal MCP server
 
       # Nix tooling
       devbox
