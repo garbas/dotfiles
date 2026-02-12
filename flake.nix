@@ -47,6 +47,21 @@
 
   inputs.llm-agents.url = "github:numtide/llm-agents.nix";
 
+  inputs.pyproject-nix.url = "github:pyproject-nix/pyproject.nix";
+  inputs.pyproject-nix.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
+  inputs.uv2nix.url = "github:pyproject-nix/uv2nix";
+  inputs.uv2nix.inputs.pyproject-nix.follows = "pyproject-nix";
+  inputs.uv2nix.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
+  inputs.pyproject-build-systems.url = "github:pyproject-nix/build-system-pkgs";
+  inputs.pyproject-build-systems.inputs.pyproject-nix.follows = "pyproject-nix";
+  inputs.pyproject-build-systems.inputs.uv2nix.follows = "uv2nix";
+  inputs.pyproject-build-systems.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
+  inputs.moviepy-mcp-src.url = "github:vizionik25/moviepy-mcp";
+  inputs.moviepy-mcp-src.flake = false;
+
   inputs.tgdash.url = "github:garbas/tgdash";
 
   inputs.flox.url = "github:flox/flox/latest";
@@ -107,6 +122,29 @@
             postInstall = "mv $out/bin/mcp-server $out/bin/incidentio-mcp";
             meta.mainProgram = "incidentio-mcp";
           };
+          moviepy-mcp =
+            let
+              workspace = inputs.uv2nix.lib.workspace.loadWorkspace {
+                workspaceRoot = inputs.moviepy-mcp-src;
+              };
+              pyprojectOverlay = workspace.mkPyprojectOverlay {
+                sourcePreference = "wheel";
+              };
+              python = prev.python312;
+              pythonSet =
+                (prev.callPackage inputs.pyproject-nix.build.packages { inherit python; }).overrideScope
+                  (
+                    prev.lib.composeManyExtensions [
+                      inputs.pyproject-build-systems.overlays.wheel
+                      pyprojectOverlay
+                    ]
+                  );
+              venv = pythonSet.mkVirtualEnv "moviepy-mcp-env" workspace.deps.default;
+            in
+            prev.writeShellScriptBin "moviepy-mcp" ''
+              export PATH="${prev.lib.makeBinPath [ prev.ffmpeg ]}"''${PATH:+:$PATH}
+              exec ${venv}/bin/python -m video_gen_service.mcp_server "$@"
+            '';
         })
       ];
 
