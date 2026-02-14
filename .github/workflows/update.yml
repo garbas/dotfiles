@@ -23,8 +23,7 @@ jobs:
 
       - name: "Install Flox"
         run: |
-          curl -fsSL https://downloads.flox.dev/by-env/stable/install.sh | bash
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          nix profile install "github:flox/flox/latest"
 
       - name: "Update Nix flake inputs"
         id: "nix-update"
