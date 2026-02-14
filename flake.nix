@@ -427,6 +427,9 @@
           pono = {
             sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICut/WcUHHbTfFiE+5OHIrQguBbC7bXgkRwbPqEK0PcD";
           };
+          tyrion = {
+            sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO/UvlzfVRvsI8bvy/PE2CTGErPUSRzsCLebGb6Ytc78";
+          };
         };
       };
     in
@@ -434,10 +437,6 @@
     // {
       homeConfigurations =
         { }
-        // mkNixOSConfiguration {
-          system = "x86_64-linux";
-          name = "tyrion";
-        }
         // mkHomeConfiguration {
           system = "aarch64-darwin";
           name = "jaime";
@@ -474,14 +473,13 @@
           system = "x86_64-linux";
           name = "pono";
         }
-        # aws machine (old)
-        // mkNixOSConfiguration {
-          system = "aarch64-linux";
-          name = "cercei";
-        } # vm on jaime (not used that much)
         // mkNixOSConfiguration {
           system = "x86_64-linux";
           name = "floki";
+        }
+        // mkNixOSConfiguration {
+          system = "x86_64-linux";
+          name = "tyrion";
         };
     };
 }
