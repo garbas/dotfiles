@@ -92,6 +92,82 @@ slack-mcp-server, incidentio-mcp, moviepy-mcp
 | XF86Audio* | volume/media controls |
 | XF86MonBrightness* | backlight |
 
+## Tmux Shortcuts (prefix: Ctrl+Space)
+
+| Key | Action |
+| --- | ------ |
+| prefix + \| | split pane horizontally |
+| prefix + - | split pane vertically |
+| prefix + h/j/k/l | navigate panes (vim-style) |
+| prefix + H/J/K/L | resize panes |
+| prefix + c | new window (from home dir) |
+| prefix + [ | enter copy mode (vi keys) |
+| prefix + I | install tmux plugins (TPM) |
+
+Plugins: catppuccin theme, tmux-fzf, resurrect
+(session save/restore), continuum (auto-save).
+Mouse enabled. Base index 1.
+
+## Neovim Shortcuts (leader: Space)
+
+### Navigation
+
+| Key | Action |
+| --- | ------ |
+| s / S | leap forward / backward |
+| gs | leap cross-window |
+| leader+ff | find files (telescope) |
+| leader+fs | live grep |
+| leader+fr | recent files |
+| leader+fF | file browser |
+| leader+bb | list buffers |
+| leader+fk | search keymaps |
+| leader+h | help tags |
+
+### Editing
+
+| Key | Action |
+| --- | ------ |
+| ys{motion}{char} | add surround |
+| ds{char} | delete surround |
+| cs{old}{new} | change surround |
+| ]t / [t | next/prev TODO comment |
+| leader+ft | find all TODOs |
+
+### Code and UI
+
+| Key | Action |
+| --- | ------ |
+| leader+o | toggle aerial outline |
+| { / } | prev/next symbol (aerial) |
+| leader+tt | toggle terminal |
+| leader+zz | zen mode |
+| leader+oo | toggle overseer tasks |
+| leader+or | run task |
+| leader+tm | toggle markdown rendering |
+| leader+w | close buffer |
+| leader+q | save and exit |
+| Esc Esc | exit terminal mode |
+
+LSP keybinds follow neovim defaults (gd, gr, K, etc).
+
+## Lazygit
+
+Lazygit uses default keybinds (catppuccin mocha theme).
+Launch with `lazygit` or `lg` alias.
+
+| Key | Action |
+| --- | ------ |
+| space | stage/unstage file |
+| a | stage all |
+| c | commit |
+| P | push |
+| p | pull |
+| [ / ] | switch panels |
+| / | filter |
+| ? | show all keybinds |
+
+
 ## Config Sources
 
 - Machine: `nixosConfigurations/tyrion.nix`
