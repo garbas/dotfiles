@@ -105,7 +105,7 @@
           };
           incidentio-mcp = prev.buildGoModule {
             pname = "incidentio-mcp";
-            version = "0-unstable-2025-07-02";
+            version = "0-unstable-2026-01-30";
             src = prev.fetchFromGitHub {
               owner = "incident-io";
               repo = "incidentio-mcp-golang";
