@@ -16,6 +16,11 @@
     chromium
     pavucontrol
     networkmanagerapplet
+    playerctl
+    grim
+    slurp
+    cliphist
+    mako
   ];
 
   wayland.windowManager.hyprland = {
@@ -26,14 +31,35 @@
       monitor = [ ", preferred, auto, 1" ];
 
       general = {
-        gaps_in = 5;
-        gaps_out = 10;
+        gaps_in = 0;
+        gaps_out = 0;
         border_size = 2;
         layout = "dwindle";
       };
 
+      animations = {
+        enabled = false;
+      };
+
       decoration = {
-        rounding = 5;
+        rounding = 0;
+        blur = {
+          enabled = false;
+        };
+        shadow = {
+          enabled = false;
+        };
+      };
+
+      misc = {
+        vfr = true;
+        disable_hyprland_logo = true;
+        disable_splash_rendering = true;
+        no_direct_scanout = true;
+      };
+
+      render = {
+        explicit_sync = false;
       };
 
       input = {
@@ -92,6 +118,13 @@
 
         # switch between recent workspaces
         "$mod, Tab, workspace, previous"
+
+        # screenshots
+        ", Print, exec, grim -g \"\$(slurp)\" - | wl-copy -t image/png"
+        "$mod, Print, exec, grim - | wl-copy -t image/png"
+
+        # clipboard history
+        "$mod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
       ];
 
       bindl = [
@@ -113,6 +146,9 @@
 
       exec-once = [
         "waybar"
+        "mako"
+        "wl-paste --type text --watch cliphist store"
+        "wl-paste --type image --watch cliphist store"
       ];
     };
   };
