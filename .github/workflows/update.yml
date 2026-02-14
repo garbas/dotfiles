@@ -34,6 +34,19 @@ jobs:
           cat nix-update.log >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+      - name: "Update custom overlay packages"
+        id: "pkg-update"
+        run: |
+          nix run nixpkgs#nix-update -- \
+            --flake --version stable slack-mcp-server \
+            2>&1 | tee -a pkg-update.log || true
+          nix run nixpkgs#nix-update -- \
+            --flake --version branch=main incidentio-mcp \
+            2>&1 | tee -a pkg-update.log || true
+          echo "output<<EOF" >> $GITHUB_OUTPUT
+          cat pkg-update.log >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: "Update Flox environment"
         id: "flox-update"
         run: |
@@ -51,15 +64,16 @@ jobs:
       - name: "Create Pull Request"
         uses: "peter-evans/create-pull-request@v8"
         with:
-          commit-message: "chore: update Nix flakes and Flox dependencies"
-          title: "chore: update Nix flakes and Flox dependencies"
+          commit-message: "chore: update dependencies and custom packages"
+          title: "chore: update dependencies and custom packages"
           body: |
             ## Automated Dependency Update
 
-            This PR updates Nix flake inputs and Flox environment dependencies to their latest versions.
+            This PR updates Nix flake inputs, custom overlay packages, and Flox environment dependencies.
 
             ### Changes
             - Updated Nix flake.lock with latest input versions
+            - Updated custom overlay packages (slack-mcp-server, incidentio-mcp)
             - Updated Flox environment manifest with latest package versions
 
             ### Verification
@@ -70,6 +84,14 @@ jobs:
 
             ```
             ${{ steps.nix-update.outputs.output }}
+            ```
+            </details>
+
+            <details>
+            <summary>Custom Package Update Output</summary>
+
+            ```
+            ${{ steps.pkg-update.outputs.output }}
             ```
             </details>
 

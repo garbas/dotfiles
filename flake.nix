@@ -291,7 +291,7 @@
             system:
             let
               pkgs = import nixpkgs-unstable {
-                inherit system;
+                inherit system overlays;
                 config.allowUnfree = true;
               };
               pre-commit-check = inputs.git-hooks.lib.${system}.run {
@@ -353,11 +353,14 @@
             {
               inherit inputs;
               checks.pre-commit = pre-commit-check;
-              packages.pre-commit = pkgs.pre-commit.overridePythonAttrs (_: {
-                nativeCheckInputs = [ ];
-                dontUsePytestCheck = true;
-                preCheck = "";
-              });
+              packages = {
+                pre-commit = pkgs.pre-commit.overridePythonAttrs (_: {
+                  nativeCheckInputs = [ ];
+                  dontUsePytestCheck = true;
+                  preCheck = "";
+                });
+                inherit (pkgs) slack-mcp-server incidentio-mcp;
+              };
               devShells.default = pkgs.mkShell {
                 inherit system;
                 packages =
