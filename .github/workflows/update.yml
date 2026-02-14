@@ -21,10 +21,6 @@ jobs:
             substituters = https://cache.nixos.org https://cache.flox.dev https://devenv.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
 
-      - name: "Install Flox"
-        run: |
-          nix profile install "github:flox/flox/latest"
-
       - name: "Update Nix flake inputs"
         id: "nix-update"
         run: |
@@ -46,17 +42,6 @@ jobs:
           cat pkg-update.log >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: "Update Flox environment"
-        id: "flox-update"
-        run: |
-          ln -s ./flox ./.flox
-          flox upgrade 2>&1 | tee flox-upgrade.log
-          echo "output<<EOF" >> $GITHUB_OUTPUT
-          cat flox-upgrade.log >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          # Copy updated files back to flox/env
-          cp -r .flox/* flox/env/
-
       - name: "Run flake check"
         run: "nix flake check"
 
@@ -68,12 +53,11 @@ jobs:
           body: |
             ## Automated Dependency Update
 
-            This PR updates Nix flake inputs, custom overlay packages, and Flox environment dependencies.
+            This PR updates Nix flake inputs and custom overlay packages.
 
             ### Changes
             - Updated Nix flake.lock with latest input versions
             - Updated custom overlay packages (slack-mcp-server, incidentio-mcp)
-            - Updated Flox environment manifest with latest package versions
 
             ### Verification
             ✅ `nix flake check` passed successfully
@@ -91,14 +75,6 @@ jobs:
 
             ```
             ${{ steps.pkg-update.outputs.output }}
-            ```
-            </details>
-
-            <details>
-            <summary>Flox Update Output</summary>
-
-            ```
-            ${{ steps.flox-update.outputs.output }}
             ```
             </details>
 
